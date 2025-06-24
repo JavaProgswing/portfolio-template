@@ -29,7 +29,11 @@ export interface Info {
   projects: {
     name: string;
     description: string;
-    github: string | null;
+    type: string;
+    links: {
+      name: string;
+      link: string;
+    }[];
     skills: string[];
   }[];
   contacts: {
@@ -43,8 +47,10 @@ export interface Info {
 }
 interface Props {
   data: Info;
+  onScrollDown?: () => void;
 }
-const Intro = ({ data }: Props) => {
+
+const Intro = ({ data, onScrollDown }: Props) => {
   const { isOpen, onToggle } = useDisclosure();
 
   const [displayedText, setDisplayedText] = useState(data.desc_brief);

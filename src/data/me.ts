@@ -68,41 +68,89 @@ export default {
       name: "Aestron Discord Bot",
       description:
         "A multi-featured bot with moderation, music, logging, and giveaways.",
-      github: "https://github.com/JavaProgswing/aestron",
+      type: "github",
+      links: [
+        { name: "GitHub", link: "https://github.com/JavaProgswing/aestron" },
+      ],
       skills: ["Python", "Discord API"],
     },
     {
       name: "ChatGPT Automation",
       description:
         "Automates ChatGPT using Selenium to simulate user behavior.",
-      github: "https://github.com/JavaProgswing/ChatGPTSeleniumAutomation",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/ChatGPTSeleniumAutomation",
+        },
+      ],
       skills: ["Python", "Selenium"],
     },
     {
       name: "Google Forms Answer Bot",
       description: "Web automation tool to answer Google Forms using Selenium.",
-      github: "https://github.com/JavaProgswing/GoogleFormsAnswerBot",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/GoogleFormsAnswerBot",
+        },
+      ],
       skills: ["Python", "Selenium", "JavaScript"],
     },
     {
       name: "University Wi-Fi Auto Login",
       description:
         "Automates the login process for university Wi-Fi networks using Selenium.",
-      github: "https://github.com/JavaProgswing/SRM-WIFI-Login",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/SRM-WIFI-Login",
+        },
+      ],
       skills: ["Python", "Selenium"],
+    },
+    {
+      name: "Stock Market Predictor",
+      description:
+        "Predicts stock market trends using Stock, News data and ChatGPT.",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/StockMarketPredictor",
+        },
+      ],
+      skills: ["Python", "Selenium", "Quart"],
+    },
+    {
+      name: "Top Games List",
+      description: "Displays a list of top games with their details.",
+      type: "vercel",
+      links: [{ name: "Vercel", link: "https://games-x-ten.vercel.app/" }],
+      skills: ["TypeScript", "React", "Chakra UI"],
     },
     {
       name: "WhisperCPP Java Command Recognition",
       description:
         "Offline speech command recognizer using WhisperCPP in Java.",
-      github: null,
+      type: "github",
+      links: [{ name: "GitHub", link: null }],
       skills: ["Java", "WhisperCPP"],
     },
     {
       name: "Valorant Narrator",
       description:
         "Narrates Valorant game chat using JavaFX and custom agent voices.",
-      github: "https://github.com/JavaProgswing/valorantnarratorOPS",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/valorantnarratorOPS",
+        },
+      ],
       skills: ["Java", "JavaFX", "TypeScript"],
     },
   ],
