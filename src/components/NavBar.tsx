@@ -1,4 +1,4 @@
-import { Heading, HStack } from "@chakra-ui/react";
+import { Heading, HStack, useColorModeValue } from "@chakra-ui/react";
 import { Info } from "./Intro";
 import ContactBadges from "./ContactBadges";
 import ColorModeToggle from "./ColorModeToggle";
@@ -9,7 +9,15 @@ interface Props {
 const Navbar = ({ data }: Props) => {
   return (
     <>
-      <HStack padding={"10px"} justifyContent="space-between" paddingX={2}>
+      <HStack
+        position="sticky"
+        top="0"
+        zIndex="100"
+        bg={useColorModeValue("gray.200", "gray.900")}
+        px={5}
+        py={3}
+        justifyContent="space-between"
+      >
         <Heading
           as="h1"
           size="md"
