@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Spacer } from "@chakra-ui/react";
+import { Heading, HStack } from "@chakra-ui/react";
 import { Info } from "./Intro";
 import ContactBadges from "./ContactBadges";
 import ColorModeToggle from "./ColorModeToggle";
@@ -6,27 +6,21 @@ import ColorModeToggle from "./ColorModeToggle";
 interface Props {
   data: Info;
 }
-
 const Navbar = ({ data }: Props) => {
   return (
-    <HStack w="100%" px={5} py={3}>
-      {/* Left Item */}
-      <Heading
-        as="h1"
-        size="md"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      >
-        ~
-      </Heading>
-
-      {/* Center Item (ContactBadges) */}
-      <Box flex="1" display="flex" justifyContent="center">
+    <>
+      <HStack padding={"10px"} justifyContent="space-between" paddingX={5}>
+        <Heading
+          as="h1"
+          size="md"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          ~
+        </Heading>
         <ContactBadges contacts={data.contacts} />
-      </Box>
-
-      {/* Right Item */}
-      <ColorModeToggle />
-    </HStack>
+        <ColorModeToggle />
+      </HStack>
+    </>
   );
 };
 
