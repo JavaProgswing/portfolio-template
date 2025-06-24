@@ -143,7 +143,12 @@ const Intro = ({ data, onScrollDown }: Props) => {
               <WrapItem key={lang}>
                 <Tooltip label={label} hasArrow>
                   <Stack spacing={1} align="center" px={2} py={1}>
-                    <Icon as={IconComponent} boxSize={6} />
+                    {IconComponent && (
+                      <Icon
+                        as={IconComponent as React.ElementType}
+                        boxSize={6}
+                      />
+                    )}
                     <Text fontSize="xs">{label}</Text>
                   </Stack>
                 </Tooltip>
@@ -164,7 +169,12 @@ const Intro = ({ data, onScrollDown }: Props) => {
                 <WrapItem key={fw.id}>
                   <Tooltip label={fw.desc} hasArrow>
                     <Stack spacing={1} align="center" px={2} py={1}>
-                      <Icon as={IconComponent} boxSize={6} />
+                      {IconComponent && (
+                        <Icon
+                          as={IconComponent as React.ElementType}
+                          boxSize={6}
+                        />
+                      )}
                       <Text fontSize="xs">{fw.name}</Text>
                     </Stack>
                   </Tooltip>

@@ -1,5 +1,8 @@
 import { HStack, IconButton } from "@chakra-ui/react";
 import { getSiteIconUrl } from "../services/favicon-site-url";
+import { FaQuestion } from "react-icons/fa";
+import { FunctionComponent, ReactElement } from "react";
+import { IconBaseProps } from "react-icons";
 
 interface ContactBadge {
   id: string;
@@ -15,8 +18,8 @@ const ContactBadges = ({ contacts }: Props) => {
   return (
     <HStack>
       {contacts.map((contact) => {
-        const Icon = getSiteIconUrl(contact.id);
-
+        const IconComponent = (getSiteIconUrl(contact.id) ||
+          FaQuestion) as FunctionComponent<IconBaseProps>;
         return (
           <IconButton
             key={contact.id}
@@ -25,7 +28,7 @@ const ContactBadges = ({ contacts }: Props) => {
             aria-label={contact.id}
             variant="ghost"
             size="md"
-            icon={Icon ? <Icon /> : undefined}
+            icon={<IconComponent />}
           />
         );
       })}

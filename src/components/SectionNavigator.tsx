@@ -1,4 +1,6 @@
 import { VStack, IconButton, Box, useColorModeValue } from "@chakra-ui/react";
+import { FunctionComponent } from "react";
+import { IconBaseProps } from "react-icons";
 import { FaUser, FaCode } from "react-icons/fa";
 
 interface Props {
@@ -15,6 +17,8 @@ const SectionNavigator = ({
   const activeBorder = "2px solid white";
   const inactiveBorder = "2px solid transparent";
   const iconBg = useColorModeValue("gray.200", "gray.700");
+  const FaUserIcon = FaUser as FunctionComponent<IconBaseProps>;
+  const FaCodeIcon = FaCode as FunctionComponent<IconBaseProps>;
 
   return (
     <Box
@@ -27,7 +31,7 @@ const SectionNavigator = ({
       <VStack spacing={4}>
         <IconButton
           aria-label="Go to Intro"
-          icon={<FaUser />}
+          icon={<FaUserIcon />}
           onClick={onIntroClick}
           h="100px"
           w="50px"
@@ -37,7 +41,7 @@ const SectionNavigator = ({
         />
         <IconButton
           aria-label="Go to Projects"
-          icon={<FaCode />}
+          icon={<FaCodeIcon />}
           onClick={onProjectsClick}
           h="100px"
           w="50px"

@@ -8,18 +8,21 @@ import {
   Link,
   Icon,
   useColorModeValue,
-  HStack,
   Tooltip,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { FaGithub, FaGlobe, FaExternalLinkAlt } from "react-icons/fa";
 import { Info } from "./Intro";
+import { IconType } from "react-icons";
+import { ElementType } from "react";
 
 interface Props {
   data: Info;
 }
 
-const getIconForType = (type: string) => {
-  switch (type) {
+const getIconForType = (type: string): IconType => {
+  switch (type.toLowerCase()) {
     case "github":
       return FaGithub;
     case "vercel":
@@ -41,48 +44,50 @@ const Projects = ({ data }: Props) => {
       </Heading>
 
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-        {data.projects.map((project, index) => {
-          const IconComponent = getIconForType(project.type);
+        {data.projects.map((project, index) => (
+          <Box
+            key={index}
+            p={5}
+            borderWidth="1px"
+            borderColor={borderColor}
+            borderRadius="md"
+            bg={cardBg}
+            shadow="sm"
+            transition="all 0.2s"
+            _hover={{ shadow: "md" }}
+          >
+            <Stack spacing={3}>
+              <Heading size="md">{project.name}</Heading>
 
-          return (
-            <Box
-              key={index}
-              p={5}
-              borderWidth="1px"
-              borderColor={borderColor}
-              borderRadius="md"
-              bg={cardBg}
-              shadow="sm"
-              transition="all 0.2s"
-              _hover={{ shadow: "md" }}
-            >
-              <Stack spacing={3}>
-                <Heading size="md">{project.name}</Heading>
+              <Text fontSize="sm" color={textColor}>
+                {project.description}
+              </Text>
 
-                <Text fontSize="sm" color={textColor}>
-                  {project.description}
-                </Text>
-
-                {/* Links */}
-                <HStack spacing={3} wrap="wrap">
-                  {project.links.map((link, idx) =>
-                    link.link ? (
-                      <Tooltip key={idx} label={link.name} hasArrow>
-                        <Link href={link.link} isExternal>
-                          <Icon as={IconComponent} boxSize={4} />
+              {/* Links */}
+              <Wrap>
+                {project.links.map((link, idx) => {
+                  const IconComponent = getIconForType(project.type);
+                  return link.link ? (
+                    <WrapItem key={idx}>
+                      <Tooltip label={link.name} hasArrow>
+                        <Link
+                          href={link.link}
+                          isExternal
+                          aria-label={link.name}
+                        >
+                          <Icon as={IconComponent as ElementType} boxSize={4} />
                         </Link>
                       </Tooltip>
-                    ) : null
-                  )}
-                </HStack>
+                    </WrapItem>
+                  ) : null;
+                })}
+              </Wrap>
 
-                {/* Skills */}
-                <Box>
-                  {project.skills.map((skill, idx) => (
+              {/* Skills */}
+              <Wrap>
+                {project.skills.map((skill, idx) => (
+                  <WrapItem key={idx}>
                     <Badge
-                      key={idx}
-                      mr={2}
-                      mb={1}
                       px={2}
                       py={1}
                       borderRadius="md"
@@ -91,12 +96,12 @@ const Projects = ({ data }: Props) => {
                     >
                       {skill}
                     </Badge>
-                  ))}
-                </Box>
-              </Stack>
-            </Box>
-          );
-        })}
+                  </WrapItem>
+                ))}
+              </Wrap>
+            </Stack>
+          </Box>
+        ))}
       </SimpleGrid>
     </Box>
   );
