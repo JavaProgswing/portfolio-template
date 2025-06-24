@@ -1,5 +1,6 @@
 import Intro from "./components/Intro";
 import NavBar from "./components/NavBar";
+import Projects from "./components/Projects";
 import data from "./data/me";
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <>
       <NavBar data={data} />
       <Intro data={data} />
+      <Projects data={data} />
     </>
   );
 }

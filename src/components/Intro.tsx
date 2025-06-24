@@ -65,7 +65,7 @@ const Intro = ({ data }: Props) => {
       } else {
         clearInterval(interval);
       }
-    }, 15); // Adjust typing speed
+    }, 17);
 
     return () => clearInterval(interval);
   }, [isOpen, data.desc, data.desc_brief]);

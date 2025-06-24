@@ -9,11 +9,12 @@ interface Props {
 const Navbar = ({ data }: Props) => {
   return (
     <>
-      <HStack padding={"10px"} justifyContent="space-between" paddingX={5}>
+      <HStack padding={"10px"} justifyContent="space-between" paddingX={2}>
         <Heading
           as="h1"
           size="md"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          paddingLeft={2}
         >
           ~
         </Heading>
