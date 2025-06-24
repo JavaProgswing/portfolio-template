@@ -67,6 +67,7 @@ function App() {
           <Projects data={data} />
         </GridItem>
       </Grid>
+      <Footer />
     </>
   );
 }

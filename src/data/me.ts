@@ -137,7 +137,7 @@ export default {
       description:
         "Offline speech command recognizer using WhisperCPP in Java.",
       type: "github",
-      links: [{ name: "GitHub", link: null }],
+      links: [],
       skills: ["Java", "WhisperCPP"],
     },
     {
