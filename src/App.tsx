@@ -5,6 +5,7 @@ import Intro from "./components/Intro";
 import Projects from "./components/Projects";
 import SectionNavigator from "./components/SectionNavigator";
 import data from "./data/me";
+import Footer from "./components/Footer";
 
 function App() {
   const introRef = useRef<HTMLDivElement>(null);
