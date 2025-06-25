@@ -62,6 +62,21 @@ export default {
         link: "https://spring.io/projects/spring-boot",
       },
     ],
+    databases: [
+      {
+        name: "PostgreSQL",
+        id: "postgresql",
+        desc: "Relational Database",
+        link: "https://www.postgresql.org/",
+      },
+      {
+        name: "SQLite",
+        id: "sqlite",
+        desc: "Lightweight Database",
+        link: "https://www.sqlite.org/index.html",
+      },
+    ],
+    misc: [],
   },
   projects: [
     {

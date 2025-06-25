@@ -24,6 +24,8 @@ export interface Info {
   frameworks: {
     frontend: { name: string; id: string; desc: string; link: string }[];
     backend: { name: string; id: string; desc: string; link: string }[];
+    databases: { name: string; id: string; desc: string; link: string }[];
+    misc: { name: string; id: string; desc: string; link: string }[];
   };
   projects: {
     name: string;
@@ -166,26 +168,29 @@ const Intro = ({ data, onScrollDown }: Props) => {
           Frameworks & Libraries
         </Heading>
         <Wrap justify="center">
-          {[...data.frameworks.frontend, ...data.frameworks.backend].map(
-            (fw) => {
-              const { icon: IconComponent, label } = getTechIcon(fw.id);
-              return (
-                <WrapItem key={fw.id}>
-                  <Tooltip label={fw.desc} hasArrow>
-                    <Stack spacing={1} align="center" px={2} py={1}>
-                      {IconComponent && (
-                        <Icon
-                          as={IconComponent as React.ElementType}
-                          boxSize={6}
-                        />
-                      )}
-                      <Text fontSize="xs">{fw.name}</Text>
-                    </Stack>
-                  </Tooltip>
-                </WrapItem>
-              );
-            }
-          )}
+          {[
+            ...data.frameworks.frontend,
+            ...data.frameworks.backend,
+            ...data.frameworks.databases,
+            ...data.frameworks.misc,
+          ].map((fw) => {
+            const { icon: IconComponent, label } = getTechIcon(fw.id);
+            return (
+              <WrapItem key={fw.id}>
+                <Tooltip label={fw.desc} hasArrow>
+                  <Stack spacing={1} align="center" px={2} py={1}>
+                    {IconComponent && (
+                      <Icon
+                        as={IconComponent as React.ElementType}
+                        boxSize={6}
+                      />
+                    )}
+                    <Text fontSize="xs">{fw.name}</Text>
+                  </Stack>
+                </Tooltip>
+              </WrapItem>
+            );
+          })}
         </Wrap>
       </Box>
     </Box>
