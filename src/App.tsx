@@ -1,10 +1,4 @@
-import {
-  Grid,
-  GridItem,
-  Show,
-  Box,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { Grid, GridItem, Show, Box } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import NavBar from "./components/NavBar";
 import Intro from "./components/Intro";
@@ -22,7 +16,6 @@ function App() {
 
   useEffect(() => {
     const onScroll = () => {
-      const scrollY = window.scrollY;
       const threshold = window.innerHeight / 2;
       const introTop = introRef.current?.getBoundingClientRect().top ?? 0;
       const projTop = projectsRef.current?.getBoundingClientRect().top ?? 0;
@@ -44,7 +37,7 @@ function App() {
     <>
       <NavBar data={data} />
 
-      {/* Hide SectionNavigator on mobile */}
+      {/* SectionNavigator on right for md+ screens */}
       <Show above="md">
         <SectionNavigator
           onIntroClick={scrollToIntro}
@@ -53,20 +46,22 @@ function App() {
         />
       </Show>
 
-      <Box minHeight="100vh">
+      {/* Only apply margin to scrollable content (not Footer) */}
+      <Box
+        minHeight="100vh"
+        mr={{ base: 0, md: "80px" }} // Matches navigator width
+        transition="margin 0.3s ease"
+      >
         <Grid
-          templateRows="1fr auto 1fr auto"
+          templateRows="repeat(2, minmax(100vh, auto))"
           templateAreas={`
             "intro"
-            "."
             "projects"
-            "footer"
           `}
         >
           <GridItem
             area="intro"
             ref={introRef}
-            minHeight="100vh"
             display="flex"
             alignItems="center"
             justifyContent="center"
@@ -77,20 +72,17 @@ function App() {
           <GridItem
             area="projects"
             ref={projectsRef}
-            minHeight="100vh"
             display="flex"
             alignItems="center"
             justifyContent="center"
-            scrollMarginTop="80px"
           >
             <Projects data={data} />
           </GridItem>
-
-          <GridItem area="footer">
-            <Footer />
-          </GridItem>
         </Grid>
       </Box>
+
+      {/* Footer outside the margin */}
+      <Footer />
     </>
   );
 }

@@ -30,6 +30,7 @@ import { IconType } from "react-icons";
 
 export const getTechIcon = (id: string): { icon: IconType; label: string } => {
   switch (id.toLowerCase()) {
+    case "reactjs":
     case "react":
       return { icon: FaReact, label: "React" };
     case "angular":

@@ -38,28 +38,25 @@ const Projects = ({ data }: Props) => {
   const textColor = useColorModeValue("gray.700", "gray.300");
 
   return (
-    <Box maxW="6xl" mx="auto" px={6} py={10}>
-      <Heading size="lg" mb={8} textAlign="center">
-        Projects
-      </Heading>
-
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
+    <Box maxW="5xl" mx="auto" px={6} py={10}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8} marginTop={8}>
         {data.projects.map((project, index) => (
           <Box
             key={index}
-            p={6}
+            p={5}
             borderWidth="1px"
-            borderColor={borderColor}
-            borderRadius="xl"
+            borderRadius="md"
             bg={cardBg}
-            shadow="base"
+            borderColor={borderColor}
+            shadow="sm"
             transition="all 0.3s ease"
             _hover={{
+              bg: useColorModeValue("gray.200", "gray.700"),
               shadow: "lg",
-              transform: "translateY(-4px)",
+              transform: "scale(1.02)",
             }}
           >
-            <Stack spacing={4}>
+            <Stack spacing={3}>
               <Heading size="md">{project.name}</Heading>
 
               <Text fontSize="sm" color={textColor}>
@@ -77,15 +74,8 @@ const Projects = ({ data }: Props) => {
                           href={link.link}
                           isExternal
                           aria-label={link.name}
-                          _hover={{ color: "blue.400" }}
-                          transition="color 0.2s"
                         >
-                          <Icon
-                            as={IconComponent as ElementType}
-                            boxSize={5}
-                            transition="transform 0.2s"
-                            _hover={{ transform: "scale(1.2)" }}
-                          />
+                          <Icon as={IconComponent as ElementType} boxSize={4} />
                         </Link>
                       </Tooltip>
                     </WrapItem>
@@ -103,12 +93,6 @@ const Projects = ({ data }: Props) => {
                       borderRadius="md"
                       fontSize="xs"
                       colorScheme="blue"
-                      transition="all 0.2s"
-                      _hover={{
-                        transform: "scale(1.05)",
-                        bg: "blue.500",
-                        color: "white",
-                      }}
                     >
                       {skill}
                     </Badge>
