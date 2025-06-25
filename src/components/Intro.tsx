@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Fade,
   Flex,
   Heading,
   Icon,
@@ -56,6 +55,11 @@ const Intro = ({ data, onScrollDown }: Props) => {
   const [displayedText, setDisplayedText] = useState(data.desc_brief);
 
   useEffect(() => {
+    if (!isOpen) {
+      setDisplayedText(data.desc_brief);
+      return;
+    }
+
     const targetText = isOpen ? data.desc : data.desc_brief;
 
     let index = 0;
