@@ -33,7 +33,7 @@ const getIconForType = (type: string): IconType => {
 };
 
 const Projects = ({ data }: Props) => {
-  const cardBg = useColorModeValue("gray.100", "gray.800");
+  const cardBg = useColorModeValue("gray.200", "gray.800");
   const borderColor = useColorModeValue("gray.300", "gray.700");
   const textColor = useColorModeValue("gray.700", "gray.300");
 
@@ -51,7 +51,7 @@ const Projects = ({ data }: Props) => {
             shadow="sm"
             transition="all 0.3s ease"
             _hover={{
-              bg: useColorModeValue("gray.200", "gray.700"),
+              bg: useColorModeValue("gray.300", "gray.700"),
               shadow: "lg",
               transform: "scale(1.02)",
             }}
