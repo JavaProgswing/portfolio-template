@@ -81,6 +81,7 @@ function App() {
             display="flex"
             alignItems="center"
             justifyContent="center"
+            scrollMarginTop="80px"
           >
             <Projects data={data} />
           </GridItem>

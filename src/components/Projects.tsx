@@ -39,24 +39,27 @@ const Projects = ({ data }: Props) => {
 
   return (
     <Box maxW="6xl" mx="auto" px={6} py={10}>
-      <Heading size="lg" mb={6} textAlign="center">
+      <Heading size="lg" mb={8} textAlign="center">
         Projects
       </Heading>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
         {data.projects.map((project, index) => (
           <Box
             key={index}
-            p={5}
+            p={6}
             borderWidth="1px"
             borderColor={borderColor}
-            borderRadius="md"
+            borderRadius="xl"
             bg={cardBg}
-            shadow="sm"
-            transition="all 0.2s"
-            _hover={{ shadow: "md" }}
+            shadow="base"
+            transition="all 0.3s ease"
+            _hover={{
+              shadow: "lg",
+              transform: "translateY(-4px)",
+            }}
           >
-            <Stack spacing={3}>
+            <Stack spacing={4}>
               <Heading size="md">{project.name}</Heading>
 
               <Text fontSize="sm" color={textColor}>
@@ -74,8 +77,15 @@ const Projects = ({ data }: Props) => {
                           href={link.link}
                           isExternal
                           aria-label={link.name}
+                          _hover={{ color: "blue.400" }}
+                          transition="color 0.2s"
                         >
-                          <Icon as={IconComponent as ElementType} boxSize={4} />
+                          <Icon
+                            as={IconComponent as ElementType}
+                            boxSize={5}
+                            transition="transform 0.2s"
+                            _hover={{ transform: "scale(1.2)" }}
+                          />
                         </Link>
                       </Tooltip>
                     </WrapItem>
@@ -93,6 +103,12 @@ const Projects = ({ data }: Props) => {
                       borderRadius="md"
                       fontSize="xs"
                       colorScheme="blue"
+                      transition="all 0.2s"
+                      _hover={{
+                        transform: "scale(1.05)",
+                        bg: "blue.500",
+                        color: "white",
+                      }}
                     >
                       {skill}
                     </Badge>
