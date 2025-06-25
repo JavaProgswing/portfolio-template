@@ -1,6 +1,6 @@
 export default {
   name: "Yashasvi Allen Kujur",
-  image: "https://yashasviallen.is-a.dev/me.jpg?",
+  image: "https://yashasviallen.is-a.dev/me.jpg?v=1",
   tags: ["sophomore", "backend developer", "web developer"],
   languages: ["Rust", "C++", "Java", "Python", "JavaScript", "TypeScript"],
   frameworks: {
