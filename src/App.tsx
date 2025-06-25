@@ -1,11 +1,17 @@
-import { Grid, GridItem, useDisclosure } from "@chakra-ui/react";
+import {
+  Grid,
+  GridItem,
+  Show,
+  Box,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import NavBar from "./components/NavBar";
 import Intro from "./components/Intro";
 import Projects from "./components/Projects";
 import SectionNavigator from "./components/SectionNavigator";
-import data from "./data/me";
 import Footer from "./components/Footer";
+import data from "./data/me";
 
 function App() {
   const introRef = useRef<HTMLDivElement>(null);
@@ -37,38 +43,53 @@ function App() {
   return (
     <>
       <NavBar data={data} />
-      <SectionNavigator
-        onIntroClick={scrollToIntro}
-        onProjectsClick={scrollToProjects}
-        activeSection={activeSection}
-      />
 
-      <Grid
-        height="200vh" // 2 full screens
-        templateRows="repeat(2, 100vh)"
-        templateAreas={`"intro" "projects"`}
-      >
-        <GridItem
-          area="intro"
-          ref={introRef}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Intro data={data} onScrollDown={scrollToProjects} />
-        </GridItem>
+      {/* Hide SectionNavigator on mobile */}
+      <Show above="md">
+        <SectionNavigator
+          onIntroClick={scrollToIntro}
+          onProjectsClick={scrollToProjects}
+          activeSection={activeSection}
+        />
+      </Show>
 
-        <GridItem
-          area="projects"
-          ref={projectsRef}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+      <Box minHeight="100vh">
+        <Grid
+          templateRows="1fr auto 1fr auto"
+          templateAreas={`
+            "intro"
+            "."
+            "projects"
+            "footer"
+          `}
         >
-          <Projects data={data} />
-        </GridItem>
-      </Grid>
-      <Footer />
+          <GridItem
+            area="intro"
+            ref={introRef}
+            minHeight="100vh"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Intro data={data} onScrollDown={scrollToProjects} />
+          </GridItem>
+
+          <GridItem
+            area="projects"
+            ref={projectsRef}
+            minHeight="100vh"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Projects data={data} />
+          </GridItem>
+
+          <GridItem area="footer">
+            <Footer />
+          </GridItem>
+        </Grid>
+      </Box>
     </>
   );
 }
