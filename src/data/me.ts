@@ -82,6 +82,19 @@ export default {
       skills: ["Python", "Tkinter", "Pystray", "Selenium"],
     },
     {
+      name: "SRM Academic Timetable Visualizer",
+      description:
+        "A Python application which visualizes the academic timetable of SRM students.",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/SRM-Academia-Timetable",
+        },
+      ],
+      skills: ["Python", "Requests", "BeautifulSoup", "Matplotlib"],
+    },
+    {
       name: "Valorant Narrator",
       description:
         "Designed a JavaFX application to narrate comms to in-game mic in agent/AWS/windows based voices. Made with typescript for tcp xmpp server, JavaFX for windows application.",
