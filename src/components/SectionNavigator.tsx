@@ -1,55 +1,64 @@
-import { VStack, IconButton, Box, useColorModeValue } from "@chakra-ui/react";
-import { FunctionComponent } from "react";
-import { IconBaseProps } from "react-icons";
-import { FaUser, FaCode } from "react-icons/fa";
+import { Box, Tooltip } from "@chakra-ui/react";
 
 interface Props {
   onIntroClick: () => void;
+  onJourneyClick: () => void;
   onProjectsClick: () => void;
-  activeSection: "intro" | "projects";
+  activeSection: "intro" | "journey" | "projects";
 }
 
 const SectionNavigator = ({
   onIntroClick,
+  onJourneyClick,
   onProjectsClick,
   activeSection,
 }: Props) => {
-  const activeBorder = "2px solid white";
-  const inactiveBorder = "2px solid transparent";
-  const iconBg = useColorModeValue("gray.200", "gray.700");
-  const FaUserIcon = FaUser as FunctionComponent<IconBaseProps>;
-  const FaCodeIcon = FaCode as FunctionComponent<IconBaseProps>;
+  const navItems = [
+    { id: "intro", label: "Intro", onClick: onIntroClick },
+    { id: "journey", label: "Journey", onClick: onJourneyClick },
+    { id: "projects", label: "Projects", onClick: onProjectsClick },
+  ];
 
   return (
     <Box
       position="fixed"
-      right={4}
+      right="40px"
       top="50%"
       transform="translateY(-50%)"
+      display="flex"
+      flexDirection="column"
+      gap={6}
       zIndex={10}
     >
-      <VStack spacing={4}>
-        <IconButton
-          aria-label="Go to Intro"
-          icon={<FaUserIcon />}
-          onClick={onIntroClick}
-          h="100px"
-          w="50px"
-          bg={activeSection === "intro" ? iconBg : "transparent"}
-          border={activeSection === "intro" ? activeBorder : inactiveBorder}
-          borderRadius="md"
-        />
-        <IconButton
-          aria-label="Go to Projects"
-          icon={<FaCodeIcon />}
-          onClick={onProjectsClick}
-          h="100px"
-          w="50px"
-          bg={activeSection === "projects" ? iconBg : "transparent"}
-          border={activeSection === "projects" ? activeBorder : inactiveBorder}
-          borderRadius="md"
-        />
-      </VStack>
+      {navItems.map((item) => (
+        <Tooltip
+          key={item.id}
+          label={item.label}
+          placement="left"
+          hasArrow
+          bg="gray.700"
+          color="white"
+        >
+          <Box
+            as="button"
+            onClick={item.onClick}
+            w="12px"
+            h="12px"
+            borderRadius="full"
+            bg={activeSection === item.id ? "blue.400" : "gray.600"}
+            transition="all 0.3s ease"
+            _hover={{
+              transform: "scale(1.5)",
+              bg: activeSection === item.id ? "blue.300" : "gray.400",
+            }}
+            boxShadow={
+              activeSection === item.id
+                ? "0 0 10px rgba(66, 153, 225, 0.6)"
+                : "none"
+            }
+          />
+        </Tooltip>
+      ))}
     </Box>
   );
 };

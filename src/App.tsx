@@ -3,14 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import NavBar from "./components/NavBar";
 import Intro from "./components/Intro";
 import Projects from "./components/Projects";
+import Journey from "./components/Journey";
 import SectionNavigator from "./components/SectionNavigator";
 import Footer from "./components/Footer";
 import data from "./data/me";
 
 function App() {
   const introRef = useRef<HTMLDivElement>(null);
+  const journeyRef = useRef<HTMLDivElement>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
-  const [activeSection, setActiveSection] = useState<"intro" | "projects">(
+  const [activeSection, setActiveSection] = useState<"intro" | "journey" | "projects">(
     "intro"
   );
 
@@ -18,9 +20,11 @@ function App() {
     const onScroll = () => {
       const threshold = window.innerHeight / 2;
       const introTop = introRef.current?.getBoundingClientRect().top ?? 0;
+      const journeyTop = journeyRef.current?.getBoundingClientRect().top ?? 0;
       const projTop = projectsRef.current?.getBoundingClientRect().top ?? 0;
 
       if (Math.abs(introTop) < threshold) setActiveSection("intro");
+      else if (Math.abs(journeyTop) < threshold) setActiveSection("journey");
       else if (Math.abs(projTop) < threshold) setActiveSection("projects");
     };
 
@@ -30,6 +34,8 @@ function App() {
 
   const scrollToIntro = () =>
     introRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToJourney = () =>
+    journeyRef.current?.scrollIntoView({ behavior: "smooth" });
   const scrollToProjects = () =>
     projectsRef.current?.scrollIntoView({ behavior: "smooth" });
 
@@ -38,9 +44,11 @@ function App() {
       <NavBar data={data} />
 
       {/* SectionNavigator on right for md+ screens */}
+      {/* Note: You might need to update SectionNavigator to handle the new section */}
       <Show above="md">
         <SectionNavigator
           onIntroClick={scrollToIntro}
+          onJourneyClick={scrollToJourney}
           onProjectsClick={scrollToProjects}
           activeSection={activeSection}
         />
@@ -53,9 +61,10 @@ function App() {
         transition="margin 0.3s ease"
       >
         <Grid
-          templateRows="repeat(2, minmax(100vh, auto))"
+          templateRows="repeat(3, minmax(100vh, auto))"
           templateAreas={`
             "intro"
+            "journey"
             "projects"
           `}
         >
@@ -66,7 +75,17 @@ function App() {
             alignItems="center"
             justifyContent="center"
           >
-            <Intro data={data} onScrollDown={scrollToProjects} />
+            <Intro data={data} onScrollDown={scrollToJourney} />
+          </GridItem>
+
+          <GridItem
+            area="journey"
+            ref={journeyRef}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Journey data={data} />
           </GridItem>
 
           <GridItem

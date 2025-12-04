@@ -1,8 +1,8 @@
 export default {
   name: "Yashasvi Allen Kujur",
-  image: "https://yashasviallen.is-a.dev/me.jpg?v=1",
-  tags: ["sophomore", "backend developer", "web developer"],
-  languages: ["Rust", "C++", "Java", "Python", "JavaScript", "TypeScript"],
+  image: "https://yashasviallen.is-a.dev/me.jpg?v=5",
+  tags: ["CSE Core Student", "Software Developer", "Tech Enthusiast"],
+  languages: ["Java", "Python", "JavaScript", "TypeScript", "Rust", "C++"],
   frameworks: {
     frontend: [
       {
@@ -22,6 +22,12 @@ export default {
         id: "chakraui",
         desc: "Styling Library",
         link: "https://chakra-ui.com/",
+      },
+      {
+        name: "JavaFX",
+        id: "javafx",
+        desc: "Client Application Platform",
+        link: "https://openjfx.io/",
       },
     ],
     backend: [
@@ -44,18 +50,6 @@ export default {
         link: "https://fastapi.tiangolo.com/",
       },
       {
-        name: "Django",
-        id: "django",
-        desc: "Python Web Framework",
-        link: "https://www.djangoproject.com/",
-      },
-      {
-        name: "Express",
-        id: "express",
-        desc: "Node.js Web Framework",
-        link: "https://expressjs.com/",
-      },
-      {
         name: "Spring Boot",
         id: "springboot",
         desc: "Java Web Framework",
@@ -76,9 +70,61 @@ export default {
         link: "https://www.sqlite.org/index.html",
       },
     ],
-    misc: [],
+    misc: [
+      {
+        name: "Selenium",
+        id: "selenium",
+        desc: "Web Browser Automation",
+        link: "https://www.selenium.dev/",
+      },
+      {
+        name: "Pystray",
+        id: "python",
+        desc: "System Tray Icons",
+        link: "https://pypi.org/project/pystray/",
+      },
+    ],
   },
   projects: [
+    {
+      name: "SRM Wi-FI Autologin",
+      description:
+        "A tkinter/windows tray(pystray)-based Python application which automatically logins to the SRM wifi portal(Hostel/TP) when login expires, automatically detecting UB/Hostel wifi.",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/SRM-WIFI-Login",
+        },
+      ],
+      skills: ["Python", "Tkinter", "Pystray", "Selenium"],
+    },
+    {
+      name: "Valnarrator",
+      description:
+        "Designed a JavaFX application to narrate valorant text chat comms to ingame mic in agent/AWS/windows based voices. Made with typescript for tcp xmpp server, JavaFX for windows application.",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/valorantnarratorOPS",
+        },
+      ],
+      skills: ["Java", "JavaFX", "TypeScript", "AWS Polly"],
+    },
+    {
+      name: "Google Form Answer Bot",
+      description:
+        "Created a chrome based JS extension which automatically fills answers to google form based questions using GPT.",
+      type: "github",
+      links: [
+        {
+          name: "GitHub",
+          link: "https://github.com/JavaProgswing/GoogleFormsAnswerBot",
+        },
+      ],
+      skills: ["JavaScript", "Chrome Extension", "GPT"],
+    },
     {
       name: "Aestron Discord Bot",
       description:
@@ -88,44 +134,6 @@ export default {
         { name: "GitHub", link: "https://github.com/JavaProgswing/aestron" },
       ],
       skills: ["Python", "Discord API"],
-    },
-    {
-      name: "ChatGPT Automation",
-      description:
-        "Automates ChatGPT using Selenium to simulate user behavior.",
-      type: "github",
-      links: [
-        {
-          name: "GitHub",
-          link: "https://github.com/JavaProgswing/ChatGPTSeleniumAutomation",
-        },
-      ],
-      skills: ["Python", "Selenium"],
-    },
-    {
-      name: "Google Forms Answer Bot",
-      description: "Web automation tool to answer Google Forms using Selenium.",
-      type: "github",
-      links: [
-        {
-          name: "GitHub",
-          link: "https://github.com/JavaProgswing/GoogleFormsAnswerBot",
-        },
-      ],
-      skills: ["Python", "Selenium", "JavaScript"],
-    },
-    {
-      name: "University Wi-Fi Auto Login",
-      description:
-        "Automates the login process for university Wi-Fi networks using Selenium.",
-      type: "github",
-      links: [
-        {
-          name: "GitHub",
-          link: "https://github.com/JavaProgswing/SRM-WIFI-Login",
-        },
-      ],
-      skills: ["Python", "Selenium"],
     },
     {
       name: "Stock Market Predictor",
@@ -140,41 +148,13 @@ export default {
       ],
       skills: ["Python", "Selenium", "Quart"],
     },
-    {
-      name: "Top Games List",
-      description: "Displays a list of top games with their details.",
-      type: "vercel",
-      links: [{ name: "Vercel", link: "https://games-x-ten.vercel.app/" }],
-      skills: ["TypeScript", "React", "Chakra UI"],
-    },
-    {
-      name: "WhisperCPP Java Command Recognition",
-      description:
-        "Offline speech command recognizer using WhisperCPP in Java.",
-      type: "github",
-      links: [],
-      skills: ["Java", "WhisperCPP"],
-    },
-    {
-      name: "Valorant Narrator",
-      description:
-        "Narrates Valorant game chat using JavaFX and custom agent voices.",
-      type: "github",
-      links: [
-        {
-          name: "GitHub",
-          link: "https://github.com/JavaProgswing/valorantnarratorOPS",
-        },
-      ],
-      skills: ["Java", "JavaFX", "TypeScript"],
-    },
   ],
   contacts: [
     {
       id: "github",
       name: "Github",
       site: "https://github.com/",
-      link: "https://yashasviallen.is-a.dev/github",
+      link: "https://github.com/JavaProgswing/",
     },
     {
       id: "linkedin",
@@ -188,8 +168,30 @@ export default {
       site: "https://www.instagram.com/",
       link: "https://yashasviallen.is-a.dev/instagram",
     },
+    {
+      id: "spotify",
+      name: "Spotify",
+      site: "https://open.spotify.com/",
+      link: "http://yashasviallen.is-a.dev/spotify",
+    },
+  ],
+  journey: [
+    {
+      title: "Computer Science Engineering Student",
+      company: "SRM Institute of Science and Technology",
+      date: "2023 - Present",
+      description:
+        "Specializing in CSE Core. Building a strong foundation in software development, algorithms, and system design.",
+    },
+    {
+      title: "Backend Developer",
+      company: "Personal Projects",
+      date: "2022 - Present",
+      description:
+        "Developed various automation tools and bots using Python, Java, and modern web frameworks.",
+    },
   ],
   desc_brief:
-    "I am a 20 y/o tech enthusiast who loves to create tools to automate daily repetitive tasks.\nCurrently looking into Rust and ASM.",
-  desc: "I am a passionate tech enthusiast with a strong foundation in software development.\nJava is my daily driver, and I have created multiple hobby projects for tasks such as auto-joining scheduled meetings and logging into university Wi-Fi networks.",
+    "I am a dedicated Computer Science Engineering student specializing in CSE Core at SRM Institute of Science and Technology.",
+  desc: "I am a passionate tech enthusiast with a strong foundation in software development. Java is my daily driver, and I am curious about making projects that automate/ease daily tasks or make our lives more fun.",
 };

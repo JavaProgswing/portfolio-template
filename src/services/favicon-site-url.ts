@@ -18,6 +18,7 @@ import {
   FaBehance,
   FaPinterest,
   FaQuestion,
+  FaSpotify,
 } from "react-icons/fa";
 
 const getSiteIconUrl = (site: string): IconType => {
@@ -30,6 +31,8 @@ const getSiteIconUrl = (site: string): IconType => {
       return FaLinkedin;
     case "stackoverflow":
       return FaStackOverflow;
+    case "spotify":
+      return FaSpotify;
     case "twitter":
       return FaTwitter;
     case "youtube":
