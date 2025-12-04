@@ -1,16 +1,10 @@
 export default {
   name: "Yashasvi Allen Kujur",
   image: "https://yashasviallen.is-a.dev/me.jpg?v=5",
-  tags: ["CSE Core Student", "Software Developer", "Tech Enthusiast"],
-  languages: ["Java", "Python", "JavaScript", "TypeScript", "Rust", "C++"],
+  tags: ["CSE Core Student", "Tech Enthusiast"],
+  languages: ["Java", "Python", "TypeScript", "Rust"],
   frameworks: {
     frontend: [
-      {
-        name: "React",
-        id: "react",
-        desc: "UI Library",
-        link: "https://reactjs.org/",
-      },
       {
         name: "Tailwind CSS",
         id: "tailwindcss",
@@ -31,12 +25,6 @@ export default {
       },
     ],
     backend: [
-      {
-        name: "Flask",
-        id: "flask",
-        desc: "Python Web Framework",
-        link: "https://flask.palletsprojects.com/en/latest/",
-      },
       {
         name: "Quart",
         id: "quart",
@@ -77,12 +65,6 @@ export default {
         desc: "Web Browser Automation",
         link: "https://www.selenium.dev/",
       },
-      {
-        name: "Pystray",
-        id: "python",
-        desc: "System Tray Icons",
-        link: "https://pypi.org/project/pystray/",
-      },
     ],
   },
   projects: [
@@ -100,14 +82,18 @@ export default {
       skills: ["Python", "Tkinter", "Pystray", "Selenium"],
     },
     {
-      name: "Valnarrator",
+      name: "Valorant Narrator",
       description:
-        "Designed a JavaFX application to narrate valorant text chat comms to ingame mic in agent/AWS/windows based voices. Made with typescript for tcp xmpp server, JavaFX for windows application.",
+        "Designed a JavaFX application to narrate comms to in-game mic in agent/AWS/windows based voices. Made with typescript for tcp xmpp server, JavaFX for windows application.",
       type: "github",
       links: [
         {
           name: "GitHub",
           link: "https://github.com/JavaProgswing/valorantnarratorOPS",
+        },
+        {
+          name: "Vercel",
+          link: "https://valnarrator.vercel.app/",
         },
       ],
       skills: ["Java", "JavaFX", "TypeScript", "AWS Polly"],
@@ -115,7 +101,7 @@ export default {
     {
       name: "Google Form Answer Bot",
       description:
-        "Created a chrome based JS extension which automatically fills answers to google form based questions using GPT.",
+        "Created a chrome-based JS extension which automatically fills answers to Google Form-based questions using GPT.",
       type: "github",
       links: [
         {
@@ -134,19 +120,6 @@ export default {
         { name: "GitHub", link: "https://github.com/JavaProgswing/aestron" },
       ],
       skills: ["Python", "Discord API"],
-    },
-    {
-      name: "Stock Market Predictor",
-      description:
-        "Predicts stock market trends using Stock, News data and ChatGPT.",
-      type: "github",
-      links: [
-        {
-          name: "GitHub",
-          link: "https://github.com/JavaProgswing/StockMarketPredictor",
-        },
-      ],
-      skills: ["Python", "Selenium", "Quart"],
     },
   ],
   contacts: [
@@ -179,9 +152,9 @@ export default {
     {
       title: "Computer Science Engineering Student",
       company: "SRM Institute of Science and Technology",
-      date: "2023 - Present",
+      date: "2024 - Present",
       description:
-        "Specializing in CSE Core. Building a strong foundation in software development, algorithms, and system design.",
+        "Specializing in CSE Core. Building a strong foundation in software development, algorithms.",
     },
     {
       title: "Backend Developer",
@@ -192,6 +165,6 @@ export default {
     },
   ],
   desc_brief:
-    "I am a dedicated Computer Science Engineering student specializing in CSE Core at SRM Institute of Science and Technology.",
-  desc: "I am a passionate tech enthusiast with a strong foundation in software development. Java is my daily driver, and I am curious about making projects that automate/ease daily tasks or make our lives more fun.",
+    "I am a CSE Core student at SRM Institute of Science and Technology, passionate about technology and software development.",
+  desc: "Hi, I’m a passionate tech enthusiast, curious to learn new frameworks and research bugs/exploits in software.\n Java is my primary language, and I am curious about making projects that automate/ease daily tasks or make our lives more fun.",
 };
