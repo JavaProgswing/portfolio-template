@@ -106,7 +106,7 @@ const Projects = ({ data }: Props) => {
                 </Heading>
                 <Wrap>
                   {project.links.map((link, idx) => {
-                    const IconComponent = getIconForType(project.type);
+                    const IconComponent = getIconForType(link.name);
                     return link.link ? (
                       <WrapItem key={idx}>
                         <Tooltip label={link.name} hasArrow>
