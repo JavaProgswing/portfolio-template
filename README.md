@@ -58,7 +58,12 @@ npm run preview
 
 You can easily update the portfolio content without touching the component code. All personal details, projects, and skills are stored in `src/data/me.ts`.
 
-1.  Open `src/data/me.ts`.
+1.  **Create your data file:**
+    Copy `src/data/me.example.ts` to `src/data/me.ts`.
+    ```bash
+    cp src/data/me.example.ts src/data/me.ts
+    ```
+2.  Open `src/data/me.ts`.
 2.  Update the following fields:
     - `name`: Your name.
     - `image`: URL to your profile picture.
