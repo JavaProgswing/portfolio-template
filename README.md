@@ -61,10 +61,10 @@ You can easily update the portfolio content without touching the component code.
 1.  **Create your data file:**
     Copy `src/data/me.example.ts` to `src/data/me.ts`.
     ```bash
-    cp src/data/me.example.ts src/data/me.ts
+    copy src/data/me.example.ts src/data/me.ts
     ```
 2.  Open `src/data/me.ts`.
-2.  Update the following fields:
+3.  Update the following fields:
     - `name`: Your name.
     - `image`: URL to your profile picture.
     - `tags`: Your titles (e.g., "Full Stack Developer").
