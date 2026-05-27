@@ -4,6 +4,7 @@ import {
   HStack,
   Link,
   Text,
+  Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -15,9 +16,11 @@ interface Props {
 }
 
 /**
- * Minimal footer. The 5 page links got moved into the command palette (⌘K) —
- * which is itself an easter egg the footer now subtly advertises. Less clutter,
- * more discovery.
+ * Minimal footer. Two distinct clickable bits:
+ *   1. "press ⌘K for quick actions" → fires `open-command-palette` event
+ *   2. `❯_` blinking cursor → navigates to /console
+ *
+ * Both are exposed as easter-egg entry points without crowding the footer.
  */
 const Footer = ({ name }: Props) => {
   const [time, setTime] = useState(() =>
@@ -42,6 +45,9 @@ const Footer = ({ name }: Props) => {
   const kbdBg = useColorModeValue("gray.100", "rgba(255,255,255,0.05)");
   const kbdBorder = useColorModeValue("gray.300", "rgba(255,255,255,0.1)");
 
+  const openPalette = () =>
+    window.dispatchEvent(new Event("open-command-palette"));
+
   return (
     <Box
       w="100%"
@@ -63,40 +69,75 @@ const Footer = ({ name }: Props) => {
           © 2025 {name}
         </Text>
 
-        {/* ⌘K hint — central discovery point */}
-        <HStack
-          as={RouterLink}
-          to="/console"
-          spacing={2.5}
-          fontFamily="mono"
-          fontSize="11px"
-          color={subtleColor}
-          _hover={{ color: "brand.400" }}
-          sx={{ transition: "color 0.15s" }}
-          title="press ⌘K (or Ctrl+K) anywhere for quick actions · also: this footer hint opens the interactive console"
-        >
-          <HStack spacing={1}>
-            <Text>press</Text>
-            <Text
-              as="kbd"
-              px={1.5} py={0.5}
-              border="1px solid"
-              borderColor={kbdBorder}
-              borderRadius="4px"
-              bg={kbdBg}
-              fontSize="10px"
-              color="gray.400"
-              fontWeight="600"
+        <HStack spacing={3} fontFamily="mono" fontSize="11px">
+          {/* ⌘K — opens command palette */}
+          <Tooltip
+            label="open quick actions"
+            hasArrow
+            fontSize="10px"
+            placement="top"
+          >
+            <HStack
+              as="button"
+              onClick={openPalette}
+              spacing={1.5}
+              color={subtleColor}
+              _hover={{ color: "brand.400" }}
+              sx={{ transition: "color 0.15s" }}
+              cursor="pointer"
             >
-              ⌘K
-            </Text>
-            <Text>for quick actions</Text>
-          </HStack>
-          <Text color={borderColor} display={{ base: "none", sm: "inline" }}>·</Text>
-          <Text display={{ base: "none", sm: "inline" }}>
-            <Text as="span" color="brand.400">❯</Text>
-            <Text as="span" animation="blink 1.2s steps(2, start) infinite">_</Text>
+              <Text>press</Text>
+              <Text
+                as="kbd"
+                px={1.5}
+                py={0.5}
+                border="1px solid"
+                borderColor={kbdBorder}
+                borderRadius="4px"
+                bg={kbdBg}
+                fontSize="10px"
+                color="gray.400"
+                fontWeight="600"
+              >
+                ⌘K
+              </Text>
+              <Text>for quick actions</Text>
+            </HStack>
+          </Tooltip>
+
+          <Text
+            color={borderColor}
+            display={{ base: "none", sm: "inline" }}
+          >
+            ·
           </Text>
+
+          {/* Console cursor — opens /console */}
+          <Tooltip
+            label="open interactive console"
+            hasArrow
+            fontSize="10px"
+            placement="top"
+          >
+            <Link
+              as={RouterLink}
+              to="/console"
+              display={{ base: "none", sm: "inline-flex" }}
+              alignItems="center"
+              color={subtleColor}
+              _hover={{ color: "brand.400", textDecoration: "none" }}
+            >
+              <Text as="span" color="brand.400">
+                ❯
+              </Text>
+              <Text
+                as="span"
+                animation="blink 1.2s steps(2, start) infinite"
+              >
+                _
+              </Text>
+            </Link>
+          </Tooltip>
         </HStack>
 
         <Text fontSize="13px" color={textColor} fontFamily="mono">

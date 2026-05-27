@@ -370,7 +370,14 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
             <Text fontWeight="600" fontSize="sm">Codeforces</Text>
           </HStack>
           <Link href={`https://codeforces.com/profile/${cfHandle}`} isExternal>
-            <Badge variant="outline" colorScheme="indigo" fontFamily="mono">@{cfHandle}</Badge>
+            <Badge
+              variant="outline"
+              borderColor="brand.400"
+              color="brand.400"
+              fontFamily="mono"
+            >
+              @{cfHandle}
+            </Badge>
           </Link>
         </HStack>
         {cfStatus === "loading" && <Center h="80px"><Spinner size="sm" color="brand.400" /></Center>}

@@ -44,7 +44,7 @@ SPOTIFY_REFRESH_TOKEN = os.getenv("SPOTIFY_REFRESH_TOKEN", "")
 
 # Gemini API for AI chat — get a free key at https://aistudio.google.com/apikey
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemma-3-12b-it")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
 # Naive in-memory rate limit for /chat (IP → list of timestamps)
 _chat_rl: dict = {}

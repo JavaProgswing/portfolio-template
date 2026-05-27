@@ -121,46 +121,48 @@ blogs: [
 ],
 ```
 
-### AI Chat (Gemini / Gemma)
+### AI Chat (Gemini API)
 
-The floating robot button hits the FastAPI backend at `/api/portfolio/chat`, which proxies Google's Gemini API. The API key stays server-side — never exposed to the browser. System prompt is auto-built from `me.ts` data.
+Floating robot button hits FastAPI backend at `/api/portfolio/chat`, which proxies Google's Gemini API. API key stays server-side — never exposed to the browser. System prompt is auto-built from `me.ts` data.
 
 **Setup:**
 
 1. Get a free Gemini API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
-2. Add it to `backend/.env`:
+2. Add to `backend/.env`:
 
 ```bash
 GEMINI_API_KEY=AIza...
-GEMINI_MODEL=gemma-3-12b-it    # default; see options below
+GEMINI_MODEL=gemini-2.0-flash   # default — works on all free-tier keys
 ```
 
-3. Restart the backend:
+3. Restart backend:
 
 ```bash
 sudo systemctl restart portfolio-api
 ```
 
-**Available models** (set `GEMINI_MODEL`):
+**Model options** (set via `GEMINI_MODEL`):
 
-| Model | Size | Best for |
-|---|---|---|
-| `gemma-3-1b-it` | 1B | Fastest, weakest quality |
-| `gemma-3-4b-it` | 4B | Snappy, decent |
-| `gemma-3-12b-it` | 12B | **Recommended** balance |
-| `gemma-3-27b-it` | 27B | Highest quality Gemma |
-| `gemini-1.5-flash` | — | Very fast Gemini |
-| `gemini-2.0-flash-exp` | — | Latest Gemini Flash |
+| Model | Notes |
+|---|---|
+| `gemini-2.0-flash` | **Default** — current free-tier, fast streaming |
+| `gemini-1.5-flash` | Older but rock-solid |
+| `gemini-2.5-flash` | Newer (requires API access) |
+| `gemma-2-9b-it` | Gemma 2 9B (requires Gemma access on key) |
+| `gemma-2-27b-it` | Larger Gemma (requires access) |
+| `gemma-3-1b-it` / `4b-it` | Smaller Gemma 3 (availability varies) |
 
-**Rate limiting**: 30 messages per visitor IP per hour (in-memory; tweak in `backend/main.py`).
+> **Note**: not all Gemma models are exposed via v1beta for every API key. If you hit a 404, fall back to `gemini-2.0-flash` — universally available.
+
+**Rate limiting**: 30 messages per visitor IP per hour (tweak in `backend/main.py`).
 
 **Verify:**
 ```bash
 curl https://yourdomain.com/api/portfolio/chat/status
-# {"available": true, "model": "gemma-3-12b-it"}
+# {"available": true, "model": "gemini-2.0-flash"}
 ```
 
-If `available: false` → backend doesn't have `GEMINI_API_KEY`. The chat FAB will show as offline gracefully.
+If `available: false` → backend missing `GEMINI_API_KEY`. Chat FAB shows offline gracefully.
 
 ### Spotify Now Playing (optional)
 

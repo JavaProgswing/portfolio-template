@@ -333,6 +333,18 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
     return () => window.removeEventListener("close-all", handler);
   }, [onClose]);
 
+  // External trigger to open palette (footer "⌘K" hint click)
+  useEffect(() => {
+    const handler = () => {
+      setQuery("");
+      setSelectedIdx(0);
+      onOpen();
+      unlock("command-pal");
+    };
+    window.addEventListener("open-command-palette", handler);
+    return () => window.removeEventListener("open-command-palette", handler);
+  }, [onOpen]);
+
   // Global key listener for cmd+k
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
