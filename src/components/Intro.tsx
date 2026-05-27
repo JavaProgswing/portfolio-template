@@ -58,6 +58,7 @@ interface CurrentWorkData {
 interface Props {
   data: Info;
   currentWork?: CurrentWorkData;
+  resumeUrl?: string;
   onScrollDown?: () => void;
 }
 
@@ -65,7 +66,7 @@ const MotionBox = motion(Box);
 const MotionImage = motion(Image);
 const MotionStack = motion(Stack);
 
-const Intro = ({ data, currentWork, onScrollDown }: Props) => {
+const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
   const { isOpen, onToggle } = useDisclosure();
   const [displayedText, setDisplayedText] = useState(data.desc_brief);
 
@@ -160,10 +161,33 @@ const Intro = ({ data, currentWork, onScrollDown }: Props) => {
               fontWeight="bold" animation="blink 1s steps(2, start) infinite">|</Text>
           </Text>
 
-          <Button onClick={onToggle} size="xs" variant="link" colorScheme="purple"
-            fontFamily="mono" fontSize="11px" alignSelf="flex-start">
-            {isOpen ? "↑ less" : "↓ more"}
-          </Button>
+          <HStack spacing={3} flexWrap="wrap">
+            <Button onClick={onToggle} size="xs" variant="link" colorScheme="purple"
+              fontFamily="mono" fontSize="11px">
+              {isOpen ? "↑ less" : "↓ more"}
+            </Button>
+            {resumeUrl && (
+              <Button
+                as="a"
+                href={resumeUrl}
+                size="xs"
+                variant="outline"
+                borderColor="rgba(255,255,255,0.14)"
+                color="gray.400"
+                fontFamily="mono"
+                fontSize="11px"
+                px={2.5}
+                h="22px"
+                _hover={{
+                  color: "gray.100",
+                  borderColor: "rgba(255,255,255,0.3)",
+                  bg: "rgba(255,255,255,0.05)",
+                }}
+              >
+                resume ↗
+              </Button>
+            )}
+          </HStack>
 
           {/* Compact "Now" status */}
           {currentWork && (

@@ -68,6 +68,7 @@ const HomePage = ({ data }: Props) => {
           <Box id="home" ref={homeRef} minH="100vh"
             display="flex" alignItems="center" py={20}>
             <Intro data={data} currentWork={data.currentWork}
+              resumeUrl={data.resumeUrl}
               onScrollDown={() => scrollTo(journeyRef)} />
           </Box>
           <Box id="journey" ref={journeyRef} py={24}>

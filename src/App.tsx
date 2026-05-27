@@ -20,6 +20,7 @@ import ColophonPage from "./pages/ColophonPage";
 import ConsolePage from "./pages/ConsolePage";
 import GuestbookPage from "./pages/GuestbookPage";
 import ResumePage from "./pages/ResumePage";
+import PlayPage from "./pages/PlayPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import data from "./data/me";
 
@@ -45,10 +46,11 @@ function App() {
           <Route path="/console" element={<ConsolePage data={data} />} />
           <Route path="/guestbook" element={<GuestbookPage />} />
           <Route path="/resume" element={<ResumePage data={data} />} />
+          <Route path="/play" element={<PlayPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
-        <Footer name={data.name} />
+        <Footer name={data.name} resumeUrl={data.resumeUrl} />
       </Box>
 
       <OllamaChat data={data} />

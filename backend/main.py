@@ -79,7 +79,16 @@ def init_db():
                 day TEXT PRIMARY KEY,
                 count INTEGER NOT NULL DEFAULT 0
             );
+            CREATE TABLE IF NOT EXISTS suggestions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                message TEXT NOT NULL,
+                ip TEXT,
+                status TEXT DEFAULT 'pending',
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
             CREATE INDEX IF NOT EXISTS idx_guestbook_created ON guestbook(created_at DESC);
+            CREATE INDEX IF NOT EXISTS idx_suggestions_created ON suggestions(created_at DESC);
             """
         )
 
@@ -92,6 +101,11 @@ init_db()
 class GuestEntryIn(BaseModel):
     name: str = Field(..., min_length=1, max_length=64)
     message: str = Field(..., min_length=1, max_length=500)
+
+
+class SuggestionIn(BaseModel):
+    name: str = Field("anonymous", max_length=64)
+    message: str = Field(..., min_length=3, max_length=500)
 
 
 class GuestEntryOut(BaseModel):
@@ -140,6 +154,33 @@ def submit_guestbook(entry: GuestEntryIn, request: Request):
             raise HTTPException(429, "slow down")
         conn.execute(
             "INSERT INTO guestbook (name, message, ip) VALUES (?, ?, ?)",
+            (name, message, ip),
+        )
+    return {"ok": True}
+
+
+@app.post("/suggestions")
+def submit_suggestion(s: SuggestionIn, request: Request):
+    """
+    Submit a site suggestion. Write-only from visitors — no public GET.
+    Owner reads from SQLite directly. Rate limit: 3 per IP per hour.
+    """
+    name = _html.escape((s.name or "anonymous").strip()) or "anonymous"
+    message = _html.escape(s.message.strip())
+    if not message:
+        raise HTTPException(400, "empty")
+
+    ip = request.client.host if request.client else "?"
+    with db() as conn:
+        recent = conn.execute(
+            "SELECT COUNT(*) AS c FROM suggestions "
+            "WHERE ip = ? AND created_at > datetime('now', '-1 hour')",
+            (ip,),
+        ).fetchone()
+        if recent and recent["c"] >= 3:
+            raise HTTPException(429, "slow down")
+        conn.execute(
+            "INSERT INTO suggestions (name, message, ip) VALUES (?, ?, ?)",
             (name, message, ip),
         )
     return {"ok": True}

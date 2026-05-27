@@ -34,6 +34,10 @@ export const ACHIEVEMENTS: Achievement[] = [
   { key: "all-themes",   label: "Decorator",         hint: "Tried every theme" },
   { key: "vim-nav",      label: "h/j/k/l",           hint: "Used vim-style navigation" },
   { key: "triple-esc",   label: "Just Stop",         hint: "Closed everything with triple Esc" },
+  { key: "snake-played", label: "Player One",        hint: "Found the hidden snake game" },
+  { key: "snake-50",     label: "Snake Charmer",     hint: "Scored 50+ in snake" },
+  { key: "snake-100",    label: "Asp Master",        hint: "Scored 100+ in snake" },
+  { key: "suggester",    label: "Helpful Hand",      hint: "Sent a site suggestion" },
 ];
 
 function load(): Set<string> {

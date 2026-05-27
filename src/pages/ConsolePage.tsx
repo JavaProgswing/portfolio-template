@@ -17,7 +17,10 @@ interface CmdContext {
   clear: () => void;
 }
 
-const COMMANDS: Record<string, (ctx: CmdContext, args: string[]) => string | null> = {
+const COMMANDS: Record<
+  string,
+  (ctx: CmdContext, args: string[]) => string | null | Promise<string | null>
+> = {
   help: () => `available commands:
 
   about      - bio
@@ -32,6 +35,11 @@ const COMMANDS: Record<string, (ctx: CmdContext, args: string[]) => string | nul
   ls         - virtual files
   cat <file> - read a virtual file
   achievements - your easter egg progress
+
+  play       - launch snake mini-game
+  snake      - same as 'play'
+  suggest <text> - send moderated feedback
+  sign       - go to guestbook
   echo <txt> - print text
   date       - current date
   pwd        - working directory
@@ -135,6 +143,9 @@ press ↑/↓ for command history`,
       guestbook: "/guestbook",
       resume: "/resume",
       cv: "/resume",
+      play: "/play",
+      game: "/play",
+      snake: "/play",
     };
     const path = routes[target.toLowerCase()];
     if (!path) return `open: unknown destination: ${target}`;
@@ -156,6 +167,40 @@ press ↑/↓ for command history`,
       : `rm: cannot remove '${args.join(" ")}': permission denied`,
 
   whois: ({ data }) => data.contacts.find((c: any) => c.id === "github")?.link || "n/a",
+
+  play: ({ navigate }) => {
+    setTimeout(() => navigate("/play"), 200);
+    return "→ launching snake…";
+  },
+
+  snake: ({ navigate }) => {
+    setTimeout(() => navigate("/play"), 200);
+    return "→ launching snake…";
+  },
+
+  suggest: async (_, args) => {
+    const message = args.join(" ").trim();
+    if (!message) return "usage: suggest <your feedback or idea>";
+    if (message.length < 3) return "suggestion too short";
+    try {
+      const res = await fetch("/api/portfolio/suggestions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "console-visitor", message }),
+      });
+      if (!res.ok) return `suggest: backend returned ${res.status}`;
+      // Track in achievements
+      import("../lib/achievements").then(({ unlock }) => unlock("suggester"));
+      return "✓ suggestion received · moderated before publishing · thanks!";
+    } catch {
+      return "suggest: backend unreachable. is portfolio-api running?";
+    }
+  },
+
+  sign: ({ navigate }) => {
+    setTimeout(() => navigate("/guestbook"), 200);
+    return "→ heading to guestbook…";
+  },
 
   achievements: () => {
     const stats = getStats();
@@ -222,8 +267,26 @@ const ConsolePage = ({ data }: { data: any }) => {
 
     try {
       const result = fn({ data, navigate, clear }, args);
-      if (result !== null) {
-        setLines((l) => [...l, { type: "output", text: result }]);
+      // Support both sync (string|null) and async (Promise<string|null>) commands
+      if (result && typeof (result as Promise<unknown>).then === "function") {
+        setLines((l) => [...l, { type: "output", text: "…" }]);
+        (result as Promise<string | null>)
+          .then((out) => {
+            setLines((l) => {
+              const copy = [...l];
+              copy[copy.length - 1] = { type: "output", text: out ?? "" };
+              return copy;
+            });
+          })
+          .catch((e) => {
+            setLines((l) => {
+              const copy = [...l];
+              copy[copy.length - 1] = { type: "error", text: `error: ${e.message}` };
+              return copy;
+            });
+          });
+      } else if (result !== null) {
+        setLines((l) => [...l, { type: "output", text: result as string }]);
       }
     } catch (e) {
       setLines((l) => [...l, { type: "error", text: `error: ${(e as Error).message}` }]);
