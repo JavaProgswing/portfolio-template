@@ -75,8 +75,7 @@ def db():
 
 def init_db():
     with db() as conn:
-        conn.executescript(
-            """
+        conn.executescript("""
             CREATE TABLE IF NOT EXISTS guestbook (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
@@ -119,14 +118,14 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_suggestions_created ON suggestions(created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_blog_ratings_slug ON blog_ratings(slug);
             CREATE INDEX IF NOT EXISTS idx_blog_comments_slug ON blog_comments(slug, status);
-            """
-        )
+            """)
 
 
 init_db()
 
 
 # ── Models ───────────────────────────────────────────────────────────────────
+
 
 class GuestEntryIn(BaseModel):
     name: str = Field(..., min_length=1, max_length=64)
@@ -246,7 +245,9 @@ def visits():
             (today,),
         )
         total = conn.execute("SELECT SUM(count) AS s FROM visits").fetchone()["s"] or 0
-        today_count = conn.execute("SELECT count FROM visits WHERE day = ?", (today,)).fetchone()
+        today_count = conn.execute(
+            "SELECT count FROM visits WHERE day = ?", (today,)
+        ).fetchone()
         today_n = today_count["count"] if today_count else 0
     return {"total": total, "today": today_n}
 
@@ -304,7 +305,11 @@ async def spotify_now_playing():
                         "title": track["name"],
                         "artist": ", ".join(a["name"] for a in track["artists"]),
                         "album": track["album"]["name"],
-                        "albumImageUrl": (track["album"]["images"][0]["url"] if track["album"]["images"] else None),
+                        "albumImageUrl": (
+                            track["album"]["images"][0]["url"]
+                            if track["album"]["images"]
+                            else None
+                        ),
                         "songUrl": track["external_urls"]["spotify"],
                     }
                     _spotify_cache["data"] = out
@@ -325,7 +330,9 @@ async def spotify_now_playing():
             "title": track["name"],
             "artist": ", ".join(a["name"] for a in track["artists"]),
             "album": track["album"]["name"],
-            "albumImageUrl": (track["album"]["images"][0]["url"] if track["album"]["images"] else None),
+            "albumImageUrl": (
+                track["album"]["images"][0]["url"] if track["album"]["images"] else None
+            ),
             "songUrl": track["external_urls"]["spotify"],
             "context": None,
         }
@@ -424,9 +431,17 @@ async def leetcode_stats(username: str):
     if not user:
         raise HTTPException(404, "user not found")
 
-    all_counts = {q["difficulty"]: q["count"] for q in body["data"]["allQuestionsCount"]}
-    solved = {q["difficulty"]: q["count"] for q in user["submitStatsGlobal"]["acSubmissionNum"]}
-    subs = {q["difficulty"]: q["submissions"] for q in user["submitStatsGlobal"]["acSubmissionNum"]}
+    all_counts = {
+        q["difficulty"]: q["count"] for q in body["data"]["allQuestionsCount"]
+    }
+    solved = {
+        q["difficulty"]: q["count"]
+        for q in user["submitStatsGlobal"]["acSubmissionNum"]
+    }
+    subs = {
+        q["difficulty"]: q["submissions"]
+        for q in user["submitStatsGlobal"]["acSubmissionNum"]
+    }
 
     total_solved = solved.get("All", 0)
     total_subs = subs.get("All", 0)
@@ -442,7 +457,9 @@ async def leetcode_stats(username: str):
         "hardSolved": solved.get("Hard", 0),
         "totalHard": all_counts.get("Hard", 0),
         "ranking": (user.get("profile") or {}).get("ranking") or 0,
-        "acceptanceRate": round((total_solved / total_subs * 100), 1) if total_subs > 0 else 0,
+        "acceptanceRate": (
+            round((total_solved / total_subs * 100), 1) if total_subs > 0 else 0
+        ),
     }
 
     _lc_cache[key] = {"data": out, "expires": now + 300}
@@ -450,44 +467,46 @@ async def leetcode_stats(username: str):
 
 
 # ── AI Chat (Gemini / Gemma proxy) ───────────────────────────────────────────
-
-
-async def _gemini_stream(messages: list[ChatMessage], model: str) -> AsyncIterator[bytes]:
+async def _gemini_stream(
+    messages: list[ChatMessage], model: str
+) -> AsyncIterator[bytes]:
     """
-    Call Gemini's streamGenerateContent (SSE) and re-emit as NDJSON the frontend
-    expects: one JSON object per line, with {"content": "..."} or {"done": true}.
-    Errors are emitted as {"error": "..."}.
+    Call Gemini generateContent and emit NDJSON:
+    {"content": "..."} then {"done": true}
     """
     url = (
         f"https://generativelanguage.googleapis.com/v1beta/models/"
-        f"{model}:streamGenerateContent?alt=sse"
+        f"{model}:generateContent"
     )
 
-    # Pull out system instruction, convert OpenAI-style roles to Gemini's
     system_text = ""
     contents = []
+
     for m in messages:
         if m.role == "system":
             system_text = m.content
             continue
+
         role = "user" if m.role == "user" else "model"
-        contents.append({"role": role, "parts": [{"text": m.content}]})
+        contents.append(
+            {
+                "role": role,
+                "parts": [{"text": m.content}],
+            }
+        )
 
     if not contents:
         yield (json.dumps({"error": "no user messages"}) + "\n").encode()
         return
 
-    body: dict = {
+    body = {
         "contents": contents,
         "generationConfig": {
             "temperature": 0.7,
             "maxOutputTokens": 800,
         },
-        "safetySettings": [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_ONLY_HIGH"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_ONLY_HIGH"},
-        ],
     }
+
     if system_text:
         body["systemInstruction"] = {"parts": [{"text": system_text}]}
 
@@ -498,39 +517,49 @@ async def _gemini_stream(messages: list[ChatMessage], model: str) -> AsyncIterat
 
     try:
         async with httpx.AsyncClient(timeout=60.0) as client:
-            async with client.stream("POST", url, headers=headers, json=body) as r:
-                if r.status_code != 200:
-                    err_body = (await r.aread()).decode(errors="replace")[:300]
-                    yield (
-                        json.dumps({"error": f"gemini {r.status_code}: {err_body}"}) + "\n"
-                    ).encode()
-                    return
+            r = await client.post(url, headers=headers, json=body)
 
-                buffer = ""
-                async for chunk in r.aiter_text():
-                    buffer += chunk
-                    # SSE events end with \n\n
-                    while "\n\n" in buffer:
-                        block, buffer = buffer.split("\n\n", 1)
-                        for line in block.splitlines():
-                            if not line.startswith("data: "):
-                                continue
-                            payload = line[6:]
-                            if not payload or payload == "[DONE]":
-                                continue
-                            try:
-                                data = json.loads(payload)
-                            except json.JSONDecodeError:
-                                continue
-                            candidates = data.get("candidates") or []
-                            if not candidates:
-                                continue
-                            parts = (candidates[0].get("content") or {}).get("parts") or []
-                            text = "".join(p.get("text", "") for p in parts)
-                            if text:
-                                yield (json.dumps({"content": text}) + "\n").encode()
+        if r.status_code != 200:
+            err_body = r.text[:800]
+            yield (
+                json.dumps({"error": f"gemini {r.status_code}: {err_body}"}) + "\n"
+            ).encode()
+            return
 
-                yield (json.dumps({"done": True}) + "\n").encode()
+        data = r.json()
+
+        candidates = data.get("candidates") or []
+        if not candidates:
+            yield (
+                json.dumps({"error": f"gemini returned no candidates: {data}"}) + "\n"
+            ).encode()
+            return
+
+        candidate = candidates[0]
+        parts = (candidate.get("content") or {}).get("parts") or []
+        text = "".join(p.get("text", "") for p in parts if p.get("text"))
+
+        if not text.strip():
+            finish_reason = candidate.get("finishReason")
+            safety = candidate.get("safetyRatings")
+            prompt_feedback = data.get("promptFeedback")
+
+            yield (
+                json.dumps(
+                    {
+                        "error": "gemini returned empty text",
+                        "finishReason": finish_reason,
+                        "safetyRatings": safety,
+                        "promptFeedback": prompt_feedback,
+                    }
+                )
+                + "\n"
+            ).encode()
+            return
+
+        yield (json.dumps({"content": text}) + "\n").encode()
+        yield (json.dumps({"done": True}) + "\n").encode()
+
     except httpx.RequestError as e:
         yield (json.dumps({"error": f"gemini unreachable: {e}"}) + "\n").encode()
 
@@ -542,6 +571,7 @@ async def chat(req: ChatRequest, request: Request):
 
     # Rate limit: 30 chat messages per IP per hour, simple in-memory
     import time
+
     ip = request.client.host if request.client else "?"
     now = time.time()
     bucket = _chat_rl.setdefault(ip, [])
@@ -567,8 +597,8 @@ async def chat(req: ChatRequest, request: Request):
 
 
 def _slug_ok(slug: str) -> bool:
-    return bool(slug) and len(slug) <= 120 and all(
-        c.isalnum() or c in "-_" for c in slug
+    return (
+        bool(slug) and len(slug) <= 120 and all(c.isalnum() or c in "-_" for c in slug)
     )
 
 
@@ -683,4 +713,5 @@ def chat_status():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="127.0.0.1", port=27012)
