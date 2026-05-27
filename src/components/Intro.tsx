@@ -3,9 +3,11 @@ import {
   Button,
   Flex,
   Heading,
+  HStack,
   Icon,
   Image,
   Stack,
+  Tag,
   Text,
   Tooltip,
   useColorModeValue,
@@ -16,6 +18,8 @@ import {
 import { getTechIcon } from "../services/getTechIcon";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { FaChevronDown } from "react-icons/fa";
+import { ElementType } from "react";
 
 export interface Info {
   name: string;
@@ -32,10 +36,7 @@ export interface Info {
     name: string;
     description: string;
     type: string;
-    links: {
-      name: string;
-      link: string;
-    }[];
+    links: { name: string; link: string }[];
     skills: string[];
   }[];
   contacts: {
@@ -53,6 +54,7 @@ export interface Info {
   desc: string;
   desc_brief: string;
 }
+
 interface Props {
   data: Info;
   onScrollDown?: () => void;
@@ -64,8 +66,12 @@ const MotionStack = motion(Stack);
 
 const Intro = ({ data, onScrollDown }: Props) => {
   const { isOpen, onToggle } = useDisclosure();
-
   const [displayedText, setDisplayedText] = useState(data.desc_brief);
+
+  // Hoisted — never call useColorModeValue inside a loop or map
+  const skillCardBg = useColorModeValue("gray.100", "rgba(255,255,255,0.05)");
+  const skillCardBorder = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
+  const cursorColor = useColorModeValue("gray.500", "gray.400");
 
   useEffect(() => {
     if (!isOpen) {
@@ -73,12 +79,10 @@ const Intro = ({ data, onScrollDown }: Props) => {
       return;
     }
 
-    const targetText = isOpen ? data.desc : data.desc_brief;
-
+    const targetText = data.desc;
     let index = 0;
     let currentText = "";
-
-    setDisplayedText(""); // Clear displayed text first
+    setDisplayedText("");
 
     const interval = setInterval(() => {
       if (index < targetText.length) {
@@ -88,40 +92,41 @@ const Intro = ({ data, onScrollDown }: Props) => {
       } else {
         clearInterval(interval);
       }
-    }, 17);
+    }, 15);
 
     return () => clearInterval(interval);
   }, [isOpen, data.desc, data.desc_brief]);
 
   return (
     <Box maxW="5xl" mx="auto" px={6} py={10}>
+      {/* Hero */}
       <Flex
         direction={{ base: "column", md: "row" }}
         align="center"
         justify="center"
         gap={10}
-        mb={12}
+        mb={14}
       >
-        {/* Profile Image */}
-        <Box position="relative">
+        {/* Profile image */}
+        <Box position="relative" flexShrink={0}>
           <Box
             position="absolute"
             top="50%"
             left="50%"
             transform="translate(-50%, -50%)"
-            width="160px"
-            height="160px"
+            w="170px"
+            h="170px"
             bg="blue.500"
             borderRadius="full"
-            filter="blur(40px)"
-            opacity={0.5}
+            filter="blur(44px)"
+            opacity={0.35}
             zIndex={0}
           />
           <MotionImage
             src={data.image}
             alt={data.name}
             borderRadius="full"
-            boxSize="150px"
+            boxSize="155px"
             objectFit="cover"
             shadow="2xl"
             initial={{ opacity: 0, scale: 0.5 }}
@@ -131,33 +136,69 @@ const Intro = ({ data, onScrollDown }: Props) => {
             position="relative"
             zIndex={1}
             border="2px solid"
-            borderColor="whiteAlpha.200"
+            borderColor="whiteAlpha.150"
           />
         </Box>
 
-        {/* Text Section */}
+        {/* Text */}
         <MotionStack
           spacing={4}
           textAlign={{ base: "center", md: "left" }}
           maxW="lg"
-          initial={{ opacity: 0, x: 50 }}
+          initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
         >
-          <Heading
-            fontSize={{ base: "2xl", md: "4xl" }}
-            bgGradient="linear(to-r, blue.400, purple.500)"
-            bgClip="text"
-          >
-            Hi, I'm {data.name}
-          </Heading>
+          <Box>
+            <Text
+              fontSize="sm"
+              color="blue.400"
+              fontFamily="mono"
+              fontWeight="600"
+              letterSpacing="0.12em"
+              mb={1}
+            >
+              &gt; hello world
+            </Text>
+            <Heading
+              fontSize={{ base: "3xl", md: "5xl" }}
+              bgGradient="linear(to-r, blue.400, purple.400)"
+              bgClip="text"
+              lineHeight="1.15"
+              letterSpacing="-0.02em"
+            >
+              {data.name}
+            </Heading>
+          </Box>
 
-          <Text fontSize="lg" whiteSpace="pre-wrap" lineHeight="tall">
+          {/* Tags */}
+          <HStack spacing={2} flexWrap="wrap" justify={{ base: "center", md: "flex-start" }}>
+            {data.tags.map((tag) => (
+              <Tag
+                key={tag}
+                size="sm"
+                colorScheme="blue"
+                variant="subtle"
+                fontFamily="mono"
+                fontSize="xs"
+                borderRadius="full"
+              >
+                {tag}
+              </Tag>
+            ))}
+          </HStack>
+
+          <Text
+            fontSize="md"
+            whiteSpace="pre-wrap"
+            lineHeight="1.8"
+            color="gray.400"
+          >
             {displayedText}
             <Text
               as="span"
-              ml="1"
-              color={useColorModeValue("gray.600", "gray.400")}
+              ml="1px"
+              color={cursorColor}
               fontWeight="bold"
               animation="blink 1s steps(2, start) infinite"
             >
@@ -171,55 +212,68 @@ const Intro = ({ data, onScrollDown }: Props) => {
             variant="link"
             colorScheme="blue"
             alignSelf={{ base: "center", md: "flex-start" }}
+            fontFamily="mono"
+            fontSize="xs"
           >
-            {isOpen ? "Show Less" : "Show More"}
+            {isOpen ? "↑ show less" : "↓ show more"}
           </Button>
         </MotionStack>
       </Flex>
 
+      {/* Tools grid */}
       <MotionBox
         textAlign="center"
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+        transition={{ duration: 0.5, delay: 0.35 }}
       >
-        <Box w="full" display="flex" justifyContent="center" mt={8}>
-          <Heading size="md" mb={6} textAlign="center">
-            Tools I Work With
-          </Heading>
-        </Box>
-        {/* Languages */}
-        <Heading size="sm" mt={4} mb={4} color="gray.500">
-          LANGUAGES
+        <Heading
+          size="sm"
+          mb={8}
+          textAlign="center"
+          fontFamily="mono"
+          color="gray.500"
+          letterSpacing="0.15em"
+        >
+          TOOLS I WORK WITH
         </Heading>
-        <Wrap justify="center" spacing={4}>
+
+        <Text
+          fontSize="10px"
+          color="gray.600"
+          fontFamily="mono"
+          letterSpacing="0.12em"
+          mb={3}
+        >
+          LANGUAGES
+        </Text>
+        <Wrap justify="center" spacing={3} mb={8}>
           {data.languages.map((lang, index) => {
             const { icon: IconComponent, label } = getTechIcon(lang);
             return (
               <WrapItem key={lang}>
-                <Tooltip label={label} hasArrow>
+                <Tooltip label={label} hasArrow fontSize="xs">
                   <MotionBox
                     display="flex"
                     flexDirection="column"
                     alignItems="center"
-                    gap={2}
+                    gap={1.5}
                     px={4}
                     py={3}
-                    bg={useColorModeValue("gray.100", "gray.800")}
-                    borderRadius="lg"
-                    cursor="pointer"
-                    whileHover={{ y: -5 }}
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    bg={skillCardBg}
+                    border="1px solid"
+                    borderColor={skillCardBorder}
+                    borderRadius="xl"
+                    cursor="default"
+                    whileHover={{ y: -4, borderColor: "rgba(0,127,255,0.35)" }}
+                    initial={{ opacity: 0, scale: 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.05 * index }}
                   >
                     {IconComponent && (
-                      <Icon
-                        as={IconComponent as React.ElementType}
-                        boxSize={8}
-                      />
+                      <Icon as={IconComponent as ElementType} boxSize={7} />
                     )}
-                    <Text fontSize="sm" fontWeight="medium">
+                    <Text fontSize="xs" fontWeight="500" fontFamily="mono">
                       {label}
                     </Text>
                   </MotionBox>
@@ -229,11 +283,16 @@ const Intro = ({ data, onScrollDown }: Props) => {
           })}
         </Wrap>
 
-        {/* Frameworks */}
-        <Heading size="sm" mt={8} mb={4} color="gray.500">
+        <Text
+          fontSize="10px"
+          color="gray.600"
+          fontFamily="mono"
+          letterSpacing="0.12em"
+          mb={3}
+        >
           FRAMEWORKS & LIBRARIES
-        </Heading>
-        <Wrap justify="center" spacing={4}>
+        </Text>
+        <Wrap justify="center" spacing={3}>
           {[
             ...data.frameworks.frontend,
             ...data.frameworks.backend,
@@ -243,29 +302,28 @@ const Intro = ({ data, onScrollDown }: Props) => {
             const { icon: IconComponent, label } = getTechIcon(fw.id);
             return (
               <WrapItem key={fw.id}>
-                <Tooltip label={fw.desc} hasArrow>
+                <Tooltip label={fw.desc} hasArrow fontSize="xs">
                   <MotionBox
                     display="flex"
                     flexDirection="column"
                     alignItems="center"
-                    gap={2}
+                    gap={1.5}
                     px={4}
                     py={3}
-                    bg={useColorModeValue("gray.100", "gray.800")}
-                    borderRadius="lg"
-                    cursor="pointer"
-                    whileHover={{ y: -5 }}
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    bg={skillCardBg}
+                    border="1px solid"
+                    borderColor={skillCardBorder}
+                    borderRadius="xl"
+                    cursor="default"
+                    whileHover={{ y: -4, borderColor: "rgba(0,127,255,0.35)" }}
+                    initial={{ opacity: 0, scale: 0.85 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.05 * index + 0.3 }}
+                    transition={{ delay: 0.05 * index + 0.2 }}
                   >
                     {IconComponent && (
-                      <Icon
-                        as={IconComponent as React.ElementType}
-                        boxSize={8}
-                      />
+                      <Icon as={IconComponent as ElementType} boxSize={7} />
                     )}
-                    <Text fontSize="sm" fontWeight="medium">
+                    <Text fontSize="xs" fontWeight="500" fontFamily="mono">
                       {fw.name}
                     </Text>
                   </MotionBox>
@@ -275,6 +333,39 @@ const Intro = ({ data, onScrollDown }: Props) => {
           })}
         </Wrap>
       </MotionBox>
+
+      {/* Scroll cue */}
+      {onScrollDown && (
+        <MotionBox
+          textAlign="center"
+          mt={14}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <Box
+            as="button"
+            onClick={onScrollDown}
+            display="inline-flex"
+            flexDirection="column"
+            alignItems="center"
+            gap={1}
+            color="gray.600"
+            _hover={{ color: "blue.400" }}
+            transition="color 0.2s"
+          >
+            <Text fontSize="10px" fontFamily="mono" letterSpacing="0.1em">
+              scroll
+            </Text>
+            <MotionBox
+              animate={{ y: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+            >
+              <Icon as={FaChevronDown as ElementType} boxSize={3} />
+            </MotionBox>
+          </Box>
+        </MotionBox>
+      )}
     </Box>
   );
 };

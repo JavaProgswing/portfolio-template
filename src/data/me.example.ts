@@ -1,9 +1,23 @@
+// Copy this file to me.ts and fill in your details.
+// cp src/data/me.example.ts src/data/me.ts
+
 export default {
-  name: "John Doe",
-  image: "https://via.placeholder.com/150",
-  tags: ["Full Stack Developer", "Tech Enthusiast"],
-  languages: ["JavaScript", "TypeScript", "Python", "Java"],
+  // Your full name — used in title, footer, navbar logo, and Ollama chat.
+  name: "Your Name",
+
+  // Direct URL to your profile photo.
+  image: "https://your-image-url.com/photo.jpg",
+
+  // Short descriptors shown as badges on your hero.
+  tags: ["Software Engineer", "Open Source Contributor"],
+
+  // Programming languages you work in — mapped to icons automatically.
+  // Supported: Java, Python, TypeScript, Rust, JavaScript, Go, C++, C#, etc.
+  languages: ["JavaScript", "TypeScript", "Python"],
+
   frameworks: {
+    // Each entry: { name, id, desc, link }
+    // id is used for icon lookup — see src/services/getTechIcon.ts for supported ids.
     frontend: [
       {
         name: "React",
@@ -26,19 +40,13 @@ export default {
         link: "https://nodejs.org/",
       },
       {
-        name: "Express",
-        id: "express",
-        desc: "Web Framework",
-        link: "https://expressjs.com/",
+        name: "FastAPI",
+        id: "fastapi",
+        desc: "Python Web Framework",
+        link: "https://fastapi.tiangolo.com/",
       },
     ],
     databases: [
-      {
-        name: "MongoDB",
-        id: "mongodb",
-        desc: "NoSQL Database",
-        link: "https://www.mongodb.com/",
-      },
       {
         name: "PostgreSQL",
         id: "postgresql",
@@ -55,42 +63,94 @@ export default {
       },
     ],
   },
+
+  // Competitive programming handles.
+  // Leave empty strings "" to hide the section gracefully.
+  cp: {
+    codeforces: "your_cf_handle",
+    leetcode: "your_lc_handle",
+  },
+
+  // What you're actively building right now — shown with a live indicator.
+  currentWork: {
+    title: "Your Current Project",
+    org: "Organization or Personal",
+    orgUrl: "https://github.com/org/project",
+    description:
+      "A short description of what you're building and why it matters.",
+    links: [
+      {
+        name: "Repository",
+        link: "https://github.com/yourusername/project",
+      },
+    ],
+    tags: ["Tech Stack", "Tools Used"],
+    startDate: "Month Year",
+  },
+
+  // Blog posts — rendered inline with expand/collapse.
+  // Set link to an external URL (e.g. dev.to post) or leave null for inline content.
+  blogs: [
+    {
+      title: "Your First Blog Post Title",
+      date: "Month Year",
+      readTime: "5 min read",
+      excerpt:
+        "A one-sentence hook that gets someone to click read more.",
+      tags: ["Tag1", "Tag2"],
+      content: `The full content of your blog post goes here.
+
+You can use line breaks for paragraphs. Markdown is not rendered — keep it as plain text.
+
+This is a good place to share what you learned, what you built, or a story about your journey.`,
+    },
+    {
+      title: "Another Post",
+      date: "Month Year",
+      readTime: "3 min read",
+      excerpt: "Another compelling excerpt.",
+      tags: ["Tag1"],
+      content: `Content here.`,
+    },
+  ],
+
   projects: [
     {
-      name: "Awesome Project",
+      name: "Project Name",
       description:
-        "A brief description of your awesome project and what it does.",
+        "What the project does and what problem it solves.",
       type: "github",
       links: [
         {
           name: "GitHub",
-          link: "https://github.com/yourusername/awesome-project",
+          link: "https://github.com/yourusername/project",
         },
         {
-          name: "Live Demo",
-          link: "https://awesome-project.com",
+          name: "Live",
+          link: "https://your-project.com",
         },
       ],
-      skills: ["React", "Node.js", "MongoDB"],
+      skills: ["React", "Node.js", "PostgreSQL"],
     },
     {
-      name: "Another Cool App",
-      description:
-        "Description of another cool application you built.",
-      type: "website",
+      name: "Another Project",
+      description: "Short description.",
+      type: "github",
       links: [
         {
-          name: "Website",
-          link: "https://cool-app.com",
+          name: "GitHub",
+          link: "https://github.com/yourusername/another-project",
         },
       ],
-      skills: ["Vue.js", "Firebase"],
+      skills: ["Python", "FastAPI"],
     },
   ],
+
+  // Social links — id maps to icon (github, linkedin, twitter, instagram, spotify, etc.)
   contacts: [
     {
       id: "github",
-      name: "Github",
+      name: "GitHub",
       site: "https://github.com/",
       link: "https://github.com/yourusername",
     },
@@ -102,34 +162,31 @@ export default {
     },
     {
       id: "twitter",
-      name: "Twitter",
-      site: "https://twitter.com/",
-      link: "https://twitter.com/yourusername",
-    },
-    {
-      id: "email",
-      name: "Email",
-      site: "mailto:",
-      link: "mailto:your.email@example.com",
+      name: "X / Twitter",
+      site: "https://x.com/",
+      link: "https://x.com/yourusername",
     },
   ],
+
   journey: [
     {
-      title: "Senior Developer",
-      company: "Tech Corp",
-      date: "2023 - Present",
+      title: "Your Role",
+      company: "Company or University",
+      date: "Year – Present",
       description:
-        "Leading the frontend team and building scalable web applications.",
+        "What you did or are doing here.",
     },
     {
-      title: "Junior Developer",
-      company: "Startup Inc",
-      date: "2021 - 2023",
-      description:
-        "Developed full-stack features and maintained legacy codebases.",
+      title: "Previous Role",
+      company: "Company",
+      date: "Year – Year",
+      description: "What you did here.",
     },
   ],
-  desc_brief:
-    "I am a software engineer passionate about building web applications and solving complex problems.",
-  desc: "Hi, I'm a passionate developer who loves to code and build things. I have experience with various technologies and enjoy learning new things every day.\n I am always looking for new challenges and opportunities to grow.",
+
+  // Shown below your name with a typing animation.
+  desc_brief: "One sentence about who you are and what you do.",
+
+  // Revealed when clicking Show More — can be longer.
+  desc: "Hi, I'm [name]. A longer description of your background, interests, and what drives you.\nFeel free to use multiple lines.",
 };
