@@ -54,6 +54,12 @@ interface NowPlaying {
   album?: string;
   albumImageUrl?: string;
   songUrl?: string;
+  context?: {
+    type: "playlist" | "album" | "artist";
+    name: string;
+    owner?: string;
+    url?: string;
+  } | null;
 }
 
 const BRAND: Record<string, { color: string; glow: string }> = {
@@ -402,20 +408,56 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
               <Text fontSize="xs" color="gray.500" noOfLines={1} title={data.artist}>
                 {data.artist}
               </Text>
-              <Link
-                href={data.songUrl || contact.link}
-                isExternal
-                fontSize="10px"
-                color="#1db954"
-                mt={2}
-                display="inline-flex"
-                alignItems="center"
-                gap={1}
-                fontFamily="mono"
-                _hover={{ textDecoration: "underline" }}
-              >
-                open in spotify →
-              </Link>
+              {data.context && (
+                <Text fontSize="10px" color="gray.600" fontFamily="mono" mt={1.5} noOfLines={1}>
+                  from {data.context.type}:{" "}
+                  {data.context.url ? (
+                    <Link
+                      href={data.context.url}
+                      isExternal
+                      color="#1db954"
+                      _hover={{ textDecoration: "underline" }}
+                    >
+                      {data.context.name}
+                    </Link>
+                  ) : (
+                    <Text as="span" color="gray.400">{data.context.name}</Text>
+                  )}
+                  {data.context.owner && data.context.type === "playlist" && (
+                    <Text as="span" color="gray.700"> · by {data.context.owner}</Text>
+                  )}
+                </Text>
+              )}
+              <HStack spacing={3} mt={2}>
+                {data.songUrl && (
+                  <Link
+                    href={data.songUrl}
+                    isExternal
+                    fontSize="10px"
+                    color="#1db954"
+                    display="inline-flex"
+                    alignItems="center"
+                    gap={1}
+                    fontFamily="mono"
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    open song →
+                  </Link>
+                )}
+                <Link
+                  href={contact.link}
+                  isExternal
+                  fontSize="10px"
+                  color="gray.400"
+                  display="inline-flex"
+                  alignItems="center"
+                  gap={1}
+                  fontFamily="mono"
+                  _hover={{ color: "#1db954", textDecoration: "underline" }}
+                >
+                  view profile →
+                </Link>
+              </HStack>
             </Box>
           </HStack>
         </PopoverBody>

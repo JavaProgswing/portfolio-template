@@ -14,13 +14,15 @@ Storage: SQLite at ./portfolio.db (auto-created on first run).
 from datetime import date, datetime
 from pathlib import Path
 import html as _html
+import json
 import os
 import sqlite3
-from typing import Optional
+from typing import AsyncIterator, Optional
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 # ── Config ───────────────────────────────────────────────────────────────────
@@ -39,6 +41,13 @@ ALLOWED_ORIGINS = [o.strip() for o in _origins_env.split(",") if o.strip()]
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID", "")
 SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET", "")
 SPOTIFY_REFRESH_TOKEN = os.getenv("SPOTIFY_REFRESH_TOKEN", "")
+
+# Gemini API for AI chat — get a free key at https://aistudio.google.com/apikey
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemma-3-12b-it")
+
+# Naive in-memory rate limit for /chat (IP → list of timestamps)
+_chat_rl: dict = {}
 
 # Basic in-memory cache for Spotify (avoid hammering their API)
 _spotify_cache = {"data": None, "expires_at": 0.0}
@@ -87,8 +96,29 @@ def init_db():
                 status TEXT DEFAULT 'pending',
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
             );
+            CREATE TABLE IF NOT EXISTS blog_ratings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                slug TEXT NOT NULL,
+                rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+                ip TEXT,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(slug, ip)
+            );
+            CREATE TABLE IF NOT EXISTS blog_comments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                slug TEXT NOT NULL,
+                name TEXT,
+                message TEXT NOT NULL,
+                reply_to INTEGER,
+                is_author INTEGER NOT NULL DEFAULT 0,
+                status TEXT NOT NULL DEFAULT 'pending',
+                ip TEXT,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
             CREATE INDEX IF NOT EXISTS idx_guestbook_created ON guestbook(created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_suggestions_created ON suggestions(created_at DESC);
+            CREATE INDEX IF NOT EXISTS idx_blog_ratings_slug ON blog_ratings(slug);
+            CREATE INDEX IF NOT EXISTS idx_blog_comments_slug ON blog_comments(slug, status);
             """
         )
 
@@ -106,6 +136,26 @@ class GuestEntryIn(BaseModel):
 class SuggestionIn(BaseModel):
     name: str = Field("anonymous", max_length=64)
     message: str = Field(..., min_length=3, max_length=500)
+
+
+class ChatMessage(BaseModel):
+    role: str  # "user" | "assistant" | "system"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    messages: list[ChatMessage]
+    model: Optional[str] = None
+
+
+class BlogRatingIn(BaseModel):
+    rating: int = Field(..., ge=1, le=5)
+
+
+class BlogCommentIn(BaseModel):
+    name: str = Field("anonymous", max_length=64)
+    message: str = Field(..., min_length=2, max_length=1000)
+    reply_to: Optional[int] = None
 
 
 class GuestEntryOut(BaseModel):
@@ -277,7 +327,46 @@ async def spotify_now_playing():
             "album": track["album"]["name"],
             "albumImageUrl": (track["album"]["images"][0]["url"] if track["album"]["images"] else None),
             "songUrl": track["external_urls"]["spotify"],
+            "context": None,
         }
+
+        # Fetch playback context (playlist / album / artist info)
+        ctx = body.get("context")
+        if ctx:
+            ctx_type = ctx.get("type")
+            ctx_url = (ctx.get("external_urls") or {}).get("spotify", "")
+            ctx_uri = ctx.get("uri", "")
+            ctx_id = ctx_uri.split(":")[-1] if ctx_uri else ""
+
+            if ctx_type == "playlist" and ctx_id:
+                try:
+                    pl = await client.get(
+                        f"https://api.spotify.com/v1/playlists/{ctx_id}?fields=name,owner(display_name)",
+                        headers={"Authorization": f"Bearer {access}"},
+                    )
+                    if pl.status_code == 200:
+                        pj = pl.json()
+                        out["context"] = {
+                            "type": "playlist",
+                            "name": pj.get("name", "playlist"),
+                            "owner": (pj.get("owner") or {}).get("display_name"),
+                            "url": ctx_url,
+                        }
+                except Exception:
+                    pass
+            elif ctx_type == "album":
+                out["context"] = {
+                    "type": "album",
+                    "name": track["album"]["name"],
+                    "url": ctx_url,
+                }
+            elif ctx_type == "artist":
+                out["context"] = {
+                    "type": "artist",
+                    "name": track["artists"][0]["name"] if track["artists"] else None,
+                    "url": ctx_url,
+                }
+
         _spotify_cache["data"] = out
         _spotify_cache["expires_at"] = now + 20
         return out
@@ -358,6 +447,238 @@ async def leetcode_stats(username: str):
 
     _lc_cache[key] = {"data": out, "expires": now + 300}
     return out
+
+
+# ── AI Chat (Gemini / Gemma proxy) ───────────────────────────────────────────
+
+
+async def _gemini_stream(messages: list[ChatMessage], model: str) -> AsyncIterator[bytes]:
+    """
+    Call Gemini's streamGenerateContent (SSE) and re-emit as NDJSON the frontend
+    expects: one JSON object per line, with {"content": "..."} or {"done": true}.
+    Errors are emitted as {"error": "..."}.
+    """
+    url = (
+        f"https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{model}:streamGenerateContent?alt=sse"
+    )
+
+    # Pull out system instruction, convert OpenAI-style roles to Gemini's
+    system_text = ""
+    contents = []
+    for m in messages:
+        if m.role == "system":
+            system_text = m.content
+            continue
+        role = "user" if m.role == "user" else "model"
+        contents.append({"role": role, "parts": [{"text": m.content}]})
+
+    if not contents:
+        yield (json.dumps({"error": "no user messages"}) + "\n").encode()
+        return
+
+    body: dict = {
+        "contents": contents,
+        "generationConfig": {
+            "temperature": 0.7,
+            "maxOutputTokens": 800,
+        },
+        "safetySettings": [
+            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_ONLY_HIGH"},
+            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_ONLY_HIGH"},
+        ],
+    }
+    if system_text:
+        body["systemInstruction"] = {"parts": [{"text": system_text}]}
+
+    headers = {
+        "x-goog-api-key": GEMINI_API_KEY,
+        "Content-Type": "application/json",
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            async with client.stream("POST", url, headers=headers, json=body) as r:
+                if r.status_code != 200:
+                    err_body = (await r.aread()).decode(errors="replace")[:300]
+                    yield (
+                        json.dumps({"error": f"gemini {r.status_code}: {err_body}"}) + "\n"
+                    ).encode()
+                    return
+
+                buffer = ""
+                async for chunk in r.aiter_text():
+                    buffer += chunk
+                    # SSE events end with \n\n
+                    while "\n\n" in buffer:
+                        block, buffer = buffer.split("\n\n", 1)
+                        for line in block.splitlines():
+                            if not line.startswith("data: "):
+                                continue
+                            payload = line[6:]
+                            if not payload or payload == "[DONE]":
+                                continue
+                            try:
+                                data = json.loads(payload)
+                            except json.JSONDecodeError:
+                                continue
+                            candidates = data.get("candidates") or []
+                            if not candidates:
+                                continue
+                            parts = (candidates[0].get("content") or {}).get("parts") or []
+                            text = "".join(p.get("text", "") for p in parts)
+                            if text:
+                                yield (json.dumps({"content": text}) + "\n").encode()
+
+                yield (json.dumps({"done": True}) + "\n").encode()
+    except httpx.RequestError as e:
+        yield (json.dumps({"error": f"gemini unreachable: {e}"}) + "\n").encode()
+
+
+@app.post("/chat")
+async def chat(req: ChatRequest, request: Request):
+    if not GEMINI_API_KEY:
+        raise HTTPException(503, "chat not configured — set GEMINI_API_KEY in .env")
+
+    # Rate limit: 30 chat messages per IP per hour, simple in-memory
+    import time
+    ip = request.client.host if request.client else "?"
+    now = time.time()
+    bucket = _chat_rl.setdefault(ip, [])
+    bucket[:] = [t for t in bucket if now - t < 3600]
+    if len(bucket) >= 30:
+        raise HTTPException(429, "rate limit: 30 messages per hour")
+    bucket.append(now)
+
+    # Validate length
+    total = sum(len(m.content) for m in req.messages)
+    if total > 16000:
+        raise HTTPException(413, "context too long")
+
+    model = req.model or GEMINI_MODEL
+
+    return StreamingResponse(
+        _gemini_stream(req.messages, model),
+        media_type="application/x-ndjson",
+    )
+
+
+# ── Blog ratings + comments ──────────────────────────────────────────────────
+
+
+def _slug_ok(slug: str) -> bool:
+    return bool(slug) and len(slug) <= 120 and all(
+        c.isalnum() or c in "-_" for c in slug
+    )
+
+
+@app.get("/blog/{slug}/stats")
+def blog_stats(slug: str):
+    if not _slug_ok(slug):
+        raise HTTPException(400, "bad slug")
+    with db() as conn:
+        r = conn.execute(
+            "SELECT COUNT(*) AS c, AVG(rating) AS a FROM blog_ratings WHERE slug = ?",
+            (slug,),
+        ).fetchone()
+        comment_count = conn.execute(
+            "SELECT COUNT(*) AS c FROM blog_comments WHERE slug = ? AND status = 'approved'",
+            (slug,),
+        ).fetchone()
+    return {
+        "count": r["c"] or 0,
+        "average": round(r["a"], 2) if r["a"] is not None else None,
+        "comments": comment_count["c"] or 0,
+    }
+
+
+@app.post("/blog/{slug}/rate")
+def blog_rate(slug: str, body: BlogRatingIn, request: Request):
+    if not _slug_ok(slug):
+        raise HTTPException(400, "bad slug")
+    ip = request.client.host if request.client else "?"
+    with db() as conn:
+        # One vote per IP per slug — overwrite if exists
+        conn.execute(
+            "INSERT INTO blog_ratings (slug, rating, ip) VALUES (?, ?, ?) "
+            "ON CONFLICT(slug, ip) DO UPDATE SET rating = excluded.rating, "
+            "created_at = CURRENT_TIMESTAMP",
+            (slug, body.rating, ip),
+        )
+    return {"ok": True}
+
+
+@app.get("/blog/{slug}/comments")
+def blog_comments_list(slug: str, limit: int = 100):
+    if not _slug_ok(slug):
+        raise HTTPException(400, "bad slug")
+    limit = max(1, min(limit, 200))
+    with db() as conn:
+        rows = conn.execute(
+            "SELECT id, name, message, reply_to, is_author, created_at "
+            "FROM blog_comments "
+            "WHERE slug = ? AND status = 'approved' "
+            "ORDER BY id ASC LIMIT ?",
+            (slug, limit),
+        ).fetchall()
+    return [
+        {
+            "id": r["id"],
+            "name": r["name"],
+            "message": r["message"],
+            "reply_to": r["reply_to"],
+            "is_author": bool(r["is_author"]),
+            "created_at": r["created_at"],
+        }
+        for r in rows
+    ]
+
+
+@app.post("/blog/{slug}/comments")
+def blog_comment_submit(slug: str, body: BlogCommentIn, request: Request):
+    if not _slug_ok(slug):
+        raise HTTPException(400, "bad slug")
+    name = _html.escape((body.name or "anonymous").strip()) or "anonymous"
+    message = _html.escape(body.message.strip())
+    if not message:
+        raise HTTPException(400, "empty")
+
+    ip = request.client.host if request.client else "?"
+    with db() as conn:
+        # Rate limit: 5 comments per IP per slug per hour
+        recent = conn.execute(
+            "SELECT COUNT(*) AS c FROM blog_comments "
+            "WHERE ip = ? AND slug = ? AND created_at > datetime('now', '-1 hour')",
+            (ip, slug),
+        ).fetchone()
+        if recent and recent["c"] >= 5:
+            raise HTTPException(429, "slow down")
+
+        # Validate reply_to belongs to same slug
+        reply_to = body.reply_to
+        if reply_to is not None:
+            parent = conn.execute(
+                "SELECT id FROM blog_comments WHERE id = ? AND slug = ?",
+                (reply_to, slug),
+            ).fetchone()
+            if not parent:
+                reply_to = None
+
+        conn.execute(
+            "INSERT INTO blog_comments (slug, name, message, reply_to, status, ip) "
+            "VALUES (?, ?, ?, ?, 'pending', ?)",
+            (slug, name, message, reply_to, ip),
+        )
+    return {"ok": True}
+
+
+@app.get("/chat/status")
+def chat_status():
+    """Returns whether chat is configured + which model is in use."""
+    return {
+        "available": bool(GEMINI_API_KEY),
+        "model": GEMINI_MODEL if GEMINI_API_KEY else None,
+    }
 
 
 if __name__ == "__main__":

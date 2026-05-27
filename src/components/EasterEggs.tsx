@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
-import { unlock, ACHIEVEMENTS, getStats } from "../lib/achievements";
+import { unlock } from "../lib/achievements";
 
 const KONAMI = [
   "ArrowUp", "ArrowUp",
@@ -29,26 +29,8 @@ const KONAMI = [
 const EasterEggs = () => {
   const toast = useToast();
 
-  // ── Achievement toast ──────────────────────────────────────────────────────
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const key = (e as CustomEvent).detail?.key;
-      if (!key) return;
-      const ach = ACHIEVEMENTS.find((a) => a.key === key);
-      if (!ach) return;
-      const stats = getStats();
-      toast({
-        title: `✦ ${ach.label}`,
-        description: `${ach.hint} · ${stats.found}/${stats.total} found`,
-        status: "success",
-        duration: 3500,
-        position: "bottom-left",
-        variant: "subtle",
-      });
-    };
-    window.addEventListener("achievement-unlock", handler);
-    return () => window.removeEventListener("achievement-unlock", handler);
-  }, [toast]);
+  // Achievement notifications are handled by AchievementToast component.
+  // EasterEggs only fires `unlock()` — listening + rendering lives elsewhere.
 
   // ── Effect triggers ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -250,26 +232,17 @@ const EasterEggs = () => {
     };
   }, []);
 
-  // ── Night owl (3–6 AM) ─────────────────────────────────────────────────────
+  // ── Night owl (00:00–06:00 local — relaxed window) ────────────────────────
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour >= 3 && hour < 6) {
-      // Wait 2s after load so it feels intentional, not jarring
+    if (hour >= 0 && hour < 6) {
       const id = window.setTimeout(() => {
         document.body.classList.add("night-owl");
         unlock("night-owl");
-        toast({
-          title: "🦉 night owl",
-          description: "the world is asleep but the code is not",
-          status: "info",
-          duration: 4500,
-          position: "bottom-left",
-          variant: "subtle",
-        });
       }, 2000);
       return () => window.clearTimeout(id);
     }
-  }, [toast]);
+  }, []);
 
   return null;
 };

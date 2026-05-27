@@ -2,7 +2,7 @@
 // cp src/data/me.example.ts src/data/me.ts
 
 export default {
-  // Your full name — used in title, footer, navbar logo, and Ollama chat.
+  // Your full name — used in title, footer, navbar logo, and AI chat.
   name: "Your Name",
 
   // Direct URL to your profile photo.
@@ -13,6 +13,28 @@ export default {
   //  2. Use an external URL (Google Drive, Dropbox, etc.)
   //  Leave "" to hide the /resume page.
   resumeUrl: "/resume.pdf",
+
+  // Pinned projects — shown FIRST in "What I've Built" before auto-ranked repos.
+  // Great for active PRs, GSoC work, anything you want highlighted regardless of stars.
+  // Leave [] to skip.
+  pinnedProjects: [
+    {
+      name: "Project · Subtitle",
+      description: "Why it matters, in one sentence.",
+      repoUrl: "https://github.com/owner/repo",
+      prUrl: "https://github.com/owner/repo/pull/123",  // optional
+      language: "TypeScript",
+      badge: "Featured",  // optional pill text
+      skills: ["TypeScript", "React"],
+    },
+  ],
+
+  // Planning — shown at top of /guestbook so visitors know what's next.
+  planning: [
+    "What you're shipping this month",
+    "Bigger goal for the quarter",
+    "Stretch goal",
+  ],
 
   // Short descriptors shown as badges on your hero.
   tags: ["Software Engineer", "Open Source Contributor"],

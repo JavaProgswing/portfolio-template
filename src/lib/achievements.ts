@@ -37,6 +37,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   { key: "snake-played", label: "Player One",        hint: "Found the hidden snake game" },
   { key: "snake-50",     label: "Snake Charmer",     hint: "Scored 50+ in snake" },
   { key: "snake-100",    label: "Asp Master",        hint: "Scored 100+ in snake" },
+  { key: "2048-played",  label: "Slider",            hint: "Loaded the 2048 board" },
+  { key: "2048-1k",      label: "Powers of Two",     hint: "Scored 1000+ in 2048" },
+  { key: "2048-win",     label: "★ 2048",            hint: "Merged your way to the 2048 tile" },
   { key: "suggester",    label: "Helpful Hand",      hint: "Sent a site suggestion" },
 ];
 

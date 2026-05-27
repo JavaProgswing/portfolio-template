@@ -30,7 +30,7 @@ const SECTIONS = [
       "Self-hosted FastAPI on the same Ubuntu box that serves nginx",
       "SQLite for guestbook + visitor count",
       "Spotify now-playing proxy (keeps refresh token server-side)",
-      "Local Ollama (llama3.2) for the AI chat — no external API keys",
+      "Gemma 3 via Gemini API (proxied server-side so the API key stays private)",
     ],
   },
   {

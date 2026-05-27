@@ -60,10 +60,22 @@ function scoreRepo(repo) {
   else if (sizeKB < 10)    s -= 8;     // PENALTY: empty/scaffold
   else if (sizeKB < 50)    s -= 5;     // PENALTY: tiny
 
-  // ── Recency (reduced weight — was dominating before) ────────────────────────
+  // ── Recency — favor newer projects, decay over 1 year ──────────────────────
+  // Substantial older projects (stars >= 2) still rank high via star bonus,
+  // but fresh ones get a real boost. Small + old = dropped.
   const ageDays = (Date.now() - new Date(repo.pushed_at).getTime()) / 86_400_000;
-  const recency = Math.max(0, 1 - ageDays / 730);
-  s += recency * 4;
+  const recency = Math.max(0, 1 - ageDays / 365);
+  s += recency * 6;
+
+  // Fresh + substantial bonus: pushed in last 30 days AND has description AND size
+  if (ageDays < 30 && desc.length >= 30 && (repo.size || 0) >= 200) {
+    s += 5;
+  }
+
+  // Forgotten penalty: not touched 2+ years AND fewer than 2 stars
+  if (ageDays > 730 && repo.stargazers_count < 2) {
+    s -= 6;
+  }
 
   // ── Language complexity ────────────────────────────────────────────────────
   const lang = (repo.language || "").toLowerCase();

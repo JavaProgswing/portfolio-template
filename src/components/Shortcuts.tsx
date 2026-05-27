@@ -29,6 +29,7 @@ import {
   FaInfoCircle,
   FaPenNib,
   FaFilePdf,
+  FaGamepad,
 } from "react-icons/fa";
 import { THEMES, applyTheme } from "../themes/palettes";
 import { unlock } from "../lib/achievements";
@@ -257,6 +258,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
       { id: "page-colophon",  group: "Pages", icon: FaInfoCircle as ElementType,  label: "Colophon · how this site was built", hint: "/colophon", action: () => goTo("/colophon") },
       { id: "page-console",   group: "Pages", icon: FaTerminal as ElementType,    label: "Console · interactive terminal", hint: "/console",  action: () => goTo("/console") },
       { id: "page-resume",    group: "Pages", icon: FaFilePdf as ElementType,     label: "Resume · view CV",            hint: "/resume",    action: () => goTo("/resume") },
+      { id: "page-play",      group: "Pages", icon: FaGamepad as ElementType,     label: "Play · mini-games (snake, 2048)", hint: "/play",  action: () => goTo("/play") },
     ];
 
     const themeCmds: Command[] = THEMES.map((t) => ({

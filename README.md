@@ -11,7 +11,7 @@ A personal portfolio template built with React, TypeScript, and Vite. All conten
 - **Currently Building** — live indicator for what you're working on now
 - **Competitive Programming** — live Codeforces + LeetCode stats via public APIs
 - **Blog** — inline expandable posts, no external service needed
-- **Ollama AI Chat** — floating widget powered by a local LLM that knows your portfolio
+- **AI Chat** — floating widget powered by Gemma 3 (Gemini API, proxied server-side) that knows your portfolio
 - Timeline journey section
 - Projects grid with tech badges
 - Section navigator dots
@@ -121,64 +121,46 @@ blogs: [
 ],
 ```
 
-### Ollama AI Chat
+### AI Chat (Gemini / Gemma)
 
-The floating robot button in the bottom-right connects to a local [Ollama](https://ollama.com) instance. It auto-builds a system prompt from your `me.ts` data — no hardcoded content.
+The floating robot button hits the FastAPI backend at `/api/portfolio/chat`, which proxies Google's Gemini API. The API key stays server-side — never exposed to the browser. System prompt is auto-built from `me.ts` data.
 
-#### Setup on Ubuntu
+**Setup:**
+
+1. Get a free Gemini API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+2. Add it to `backend/.env`:
 
 ```bash
-# 1. Install Ollama (one-liner)
-curl -fsSL https://ollama.com/install.sh | sh
-
-# 2. Pull a model
-ollama pull llama3.2     # ~2GB, fast, recommended
-# or:  ollama pull mistral, ollama pull phi3, ollama pull qwen2.5
+GEMINI_API_KEY=AIza...
+GEMINI_MODEL=gemma-3-12b-it    # default; see options below
 ```
 
-**Critical — browser CORS:** Ollama refuses browser requests by default. The portfolio runs in a browser, so you MUST allow your origin. Two options:
+3. Restart the backend:
 
-**One-off (foreground):**
 ```bash
-OLLAMA_ORIGINS="*" ollama serve
+sudo systemctl restart portfolio-api
 ```
 
-**Persistent (systemd, recommended):**
-```bash
-sudo systemctl edit ollama.service
-```
+**Available models** (set `GEMINI_MODEL`):
 
-In the editor that opens, add:
-```ini
-[Service]
-Environment="OLLAMA_ORIGINS=*"
-```
+| Model | Size | Best for |
+|---|---|---|
+| `gemma-3-1b-it` | 1B | Fastest, weakest quality |
+| `gemma-3-4b-it` | 4B | Snappy, decent |
+| `gemma-3-12b-it` | 12B | **Recommended** balance |
+| `gemma-3-27b-it` | 27B | Highest quality Gemma |
+| `gemini-1.5-flash` | — | Very fast Gemini |
+| `gemini-2.0-flash-exp` | — | Latest Gemini Flash |
 
-Save, then reload:
-```bash
-sudo systemctl daemon-reload
-sudo systemctl restart ollama
-```
-
-For production, replace `*` with your actual origin (e.g. `https://yourname.dev,http://localhost:5173`).
+**Rate limiting**: 30 messages per visitor IP per hour (in-memory; tweak in `backend/main.py`).
 
 **Verify:**
 ```bash
-curl http://localhost:11434/api/tags
-```
-Should return JSON of installed models.
-
-#### Setup on macOS / Windows
-
-```bash
-# Download installer from https://ollama.com/download
-ollama pull llama3.2
-# Server runs in background after install. Set OLLAMA_ORIGINS env var via:
-#   macOS: launchctl setenv OLLAMA_ORIGINS "*"
-#   Windows: setx OLLAMA_ORIGINS "*"
+curl https://yourdomain.com/api/portfolio/chat/status
+# {"available": true, "model": "gemma-3-12b-it"}
 ```
 
-The chat widget shows a green dot when Ollama is reachable and auto-detects the loaded model. Offline by design — no API keys, no external services.
+If `available: false` → backend doesn't have `GEMINI_API_KEY`. The chat FAB will show as offline gracefully.
 
 ### Spotify Now Playing (optional)
 
@@ -214,7 +196,7 @@ my-portfolio/
 │   │   ├── Journey.tsx            # Timeline
 │   │   ├── Projects.tsx           # Projects grid
 │   │   ├── Blog.tsx               # Inline blog posts
-│   │   ├── OllamaChat.tsx         # AI chat widget
+│   │   ├── AiChat.tsx             # AI chat widget (Gemini proxy)
 │   │   ├── ParticleBackground.tsx # Canvas constellation
 │   │   ├── NavBar.tsx             # Sticky nav with section links
 │   │   ├── SectionNavigator.tsx   # Dot nav (desktop)
@@ -242,7 +224,7 @@ npm run build   # outputs to dist/
 
 Deploy the `dist/` folder to any static host: Vercel, Netlify, GitHub Pages, Cloudflare Pages.
 
-> **Note:** The Ollama chat only works when the viewer has Ollama running locally — it's a personal/demo feature, not a hosted service.
+> **Note:** AI chat requires `GEMINI_API_KEY` set in the backend `.env`. Without it, the chat FAB shows as offline but the rest of the site works normally.
 
 ## License
 

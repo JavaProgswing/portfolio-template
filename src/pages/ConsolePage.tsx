@@ -36,10 +36,14 @@ const COMMANDS: Record<
   cat <file> - read a virtual file
   achievements - your easter egg progress
 
-  play       - launch snake mini-game
-  snake      - same as 'play'
+  play [game] - mini-games selector or launch direct
+              available games: snake, 2048
+  snake      - launch snake directly
+  2048       - launch 2048 directly
   suggest <text> - send moderated feedback
   sign       - go to guestbook
+  wander     - navigate to a 404 path (unlocks Wanderer)
+  reset achievements - wipe progress to test unlocks fresh
   echo <txt> - print text
   date       - current date
   pwd        - working directory
@@ -144,8 +148,9 @@ press ↑/↓ for command history`,
       resume: "/resume",
       cv: "/resume",
       play: "/play",
-      game: "/play",
-      snake: "/play",
+      games: "/play",
+      snake: "/play/snake",
+      "2048": "/play/2048",
     };
     const path = routes[target.toLowerCase()];
     if (!path) return `open: unknown destination: ${target}`;
@@ -168,14 +173,29 @@ press ↑/↓ for command history`,
 
   whois: ({ data }) => data.contacts.find((c: any) => c.id === "github")?.link || "n/a",
 
-  play: ({ navigate }) => {
+  play: ({ navigate }, args) => {
+    const game = args[0]?.toLowerCase();
+    const routes: Record<string, string> = {
+      snake: "/play/snake",
+      "2048": "/play/2048",
+    };
+    if (game && routes[game]) {
+      setTimeout(() => navigate(routes[game]), 200);
+      return `→ launching ${game}…`;
+    }
+    if (game) return `play: unknown game '${game}'\navailable: snake, 2048`;
     setTimeout(() => navigate("/play"), 200);
-    return "→ launching snake…";
+    return "→ opening game selector…\n\navailable: snake, 2048\nuse 'play snake' to launch directly";
   },
 
   snake: ({ navigate }) => {
-    setTimeout(() => navigate("/play"), 200);
+    setTimeout(() => navigate("/play/snake"), 200);
     return "→ launching snake…";
+  },
+
+  "2048": ({ navigate }) => {
+    setTimeout(() => navigate("/play/2048"), 200);
+    return "→ launching 2048…";
   },
 
   suggest: async (_, args) => {
@@ -200,6 +220,27 @@ press ↑/↓ for command history`,
   sign: ({ navigate }) => {
     setTimeout(() => navigate("/guestbook"), 200);
     return "→ heading to guestbook…";
+  },
+
+  wander: ({ navigate }) => {
+    // Intentional 404 navigation — unlocks Wanderer
+    const paths = ["/void", "/lost", "/elsewhere", "/the-edge", "/here-be-dragons"];
+    const path = paths[Math.floor(Math.random() * paths.length)];
+    setTimeout(() => navigate(path), 200);
+    return `→ wandering off the map → ${path}\n  (any unknown URL works — try /typewhatever)`;
+  },
+
+  reset: (_, args) => {
+    if (args[0] === "achievements") {
+      try {
+        localStorage.removeItem("portfolio-achievements");
+        localStorage.removeItem("portfolio-themes-tried");
+        return "✓ achievements reset — refresh page to start fresh";
+      } catch {
+        return "reset: localStorage unavailable";
+      }
+    }
+    return "usage: reset achievements\n  wipes localStorage achievement progress";
   },
 
   achievements: () => {
