@@ -1,27 +1,38 @@
-import { HStack, IconButton, Link } from "@chakra-ui/react";
-import { FunctionComponent } from "react";
-import { IconBaseProps } from "react-icons";
-import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import { HStack, IconButton, Link, Tooltip } from "@chakra-ui/react";
+import { ElementType } from "react";
+import { Icon } from "@chakra-ui/react";
+import { getSiteIconUrl } from "../services/favicon-site-url";
 
-const Socials = () => {
-  const FaGithubIcon = FaGithub as FunctionComponent<IconBaseProps>;
-  const FaLinkedinIcon = FaLinkedin as FunctionComponent<IconBaseProps>;
-  const FaInstagramIcon = FaInstagram as FunctionComponent<IconBaseProps>;
+interface Contact {
+  id: string;
+  name: string;
+  site: string;
+  link: string;
+}
+
+interface Props {
+  contacts: Contact[];
+}
+
+const Socials = ({ contacts }: Props) => {
   return (
     <HStack justify="center" spacing={4}>
-      <Link href="https://github.com/JavaProgswing" isExternal>
-        <IconButton aria-label="GitHub" icon={<FaGithubIcon />} />
-      </Link>
-      <Link
-        href="https://www.linkedin.com/in/yashasvi-allen-kujur-ba5a1533b/"
-        isExternal
-      >
-        <IconButton aria-label="LinkedIn" icon={<FaLinkedinIcon />} />
-      </Link>
-      <Link href="https://www.instagram.com/yashasviallen/" isExternal>
-        <IconButton aria-label="Instagram" icon={<FaInstagramIcon />} />
-      </Link>
+      {contacts.map((contact) => {
+        const IconComponent = getSiteIconUrl(contact.id);
+        return (
+          <Tooltip key={contact.id} label={contact.name} hasArrow>
+            <Link href={contact.link} isExternal>
+              <IconButton
+                aria-label={contact.name}
+                icon={<Icon as={IconComponent as ElementType} />}
+                variant="ghost"
+              />
+            </Link>
+          </Tooltip>
+        );
+      })}
     </HStack>
   );
 };
+
 export default Socials;

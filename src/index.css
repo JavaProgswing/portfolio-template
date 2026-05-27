@@ -1,0 +1,30 @@
+html {
+  scroll-behavior: smooth;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+code, pre, kbd, .mono {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 127, 255, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 127, 255, 0.55);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 127, 255, 0.25) transparent;
+}

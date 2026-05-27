@@ -1,7 +1,11 @@
 import { Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-const Footer = () => {
+interface Props {
+  name: string;
+}
+
+const Footer = ({ name }: Props) => {
   const [time, setTime] = useState(() =>
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   );
@@ -32,7 +36,7 @@ const Footer = () => {
     >
       <Flex justify="space-between" align="center" flexWrap="wrap">
         <Text fontSize="sm" color={textColor}>
-          Made by Yashasvi © 2025 – Present. All rights reserved.
+          Made by {name} © 2025 – Present. All rights reserved.
         </Text>
         <Text fontSize="sm" color={textColor}>
           {time}
