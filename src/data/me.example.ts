@@ -8,6 +8,12 @@ export default {
   // Direct URL to your profile photo.
   image: "https://your-image-url.com/photo.jpg",
 
+  // Path to resume PDF (optional). Two options:
+  //  1. Put resume.pdf in public/ and reference "/resume.pdf"
+  //  2. Use an external URL (Google Drive, Dropbox, etc.)
+  //  Leave "" to hide the /resume page.
+  resumeUrl: "/resume.pdf",
+
   // Short descriptors shown as badges on your hero.
   tags: ["Software Engineer", "Open Source Contributor"],
 

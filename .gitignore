@@ -38,3 +38,7 @@ backend/__pycache__/
 
 # Local deploy artifacts
 backend/portfolio-api.service.local
+
+# Personal resume PDF (drop in public/ to serve at /resume.pdf)
+public/resume.pdf
+public/cv.pdf

@@ -39,6 +39,7 @@ interface Profile {
     title: string;
     org: string;
   };
+  resumeUrl?: string;
 }
 
 interface Props {
@@ -216,6 +217,34 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
               ))}
             </Wrap>
           </Box>
+
+          {/* Resume download (if configured) */}
+          {profile.resumeUrl && (
+            <Link
+              href={profile.resumeUrl}
+              isExternal
+              _hover={{ textDecoration: "none" }}
+              display="block"
+              mb={2}
+            >
+              <Button
+                w="full"
+                size="sm"
+                variant="outline"
+                borderColor="rgba(255,255,255,0.14)"
+                color="gray.300"
+                fontFamily="mono"
+                fontSize="11px"
+                _hover={{
+                  color: "gray.100",
+                  borderColor: "rgba(255,255,255,0.3)",
+                  bg: "rgba(255,255,255,0.05)",
+                }}
+              >
+                ↓ download resume
+              </Button>
+            </Link>
+          )}
 
           {/* Connect button */}
           <Link

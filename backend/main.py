@@ -43,6 +43,9 @@ SPOTIFY_REFRESH_TOKEN = os.getenv("SPOTIFY_REFRESH_TOKEN", "")
 # Basic in-memory cache for Spotify (avoid hammering their API)
 _spotify_cache = {"data": None, "expires_at": 0.0}
 
+# LeetCode cache (key by username, 5 min TTL)
+_lc_cache: dict = {}
+
 # ── App setup ────────────────────────────────────────────────────────────────
 
 app = FastAPI(title="Portfolio API", version="1.0")
@@ -237,6 +240,83 @@ async def spotify_now_playing():
         _spotify_cache["data"] = out
         _spotify_cache["expires_at"] = now + 20
         return out
+
+
+@app.get("/leetcode/{username}")
+async def leetcode_stats(username: str):
+    """
+    Proxy LeetCode GraphQL API server-side. Avoids CORS issues and removes
+    dependency on dead third-party mirrors. Caches per-user for 5 minutes.
+    """
+    import time
+
+    key = username.lower().strip()
+    if not key:
+        raise HTTPException(400, "empty username")
+
+    now = time.time()
+    cached = _lc_cache.get(key)
+    if cached and now < cached["expires"]:
+        return cached["data"]
+
+    query = """
+    query getUserProfile($username: String!) {
+      matchedUser(username: $username) {
+        username
+        profile { ranking }
+        submitStatsGlobal {
+          acSubmissionNum { difficulty count submissions }
+        }
+      }
+      allQuestionsCount { difficulty count }
+    }
+    """
+
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            resp = await client.post(
+                "https://leetcode.com/graphql",
+                json={"query": query, "variables": {"username": username}},
+                headers={
+                    "Referer": "https://leetcode.com/",
+                    "User-Agent": "Mozilla/5.0 (portfolio-api)",
+                    "Content-Type": "application/json",
+                },
+            )
+        except httpx.RequestError as e:
+            raise HTTPException(502, f"leetcode unreachable: {e}")
+
+    if resp.status_code != 200:
+        raise HTTPException(502, f"leetcode returned {resp.status_code}")
+
+    body = resp.json()
+    user = body.get("data", {}).get("matchedUser")
+    if not user:
+        raise HTTPException(404, "user not found")
+
+    all_counts = {q["difficulty"]: q["count"] for q in body["data"]["allQuestionsCount"]}
+    solved = {q["difficulty"]: q["count"] for q in user["submitStatsGlobal"]["acSubmissionNum"]}
+    subs = {q["difficulty"]: q["submissions"] for q in user["submitStatsGlobal"]["acSubmissionNum"]}
+
+    total_solved = solved.get("All", 0)
+    total_subs = subs.get("All", 0)
+
+    out = {
+        "status": "success",
+        "totalSolved": total_solved,
+        "totalQuestions": all_counts.get("All", 0),
+        "easySolved": solved.get("Easy", 0),
+        "totalEasy": all_counts.get("Easy", 0),
+        "mediumSolved": solved.get("Medium", 0),
+        "totalMedium": all_counts.get("Medium", 0),
+        "hardSolved": solved.get("Hard", 0),
+        "totalHard": all_counts.get("Hard", 0),
+        "ranking": (user.get("profile") or {}).get("ranking") or 0,
+        "acceptanceRate": round((total_solved / total_subs * 100), 1) if total_subs > 0 else 0,
+    }
+
+    _lc_cache[key] = {"data": out, "expires": now + 300}
+    return out
 
 
 if __name__ == "__main__":

@@ -315,13 +315,45 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
 
   useEffect(() => {
     if (!lcHandle) { setLcStatus("error"); return; }
-    fetch(`https://leetcode-stats-api.herokuapp.com/${lcHandle}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.status === "success") { setLcData(d); setLcStatus("ok"); }
-        else setLcStatus("error");
-      })
-      .catch(() => setLcStatus("error"));
+    let cancelled = false;
+
+    const validate = (d: Record<string, unknown>) =>
+      d && typeof d.totalSolved === "number";
+
+    const tryEndpoints = async () => {
+      // 1. Our backend proxy (LeetCode GraphQL server-side, cached 5min)
+      try {
+        const r = await fetch(`/api/portfolio/leetcode/${lcHandle}`, {
+          signal: AbortSignal.timeout(8000),
+        });
+        if (r.ok) {
+          const d = await r.json();
+          if (!cancelled && validate(d)) {
+            setLcData(d); setLcStatus("ok"); return;
+          }
+        }
+      } catch { /* fall through */ }
+
+      if (cancelled) return;
+
+      // 2. Public mirror fallback (Vercel-hosted, no cold starts)
+      try {
+        const r = await fetch(`https://leetcode-api-faisalshohag.vercel.app/${lcHandle}`, {
+          signal: AbortSignal.timeout(8000),
+        });
+        if (r.ok) {
+          const d = await r.json();
+          if (!cancelled && validate(d)) {
+            setLcData(d); setLcStatus("ok"); return;
+          }
+        }
+      } catch { /* fall through */ }
+
+      if (!cancelled) setLcStatus("error");
+    };
+
+    tryEndpoints();
+    return () => { cancelled = true; };
   }, [lcHandle]);
 
   return (

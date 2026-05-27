@@ -18,6 +18,7 @@ import { unlock } from "../lib/achievements";
 interface Props {
   data: Info & {
     currentWork?: { title: string; org: string };
+    resumeUrl?: string;
   };
 }
 
@@ -103,6 +104,7 @@ const Navbar = ({ data }: Props) => {
               currentWork: data.currentWork
                 ? { title: data.currentWork.title, org: data.currentWork.org }
                 : undefined,
+              resumeUrl: data.resumeUrl,
             }}
           />
           <Box w="1px" h="14px" bg={border} mx={1} />

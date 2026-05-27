@@ -91,6 +91,7 @@ interface PortfolioData {
     areas: string[];
     following: FollowItem[];
   };
+  resumeUrl?: string;
 }
 
 // ── System prompt — comprehensive, with personality + examples ────────────────
@@ -156,6 +157,7 @@ ${data.desc}
 Tags: ${data.tags.join(" · ")}
 GitHub: ${github}
 LinkedIn: ${linkedin}
+${data.resumeUrl ? `Resume: ${data.resumeUrl} (also viewable at /resume on this site)` : ""}
 
 # Current Focus
 
@@ -227,6 +229,7 @@ const OllamaChat = ({ data }: Props) => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
+  const [corsBlocked, setCorsBlocked] = useState(false);
   const [model, setModel] = useState("llama3.2");
   const [scrollHidden, setScrollHidden] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -239,7 +242,19 @@ const OllamaChat = ({ data }: Props) => {
   // ── Detect Ollama availability ──────────────────────────────────────────────
   useEffect(() => {
     fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(3000) })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 403 || r.status === 401) {
+          // Ollama is running but refuses browser origin (OLLAMA_ORIGINS not set)
+          setCorsBlocked(true);
+          setAvailable(false);
+          throw new Error("cors");
+        }
+        if (!r.ok) {
+          setAvailable(false);
+          throw new Error("offline");
+        }
+        return r.json();
+      })
       .then((d) => {
         setAvailable(true);
         if (d.models?.length > 0) {
@@ -253,7 +268,10 @@ const OllamaChat = ({ data }: Props) => {
           setModel(chosen.name.replace(/:latest$/, ""));
         }
       })
-      .catch(() => setAvailable(false));
+      .catch(() => {
+        // Network error (Ollama not running). Don't overwrite if already set cors.
+        setAvailable((prev) => (prev === null ? false : prev));
+      });
   }, []);
 
   // ── Scroll-hide: slide FAB off when scrolling down past 250px, back on scroll-up
@@ -402,7 +420,9 @@ const OllamaChat = ({ data }: Props) => {
             <MotionBox whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}>
               <Tooltip
                 label={
-                  available === false
+                  corsBlocked
+                    ? "Ollama 403 — set OLLAMA_ORIGINS=* and restart"
+                    : available === false
                     ? `Ollama offline (${OLLAMA_BASE})`
                     : isOpen
                     ? "Close chat"
@@ -489,7 +509,9 @@ const OllamaChat = ({ data }: Props) => {
                       h="7px"
                       borderRadius="full"
                       bg={
-                        available
+                        corsBlocked
+                          ? "orange.300"
+                          : available
                           ? "green.300"
                           : available === false
                           ? "red.300"
@@ -498,7 +520,13 @@ const OllamaChat = ({ data }: Props) => {
                       animation={available ? "live-dot 2s ease-in-out infinite" : undefined}
                     />
                     <Text fontSize="10px" color="whiteAlpha.800" fontFamily="mono">
-                      {available === null ? "connecting…" : available ? "online" : "offline"}
+                      {corsBlocked
+                        ? "cors blocked"
+                        : available === null
+                        ? "connecting…"
+                        : available
+                        ? "online"
+                        : "offline"}
                     </Text>
                   </HStack>
                   <IconButton
@@ -562,15 +590,22 @@ const OllamaChat = ({ data }: Props) => {
             {/* Input */}
             <Box px={3} py={3} borderTop="1px solid" borderColor={borderCol} flexShrink={0}>
               {available === false ? (
-                <Text
-                  fontSize="xs"
-                  color="gray.500"
-                  textAlign="center"
-                  py={1}
-                  fontFamily="mono"
-                >
-                  Run <Text as="code" color="brand.400">ollama serve</Text> to enable
-                </Text>
+                <Stack spacing={1} py={1}>
+                  {corsBlocked ? (
+                    <>
+                      <Text fontSize="xs" color="orange.300" fontFamily="mono" textAlign="center">
+                        403 — Ollama refuses browser origin
+                      </Text>
+                      <Text fontSize="10px" color="gray.500" fontFamily="mono" textAlign="center">
+                        run: <Text as="code" color="brand.400">OLLAMA_ORIGINS="*" ollama serve</Text>
+                      </Text>
+                    </>
+                  ) : (
+                    <Text fontSize="xs" color="gray.500" textAlign="center" fontFamily="mono">
+                      run <Text as="code" color="brand.400">ollama serve</Text> to enable
+                    </Text>
+                  )}
+                </Stack>
               ) : (
                 <HStack spacing={2}>
                   <Input

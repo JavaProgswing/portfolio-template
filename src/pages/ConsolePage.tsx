@@ -133,6 +133,8 @@ press ↑/↓ for command history`,
       colophon: "/colophon",
       console: "/console",
       guestbook: "/guestbook",
+      resume: "/resume",
+      cv: "/resume",
     };
     const path = routes[target.toLowerCase()];
     if (!path) return `open: unknown destination: ${target}`;

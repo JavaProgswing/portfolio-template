@@ -19,6 +19,7 @@ import NowPage from "./pages/NowPage";
 import ColophonPage from "./pages/ColophonPage";
 import ConsolePage from "./pages/ConsolePage";
 import GuestbookPage from "./pages/GuestbookPage";
+import ResumePage from "./pages/ResumePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import data from "./data/me";
 
@@ -43,6 +44,7 @@ function App() {
           <Route path="/colophon" element={<ColophonPage />} />
           <Route path="/console" element={<ConsolePage data={data} />} />
           <Route path="/guestbook" element={<GuestbookPage />} />
+          <Route path="/resume" element={<ResumePage data={data} />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
