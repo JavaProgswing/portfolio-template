@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, Show } from "@chakra-ui/react";
+import { Box, Show } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import NavBar from "./components/NavBar";
 import Intro from "./components/Intro";
@@ -7,10 +7,10 @@ import Journey from "./components/Journey";
 import SectionNavigator, { Section } from "./components/SectionNavigator";
 import Footer from "./components/Footer";
 import ParticleBackground from "./components/ParticleBackground";
-import CurrentlyBuilding from "./components/CurrentlyBuilding";
-import CPStats from "./components/CPStats";
+import Activity from "./components/Activity";
 import Blog from "./components/Blog";
 import OllamaChat from "./components/OllamaChat";
+import EasterEggs from "./components/EasterEggs";
 import data from "./data/me";
 
 function App() {
@@ -19,46 +19,33 @@ function App() {
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute("content", data.desc_brief);
   }, []);
-  const introRef = useRef<HTMLDivElement>(null);
-  const buildingRef = useRef<HTMLDivElement>(null);
-  const cpRef = useRef<HTMLDivElement>(null);
-  const journeyRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
-  const blogRef = useRef<HTMLDivElement>(null);
 
-  const [activeSection, setActiveSection] = useState<Section>("intro");
+  const homeRef     = useRef<HTMLDivElement>(null);
+  const journeyRef  = useRef<HTMLDivElement>(null);
+  const projectsRef = useRef<HTMLDivElement>(null);
+  const activityRef = useRef<HTMLDivElement>(null);
+  const writingRef  = useRef<HTMLDivElement>(null);
+
+  const [activeSection, setActiveSection] = useState<Section>("home");
 
   useEffect(() => {
     const refs: [React.RefObject<HTMLDivElement>, Section][] = [
-      [introRef, "intro"],
-      [buildingRef, "building"],
-      [cpRef, "cp"],
+      [homeRef, "home"],
       [journeyRef, "journey"],
       [projectsRef, "projects"],
-      [blogRef, "blog"],
+      [activityRef, "activity"],
+      [writingRef, "writing"],
     ];
 
     const onScroll = () => {
-      const threshold = window.innerHeight * 0.45;
-      let closest: Section = "intro";
+      const mid = window.innerHeight * 0.4;
+      let closest: Section = "home";
       let minDist = Infinity;
 
       for (const [ref, id] of refs) {
         const top = ref.current?.getBoundingClientRect().top ?? Infinity;
-        const dist = Math.abs(top);
-        if (dist < minDist) {
-          minDist = dist;
-          closest = id;
-        }
-      }
-
-      // Prefer sections whose top is in the upper half of viewport
-      for (const [ref, id] of refs) {
-        const top = ref.current?.getBoundingClientRect().top ?? Infinity;
-        if (top >= 0 && top < threshold) {
-          closest = id;
-          break;
-        }
+        const dist = Math.abs(top - mid);
+        if (dist < minDist) { minDist = dist; closest = id; }
       }
 
       setActiveSection(closest);
@@ -80,107 +67,61 @@ function App() {
 
         <Show above="md">
           <SectionNavigator
-            onIntroClick={() => scrollTo(introRef)}
-            onBuildingClick={() => scrollTo(buildingRef)}
-            onCpClick={() => scrollTo(cpRef)}
-            onJourneyClick={() => scrollTo(journeyRef)}
-            onProjectsClick={() => scrollTo(projectsRef)}
-            onBlogClick={() => scrollTo(blogRef)}
+            onHomeClick={()     => scrollTo(homeRef)}
+            onJourneyClick={()  => scrollTo(journeyRef)}
+            onProjectsClick={()  => scrollTo(projectsRef)}
+            onActivityClick={()  => scrollTo(activityRef)}
+            onWritingClick={()   => scrollTo(writingRef)}
             activeSection={activeSection}
           />
         </Show>
 
-        <Box
-          minHeight="100vh"
-          mr={{ base: 0, md: "72px" }}
-          transition="margin 0.3s ease"
-        >
-          <Grid
-            templateRows="repeat(6, minmax(100vh, auto))"
-            templateAreas={`
-              "intro"
-              "building"
-              "cp"
-              "journey"
-              "projects"
-              "blog"
-            `}
-          >
-            <GridItem
-              area="intro"
-              id="intro"
-              ref={introRef}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Intro data={data} onScrollDown={() => scrollTo(buildingRef)} />
-            </GridItem>
+        {/* Main content — max-width document flow, not forced 100vh */}
+        <Box mr={{ base: 0, md: "60px" }}>
+          <Box maxW="780px" mx="auto" px={{ base: 5, md: 8 }}>
 
-            <GridItem
-              area="building"
-              id="building"
-              ref={buildingRef}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
+            {/* Hero — full viewport */}
+            <Box
+              id="home" ref={homeRef}
+              minH="100vh"
+              display="flex" alignItems="center"
+              py={20}
             >
-              <CurrentlyBuilding currentWork={data.currentWork} />
-            </GridItem>
-
-            <GridItem
-              area="cp"
-              id="cp"
-              ref={cpRef}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <CPStats
-                cfHandle={data.cp.codeforces}
-                lcHandle={data.cp.leetcode}
+              <Intro
+                data={data}
+                currentWork={data.currentWork}
+                onScrollDown={() => scrollTo(journeyRef)}
               />
-            </GridItem>
+            </Box>
 
-            <GridItem
-              area="journey"
-              id="journey"
-              ref={journeyRef}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
+            {/* Journey */}
+            <Box id="journey" ref={journeyRef} py={24}>
               <Journey data={data} />
-            </GridItem>
+            </Box>
 
-            <GridItem
-              area="projects"
-              id="projects"
-              ref={projectsRef}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
+            {/* Projects */}
+            <Box id="projects" ref={projectsRef} py={24}>
               <Projects data={data} />
-            </GridItem>
+            </Box>
 
-            <GridItem
-              area="blog"
-              id="blog"
-              ref={blogRef}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
+            {/* Activity */}
+            <Box id="activity" ref={activityRef} py={24}>
+              <Activity data={data} />
+            </Box>
+
+            {/* Writing */}
+            <Box id="writing" ref={writingRef} py={24}>
               <Blog blogs={data.blogs} />
-            </GridItem>
-          </Grid>
+            </Box>
+
+          </Box>
         </Box>
 
         <Footer name={data.name} />
       </Box>
 
       <OllamaChat data={data} />
+      <EasterEggs />
     </>
   );
 }

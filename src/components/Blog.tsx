@@ -1,19 +1,19 @@
 import {
   Box,
+  Collapse,
   Heading,
-  Text,
+  HStack,
   SimpleGrid,
   Stack,
-  Badge,
+  Tag,
+  Text,
+  useColorModeValue,
   Wrap,
   WrapItem,
-  Collapse,
   Button,
-  HStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export interface BlogPost {
   title: string;
@@ -25,155 +25,105 @@ export interface BlogPost {
   content?: string;
 }
 
-interface Props {
-  blogs: BlogPost[];
-}
-
 const MotionBox = motion(Box);
 
-const BlogCard = ({
-  post,
-  index,
-}: {
-  post: BlogPost;
-  index: number;
-}) => {
+/** Splits content on blank lines into paragraphs. Lines starting with `> ` become blockquotes. */
+const ContentRenderer = ({ text }: { text: string }) => {
+  const border = useColorModeValue("purple.300", "purple.700");
+  return (
+    <Stack spacing={4} mt={4}>
+      {text.split("\n\n").map((para, i) => {
+        if (para.startsWith("> ")) {
+          return (
+            <Box key={i} borderLeft="2px solid" borderColor={border} pl={4}>
+              <Text fontSize="sm" color="gray.400" fontStyle="italic" lineHeight="1.8">
+                {para.slice(2)}
+              </Text>
+            </Box>
+          );
+        }
+        return (
+          <Text key={i} fontSize="sm" color="gray.400" lineHeight="1.85">
+            {para}
+          </Text>
+        );
+      })}
+    </Stack>
+  );
+};
+
+const BlogCard = ({ post, index, featured }: { post: BlogPost; index: number; featured?: boolean }) => {
   const [expanded, setExpanded] = useState(false);
-  const cardBg = useColorModeValue("white", "transparent");
+  const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
 
   return (
     <MotionBox
-      p={6}
-      borderRadius="xl"
-      bg={cardBg}
-      layerStyle="glass"
+      p={featured ? 7 : 5}
+      borderRadius="12px"
+      layerStyle="card"
       border="1px solid"
-      borderColor={
-        expanded ? "purple.500" : "rgba(255,255,255,0.08)"
-      }
-      initial={{ opacity: 0, y: 20 }}
+      borderColor={expanded ? "brand.600" : border}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      _hover={{
-        borderColor: "purple.500",
-        boxShadow: "0 0 25px rgba(128,90,213,0.12)",
-      }}
-      display="flex"
-      flexDirection="column"
+      transition={{ duration: 0.4, delay: index * 0.08 }}
+      _hover={{ borderColor: "brand.600" }}
+      gridColumn={featured ? { base: "1", md: "1 / -1" } : undefined}
     >
-      <Stack spacing={3} flex={1}>
+      <Stack spacing={3}>
         <HStack justify="space-between" align="flex-start">
-          <Text
-            fontSize="xs"
-            color="gray.500"
-            fontFamily="mono"
-          >
-            {post.date}
-          </Text>
-          <Text
-            fontSize="xs"
-            color="gray.500"
-            fontFamily="mono"
-            whiteSpace="nowrap"
-          >
-            {post.readTime}
-          </Text>
+          <Text fontSize="11px" color="gray.500" fontFamily="mono">{post.date}</Text>
+          <Text fontSize="11px" color="gray.600" fontFamily="mono" whiteSpace="nowrap">{post.readTime}</Text>
         </HStack>
 
-        <Heading
-          size="md"
-          lineHeight="1.4"
-          _groupHover={{ color: "purple.400" }}
-          transition="color 0.2s"
-        >
+        <Heading size={featured ? "md" : "sm"} lineHeight="1.4">
           {post.title}
         </Heading>
 
-        <Text fontSize="sm" color="gray.400" lineHeight="1.7">
+        <Text fontSize="sm" color="gray.400" lineHeight="1.75">
           {post.excerpt}
         </Text>
 
         <Collapse in={expanded} animateOpacity>
-          <Text
-            fontSize="sm"
-            color="gray.300"
-            whiteSpace="pre-wrap"
-            lineHeight="1.8"
-            mt={3}
-            borderLeft="2px solid"
-            borderColor="purple.700"
-            pl={4}
-          >
-            {post.content}
-          </Text>
+          {post.content && <ContentRenderer text={post.content} />}
         </Collapse>
 
-        <Wrap mt={1}>
-          {post.tags.map((tag) => (
+        <Wrap spacing={1.5}>
+          {post.tags.map(tag => (
             <WrapItem key={tag}>
-              <Badge
-                px={2}
-                py={0.5}
-                borderRadius="full"
-                colorScheme="purple"
-                variant="subtle"
-                fontSize="10px"
-                fontFamily="mono"
-              >
-                {tag}
-              </Badge>
+              <Tag size="sm" colorScheme="purple" variant="subtle" fontSize="10px">{tag}</Tag>
             </WrapItem>
           ))}
         </Wrap>
 
-        <Box mt="auto" pt={2}>
-          {post.link ? (
-            <Button
-              as="a"
-              href={post.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="sm"
-              variant="glow"
-            >
-              Read Full Post
-            </Button>
-          ) : post.content ? (
-            <Button
-              onClick={() => setExpanded(!expanded)}
-              size="sm"
-              variant="link"
-              colorScheme="purple"
-              fontFamily="mono"
-              fontSize="xs"
-            >
-              {expanded ? "↑ collapse" : "read more →"}
-            </Button>
-          ) : null}
-        </Box>
+        {post.link ? (
+          <Button as="a" href={post.link} target="_blank" rel="noopener noreferrer"
+            size="xs" variant="glow" alignSelf="flex-start" fontFamily="mono">
+            read post ↗
+          </Button>
+        ) : post.content ? (
+          <Button onClick={() => setExpanded(v => !v)} size="xs" variant="link"
+            colorScheme="purple" alignSelf="flex-start" fontFamily="mono">
+            {expanded ? "↑ collapse" : "↓ read more"}
+          </Button>
+        ) : null}
       </Stack>
     </MotionBox>
   );
 };
 
-const Blog = ({ blogs }: Props) => {
+const Blog = ({ blogs }: { blogs: BlogPost[] }) => {
   return (
-    <Box maxW="5xl" mx="auto" px={6} py={10}>
-      <Heading
-        as="h2"
-        size="xl"
-        mb={10}
-        textAlign="center"
-        bgGradient="linear(to-r, purple.400, pink.400)"
-        bgClip="text"
-      >
+    <Box>
+      <Text fontSize="11px" fontFamily="mono" color="gray.500"
+        letterSpacing="0.14em" mb={2} textTransform="uppercase">
         Writing
-      </Heading>
+      </Text>
+      <Heading size="lg" mb={8}>Notes & Posts</Heading>
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
         {blogs.map((post, index) => (
-          <BlogCard key={index} post={post} index={index} />
+          <BlogCard key={index} post={post} index={index} featured={index === 0} />
         ))}
       </SimpleGrid>
     </Box>

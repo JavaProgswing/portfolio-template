@@ -33,6 +33,36 @@ interface Framework {
   link: string;
 }
 
+interface Project {
+  name: string;
+  description: string;
+  links: { name: string; link: string }[];
+  skills: string[];
+}
+
+interface BlogPost {
+  title: string;
+  date: string;
+  readTime: string;
+  excerpt: string;
+  tags: string[];
+}
+
+interface JourneyEntry {
+  title: string;
+  company: string;
+  date: string;
+  description: string;
+  evidence?: { name: string; url: string }[];
+}
+
+interface FollowItem {
+  name: string;
+  type: string;
+  url: string;
+  desc: string;
+}
+
 interface PortfolioData {
   name: string;
   desc: string;
@@ -44,19 +74,10 @@ interface PortfolioData {
     databases: Framework[];
     misc: Framework[];
   };
-  projects: {
-    name: string;
-    description: string;
-    links: { name: string; link: string }[];
-    skills: string[];
-  }[];
+  projects: Project[];
   contacts: Contact[];
-  journey: {
-    title: string;
-    company: string;
-    date: string;
-    description: string;
-  }[];
+  journey: JourneyEntry[];
+  blogs: BlogPost[];
   cp: { codeforces: string; leetcode: string };
   currentWork: {
     title: string;
@@ -64,65 +85,125 @@ interface PortfolioData {
     description: string;
     tags: string[];
     startDate: string;
+    links: { name: string; link: string }[];
+  };
+  interests?: {
+    areas: string[];
+    following: FollowItem[];
   };
 }
 
+// ── System prompt — comprehensive, with personality + examples ────────────────
+
 function buildSystemPrompt(data: PortfolioData): string {
   const firstName = data.name.split(" ")[0];
+
   const allFrameworks = [
     ...data.frameworks.frontend,
     ...data.frameworks.backend,
     ...data.frameworks.databases,
     ...data.frameworks.misc,
-  ]
-    .map((f) => f.name)
-    .join(", ");
-
-  const projectsStr = data.projects
-    .map(
-      (p) =>
-        `  • ${p.name}: ${p.description}${p.skills.length ? ` [${p.skills.join(", ")}]` : ""}`
-    )
-    .join("\n");
+  ].map((f) => f.name).join(", ");
 
   const journeyStr = data.journey
-    .map((j) => `  • ${j.title} at ${j.company} (${j.date}): ${j.description}`)
-    .join("\n");
+    .map((j) => {
+      const ev = j.evidence?.length
+        ? `\n      Evidence: ${j.evidence.map((e) => `${e.name} (${e.url})`).join("; ")}`
+        : "";
+      return `  • [${j.date}] ${j.title} at ${j.company}\n      ${j.description}${ev}`;
+    })
+    .join("\n\n");
 
-  const github = data.contacts.find((c) => c.id === "github");
-  const githubLine = github ? `GitHub: ${github.link}` : "";
+  const projectsStr = data.projects
+    .map((p) => {
+      const links = p.links.map((l) => `${l.name}=${l.link}`).join(", ");
+      return `  • ${p.name}: ${p.description}\n      Tech: ${p.skills.join(", ")}\n      Links: ${links}`;
+    })
+    .join("\n\n");
 
-  const cpLines = [
-    data.cp.codeforces && `  Codeforces: ${data.cp.codeforces}`,
-    data.cp.leetcode && `  LeetCode: ${data.cp.leetcode}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const blogsStr = data.blogs
+    .map((b) => `  • "${b.title}" (${b.date}, ${b.readTime}, tags: ${b.tags.join("/")})\n      ${b.excerpt}`)
+    .join("\n\n");
 
-  return `You are an AI assistant embedded in ${data.name}'s portfolio website. Here is everything you know:
+  const cw = data.currentWork;
+  const cwLinks = cw.links.map((l) => `${l.name}=${l.link}`).join(", ");
+  const cwStr = `${cw.title} at ${cw.org} (since ${cw.startDate})\n  ${cw.description}\n  Stack: ${cw.tags.join(", ")}\n  Links: ${cwLinks}`;
 
-Name: ${data.name}
-Tags: ${data.tags.join(", ")}
-Bio: ${data.desc}
+  const interestsAreas = data.interests?.areas?.join(", ") || "n/a";
+  const followingStr =
+    data.interests?.following
+      ?.map((f) => `  • ${f.name} [${f.type}]: ${f.desc}`)
+      .join("\n") || "  • (none configured)";
 
-Languages: ${data.languages.join(", ")}
-Frameworks & Libraries: ${allFrameworks}
+  const github = data.contacts.find((c) => c.id === "github")?.link || "";
+  const linkedin = data.contacts.find((c) => c.id === "linkedin")?.link || "";
 
-Journey:
+  return `You are an AI assistant embedded in ${data.name}'s personal portfolio website. You know ${firstName} well — their work, projects, journey, and what they care about.
+
+# Response rules
+
+- Speak about ${firstName} in third person. Don't pretend to be them.
+- Be direct, specific, and honest. Cite actual project names and details.
+- Keep responses to 2-4 sentences unless the user asks for depth.
+- If you don't know something, say so plainly. Don't fabricate.
+- Use ${firstName} (first name), not the full name in every sentence.
+- Don't mention you are "an AI" or apologize for limitations unless asked.
+
+# About ${data.name}
+
+${data.desc}
+
+Tags: ${data.tags.join(" · ")}
+GitHub: ${github}
+LinkedIn: ${linkedin}
+
+# Current Focus
+
+${cwStr}
+
+# Technical Stack
+
+Languages: ${data.languages.join(", ")} — primary: ${data.languages[0]}
+Frameworks & Tools: ${allFrameworks}
+
+# Journey
+
 ${journeyStr}
 
-Currently Building: ${data.currentWork.title} at ${data.currentWork.org} (since ${data.currentWork.startDate})
-  ${data.currentWork.description}
-  Tech: ${data.currentWork.tags.join(", ")}
+# Projects (${data.projects.length} total — list ALL when asked, but lead with most relevant)
 
-Projects:
 ${projectsStr}
 
-Competitive Programming:
-${cpLines}
-${githubLine}
+# Competitive Programming
 
-Answer questions about ${firstName} conversationally. Be direct and specific. Keep responses concise (2-4 sentences usually). If you don't know something, say so.`;
+  Codeforces handle: ${data.cp.codeforces}
+  LeetCode handle: ${data.cp.leetcode}
+
+# Interests & What ${firstName} Follows
+
+Areas of interest: ${interestsAreas}
+
+Sources ${firstName} reads/watches:
+${followingStr}
+
+# Writing
+
+${blogsStr}
+
+# Example Responses
+
+User: "What's the most impressive thing ${firstName} has built?"
+You: "Probably Valorant Narrator — a JavaFX app that hijacks team comms with TTS voices using AWS Polly and Windows TTS. Live demo at valnarrator.vercel.app. It took deep TTS pipeline knowledge to ship."
+
+User: "How do I contact ${firstName}?"
+You: "The icons in the top-right navbar — GitHub, LinkedIn, Twitter, Spotify. LinkedIn is best for professional outreach."
+
+User: "What's ${firstName} working on now?"
+You: "GSoC 2025 with LenovoLegionToolkit — adding OS-level automation (Bluetooth, DND, Volume, Night Light, Fan Full Speed, G-Sync) to the Windows app. C# and WPF stack."
+
+User: "Tell me about ${firstName}'s competitive programming."
+You: "${firstName} is on Codeforces as ${data.cp.codeforces} and LeetCode as ${data.cp.leetcode} — check the Activity → Competitive tab on this site for live stats. Java is the language of choice for contests."
+`;
 }
 
 const OLLAMA_BASE = "http://localhost:11434";
@@ -147,13 +228,15 @@ const OllamaChat = ({ data }: Props) => {
   const [loading, setLoading] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
   const [model, setModel] = useState("llama3.2");
+  const [scrollHidden, setScrollHidden] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const panelBg = useColorModeValue("white", "#111827");
+  const panelBg = useColorModeValue("white", "#111118");
   const borderCol = useColorModeValue("gray.200", "rgba(255,255,255,0.1)");
   const aiBubbleBg = useColorModeValue("gray.100", "rgba(255,255,255,0.06)");
 
+  // ── Detect Ollama availability ──────────────────────────────────────────────
   useEffect(() => {
     fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(3000) })
       .then((r) => r.json())
@@ -171,6 +254,36 @@ const OllamaChat = ({ data }: Props) => {
         }
       })
       .catch(() => setAvailable(false));
+  }, []);
+
+  // ── Scroll-hide: slide FAB off when scrolling down past 250px, back on scroll-up
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastY;
+
+        if (Math.abs(delta) > 8) {
+          if (delta > 0 && currentY > 250) {
+            setScrollHidden(true);
+          } else if (delta < 0) {
+            setScrollHidden(false);
+          }
+          lastY = currentY;
+        }
+
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -227,7 +340,7 @@ const OllamaChat = ({ data }: Props) => {
               ]);
             }
           } catch {
-            // partial JSON chunk
+            // partial chunk
           }
         }
       }
@@ -251,71 +364,84 @@ const OllamaChat = ({ data }: Props) => {
     }
   };
 
+  // Only hide FAB when scrolled down AND chat is closed
+  const fabVisible = isOpen || !scrollHidden;
+
   return (
     <>
-      <MotionBox
-        position="fixed"
-        bottom={6}
-        right={{ base: 4, md: 6 }}
-        zIndex={1000}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.93 }}
-      >
-        <Tooltip
-          label={
-            available === false
-              ? `Ollama offline (${OLLAMA_BASE})`
-              : isOpen
-              ? "Close chat"
-              : `Ask AI about ${firstName}`
-          }
-          placement="left"
-          hasArrow
-        >
-          <Button
-            onClick={onToggle}
-            borderRadius="full"
-            w="52px"
-            h="52px"
-            minW="52px"
-            bg="blue.600"
-            color="white"
-            boxShadow="0 0 24px rgba(0,127,255,0.45)"
-            _hover={{ bg: "blue.500", boxShadow: "0 0 36px rgba(0,127,255,0.65)" }}
-            p={0}
-            position="relative"
+      <AnimatePresence>
+        {fabVisible && (
+          <MotionBox
+            key="fab"
+            position="fixed"
+            bottom={6}
+            right={{ base: 4, md: 6 }}
+            zIndex={1000}
+            initial={{ opacity: 0, y: 60, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 60, scale: 0.8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
           >
-            <Icon as={(isOpen ? FaTimes : FaRobot) as ElementType} boxSize={5} />
-            {available === true && !isOpen && (
-              <Box
-                position="absolute"
-                top="1px"
-                right="1px"
-                w="10px"
-                h="10px"
-                borderRadius="full"
-                bg="green.400"
-                border="2px solid"
-                borderColor="blue.600"
-              />
-            )}
-          </Button>
-        </Tooltip>
-      </MotionBox>
+            <MotionBox whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.93 }}>
+              <Tooltip
+                label={
+                  available === false
+                    ? `Ollama offline (${OLLAMA_BASE})`
+                    : isOpen
+                    ? "Close chat"
+                    : `Ask AI about ${firstName}`
+                }
+                placement="left"
+                hasArrow
+              >
+                <Button
+                  onClick={onToggle}
+                  borderRadius="full"
+                  w="52px"
+                  h="52px"
+                  minW="52px"
+                  bg="brand.500"
+                  color="white"
+                  boxShadow="0 0 24px rgba(99,102,241,0.5)"
+                  _hover={{ bg: "brand.400", boxShadow: "0 0 36px rgba(99,102,241,0.7)" }}
+                  p={0}
+                  position="relative"
+                >
+                  <Icon as={(isOpen ? FaTimes : FaRobot) as ElementType} boxSize={5} />
+                  {available === true && !isOpen && (
+                    <Box
+                      position="absolute"
+                      top="1px"
+                      right="1px"
+                      w="10px"
+                      h="10px"
+                      borderRadius="full"
+                      bg="green.400"
+                      border="2px solid"
+                      borderColor="brand.500"
+                    />
+                  )}
+                </Button>
+              </Tooltip>
+            </MotionBox>
+          </MotionBox>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isOpen && (
           <MotionBox
+            key="panel"
             position="fixed"
             bottom="76px"
             right={{ base: 4, md: 6 }}
-            w={{ base: "calc(100vw - 32px)", sm: "370px" }}
-            h="460px"
+            w={{ base: "calc(100vw - 32px)", sm: "380px" }}
+            h="480px"
             bg={panelBg}
             border="1px solid"
             borderColor={borderCol}
             borderRadius="2xl"
-            boxShadow="0 24px 64px rgba(0,0,0,0.35)"
+            boxShadow="0 24px 64px rgba(0,0,0,0.5)"
             zIndex={999}
             overflow="hidden"
             display="flex"
@@ -325,8 +451,13 @@ const OllamaChat = ({ data }: Props) => {
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.18 }}
           >
-            {/* Header */}
-            <Box px={4} py={3} bgGradient="linear(to-r, blue.700, purple.700)" flexShrink={0}>
+            {/* Header — simplified, no model tag */}
+            <Box
+              px={4}
+              py={3}
+              bgGradient="linear(to-r, brand.600, purple.600)"
+              flexShrink={0}
+            >
               <HStack justify="space-between">
                 <HStack spacing={2}>
                   <Icon as={FaRobot as ElementType} color="white" boxSize={4} />
@@ -335,7 +466,7 @@ const OllamaChat = ({ data }: Props) => {
                   </Text>
                 </HStack>
                 <HStack spacing={2}>
-                  <HStack spacing={1}>
+                  <HStack spacing={1.5}>
                     <Box
                       w="7px"
                       h="7px"
@@ -347,13 +478,10 @@ const OllamaChat = ({ data }: Props) => {
                           ? "red.300"
                           : "yellow.300"
                       }
+                      animation={available ? "live-dot 2s ease-in-out infinite" : undefined}
                     />
                     <Text fontSize="10px" color="whiteAlpha.800" fontFamily="mono">
-                      {available === null
-                        ? "connecting…"
-                        : available
-                        ? model
-                        : "offline"}
+                      {available === null ? "connecting…" : available ? "online" : "offline"}
                     </Text>
                   </HStack>
                   <IconButton
@@ -384,7 +512,7 @@ const OllamaChat = ({ data }: Props) => {
                       borderRadius="xl"
                       borderBottomRightRadius={msg.role === "user" ? "sm" : "xl"}
                       borderBottomLeftRadius={msg.role === "assistant" ? "sm" : "xl"}
-                      bg={msg.role === "user" ? "blue.500" : aiBubbleBg}
+                      bg={msg.role === "user" ? "brand.500" : aiBubbleBg}
                       color={msg.role === "user" ? "white" : "inherit"}
                       fontSize="sm"
                       lineHeight="1.6"
@@ -424,7 +552,7 @@ const OllamaChat = ({ data }: Props) => {
                   py={1}
                   fontFamily="mono"
                 >
-                  Run <Text as="code" color="blue.400">ollama serve</Text> to enable
+                  Run <Text as="code" color="brand.400">ollama serve</Text> to enable
                 </Text>
               ) : (
                 <HStack spacing={2}>
@@ -439,8 +567,8 @@ const OllamaChat = ({ data }: Props) => {
                     isDisabled={loading}
                     fontSize="sm"
                     _focus={{
-                      borderColor: "blue.400",
-                      boxShadow: "0 0 0 1px rgba(0,127,255,0.4)",
+                      borderColor: "brand.400",
+                      boxShadow: "0 0 0 1px rgba(99,102,241,0.4)",
                     }}
                     border="1px solid"
                     borderColor={borderCol}
@@ -449,7 +577,7 @@ const OllamaChat = ({ data }: Props) => {
                     aria-label="Send"
                     icon={<Icon as={FaPaperPlane as ElementType} />}
                     size="sm"
-                    colorScheme="blue"
+                    colorScheme="purple"
                     borderRadius="full"
                     onClick={sendMessage}
                     isLoading={loading}

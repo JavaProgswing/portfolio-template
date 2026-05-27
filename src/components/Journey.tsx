@@ -1,5 +1,17 @@
-import { Box, Heading, Text, Stack, Flex, Circle, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  HStack,
+  Icon,
+  Link,
+  Stack,
+  Tag,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { ElementType } from "react";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { Info } from "./Intro";
 
 interface Props {
@@ -9,94 +21,115 @@ interface Props {
 const MotionBox = motion(Box);
 
 const Journey = ({ data }: Props) => {
-  const lineColor = useColorModeValue("gray.300", "gray.700");
-  const circleBg = useColorModeValue("white", "gray.900");
-  const circleBorder = useColorModeValue("blue.500", "blue.400");
+  const dotBorder = useColorModeValue("brand.500", "brand.400");
+  const lineColor = useColorModeValue("gray.200", "rgba(255,255,255,0.08)");
 
   return (
-    <Box maxW="4xl" mx="auto" px={6} py={20}>
-      <Heading
-        as="h2"
-        size="xl"
-        mb={12}
-        textAlign="center"
-        bgGradient="linear(to-r, blue.400, purple.500)"
-        bgClip="text"
+    <Box>
+      <Text
+        fontSize="11px" fontFamily="mono" color="gray.500"
+        letterSpacing="0.14em" mb={2} textTransform="uppercase"
       >
-        My Journey
-      </Heading>
+        Experience
+      </Text>
+      <Heading size="lg" mb={10}>My Journey</Heading>
 
-      <Stack spacing={0} position="relative">
-        {/* Vertical Line */}
+      <Box position="relative" pl={7}>
+        {/* Vertical line */}
         <Box
           position="absolute"
-          left={{ base: "20px", md: "50%" }}
-          top="0"
+          left="6px"
+          top="8px"
           bottom="0"
-          width="2px"
+          width="1px"
           bg={lineColor}
-          transform={{ base: "none", md: "translateX(-50%)" }}
-          zIndex={0}
         />
 
-        {data.journey.map((item, index) => {
-          const isEven = index % 2 === 0;
-          return (
-            <Flex
+        <Stack spacing={0}>
+          {data.journey.map((item, index) => (
+            <MotionBox
               key={index}
-              mb={10}
-              justifyContent={{ base: "flex-start", md: isEven ? "flex-end" : "flex-start" }}
-              alignItems="center"
               position="relative"
-              flexDirection={{ base: "row", md: isEven ? "row-reverse" : "row" }}
+              pb={index < data.journey.length - 1 ? 10 : 0}
+              initial={{ opacity: 0, x: -16 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              {/* Timeline Dot */}
-              <Circle
-                size="40px"
-                bg={circleBg}
-                border="4px solid"
-                borderColor={circleBorder}
+              {/* Timeline dot */}
+              <Box
                 position="absolute"
-                left={{ base: "0", md: "50%" }}
-                transform={{ base: "none", md: "translateX(-50%)" }}
+                left="-28px"
+                top="5px"
+                w="13px"
+                h="13px"
+                borderRadius="full"
+                border="2px solid"
+                borderColor={dotBorder}
+                bg={index === 0 ? "brand.500" : "#09090b"}
                 zIndex={1}
-                boxShadow="0 0 10px rgba(66, 153, 225, 0.6)"
               />
 
-              {/* Content Card */}
-              <MotionBox
-                width={{ base: "calc(100% - 60px)", md: "45%" }}
-                ml={{ base: "60px", md: isEven ? "0" : "auto" }}
-                mr={{ base: "0", md: isEven ? "auto" : "0" }}
-                p={6}
-                borderRadius="xl"
-                layerStyle="glass"
-                initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                _hover={{
-                  borderColor: "blue.400",
-                  boxShadow: "0 0 20px rgba(66, 153, 225, 0.2)",
-                }}
-              >
-                <Text fontSize="sm" color="blue.400" fontWeight="bold" mb={1}>
+              <Stack spacing={1.5}>
+                <Text
+                  fontSize="11px"
+                  color="gray.500"
+                  fontFamily="mono"
+                  letterSpacing="0.05em"
+                >
                   {item.date}
                 </Text>
-                <Heading size="md" mb={2}>
+
+                <Heading size="sm" lineHeight="1.3">
                   {item.title}
                 </Heading>
-                <Text fontSize="sm" fontWeight="medium" color="gray.500" mb={3}>
+
+                <Text
+                  fontSize="sm"
+                  color="brand.400"
+                  fontWeight="600"
+                >
                   {item.company}
                 </Text>
-                <Text fontSize="sm" color="gray.400">
+
+                <Text
+                  fontSize="sm"
+                  color="gray.400"
+                  lineHeight="1.75"
+                  maxW="580px"
+                >
                   {item.description}
                 </Text>
-              </MotionBox>
-            </Flex>
-          );
-        })}
-      </Stack>
+
+                {item.evidence && item.evidence.length > 0 && (
+                  <HStack spacing={2} pt={1} flexWrap="wrap">
+                    {item.evidence.map(e => (
+                      <Link
+                        key={e.name}
+                        href={e.url}
+                        isExternal
+                        _hover={{ textDecoration: "none" }}
+                      >
+                        <Tag
+                          size="sm"
+                          variant="subtle"
+                          colorScheme="gray"
+                          cursor="pointer"
+                          _hover={{ colorScheme: "blue", bg: "rgba(99,102,241,0.12)", color: "brand.400" }}
+                          transition="all 0.15s"
+                        >
+                          <Icon as={FaExternalLinkAlt as ElementType} mr={1} boxSize={2.5} />
+                          {e.name}
+                        </Tag>
+                      </Link>
+                    ))}
+                  </HStack>
+                )}
+              </Stack>
+            </MotionBox>
+          ))}
+        </Stack>
+      </Box>
     </Box>
   );
 };

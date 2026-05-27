@@ -1,0 +1,150 @@
+{
+  "repos": [
+    {
+      "name": "valorantnarratorOPS",
+      "description": "Transform Valorant text chat into real-time voice comms using agent voices, Windows TTS, AWS Polly, and more. Avoid toxicity, never miss callouts, and upgrade your communication without impacting FPS.",
+      "url": "https://github.com/JavaProgswing/valorantnarratorOPS",
+      "homepage": "",
+      "language": "Java",
+      "stars": 3,
+      "forks": 1,
+      "topics": [],
+      "pushedAt": "2025-12-29T08:26:11Z",
+      "score": 49.2
+    },
+    {
+      "name": "GDGoC",
+      "description": "This project enables users to browse available speakers, view expertise, and book sessions conveniently with OTP-based authentication, protected routes, email notifications, and Google Calendar event creation.",
+      "url": "https://github.com/JavaProgswing/GDGoC",
+      "homepage": "https://speakersessionbooking.vercel.app",
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2025-05-06T04:19:33Z",
+      "score": 21.9
+    },
+    {
+      "name": "CompleteBlogApp",
+      "description": "CompleteBlogApp is a full-stack blogging platform where users can:  Create new blog posts, Read, Update, Delete posts  as needed and explore existing posts",
+      "url": "https://github.com/JavaProgswing/CompleteBlogApp",
+      "homepage": "https://completeblogapp-pi.vercel.app/",
+      "language": "TypeScript",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2025-09-07T13:24:48Z",
+      "score": 20.6
+    },
+    {
+      "name": "SRM-WIFI-Login",
+      "description": "A Windows Tray based Python application which logs in to the SRM Wi-Fi portal whenever required.",
+      "url": "https://github.com/JavaProgswing/SRM-WIFI-Login",
+      "homepage": "",
+      "language": "Python",
+      "stars": 1,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2025-02-02T10:18:30Z",
+      "score": 19.4
+    },
+    {
+      "name": "ChessAutomation",
+      "description": "This is a desktop automation tool that assists in making chess moves, analysing games via a GUI interface.",
+      "url": "https://github.com/JavaProgswing/ChessAutomation",
+      "homepage": "",
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2026-01-31T11:45:27Z",
+      "score": 17.4
+    },
+    {
+      "name": "Aestron",
+      "description": "Aestron is a discord bot having features such as Moderation, Logging, Music, Giveaways, Custom commands and more...",
+      "url": "https://github.com/JavaProgswing/Aestron",
+      "homepage": "",
+      "language": "Python",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2025-12-04T08:35:45Z",
+      "score": 17
+    },
+    {
+      "name": "diary",
+      "description": "Personal notes/diary website",
+      "url": "https://github.com/JavaProgswing/diary",
+      "homepage": "https://personal-app-diary.vercel.app/",
+      "language": "JavaScript",
+      "stars": 0,
+      "forks": 1,
+      "topics": [],
+      "pushedAt": "2025-05-12T16:51:19Z",
+      "score": 16.9
+    },
+    {
+      "name": "carbapradah",
+      "description": "Carbapradah project website",
+      "url": "https://github.com/JavaProgswing/carbapradah",
+      "homepage": "https://carbapradah.vercel.app",
+      "language": "CSS",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2025-03-29T02:26:02Z",
+      "score": 16.7
+    },
+    {
+      "name": "ChatApp",
+      "description": "Chatapp standalone application made in javax swing.",
+      "url": "https://github.com/JavaProgswing/ChatApp",
+      "homepage": "",
+      "language": "Java",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2025-01-07T10:12:40Z",
+      "score": 16.2
+    },
+    {
+      "name": "portfolio-template",
+      "description": "A personal portfolio template built with React, TypeScript, and Vite, featuring a modern design with animations and a responsive layout.",
+      "url": "https://github.com/JavaProgswing/portfolio-template",
+      "homepage": "",
+      "language": "TypeScript",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2026-05-27T07:45:11Z",
+      "score": 16
+    },
+    {
+      "name": "GameHub",
+      "description": "Search and view latest games by genre",
+      "url": "https://github.com/JavaProgswing/GameHub",
+      "homepage": "https://games-x-ten.vercel.app/",
+      "language": "TypeScript",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2025-10-09T02:40:14Z",
+      "score": 15.7
+    },
+    {
+      "name": "AssistanceSupport",
+      "description": "",
+      "url": "https://github.com/JavaProgswing/AssistanceSupport",
+      "homepage": "https://assistance-pi.vercel.app",
+      "language": "JavaScript",
+      "stars": 0,
+      "forks": 0,
+      "topics": [],
+      "pushedAt": "2026-02-08T14:48:35Z",
+      "score": 15.4
+    }
+  ],
+  "fetchedAt": "2026-05-27T10:44:53.991Z",
+  "username": "JavaProgswing"
+}

@@ -110,17 +110,82 @@ blogs: [
 
 The floating robot button in the bottom-right connects to a local [Ollama](https://ollama.com) instance. It auto-builds a system prompt from your `me.ts` data — no hardcoded content.
 
-**Setup:**
+#### Setup on Ubuntu
 
 ```bash
-# Install Ollama: https://ollama.com
-ollama pull llama3.2   # or any model you prefer
-ollama serve           # starts the API on localhost:11434
+# 1. Install Ollama (one-liner)
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 2. Pull a model
+ollama pull llama3.2     # ~2GB, fast, recommended
+# or:  ollama pull mistral, ollama pull phi3, ollama pull qwen2.5
 ```
 
-The chat widget will show a green dot when Ollama is running and auto-detects the available model. It works entirely offline — no API keys, no external services.
+**Critical — browser CORS:** Ollama refuses browser requests by default. The portfolio runs in a browser, so you MUST allow your origin. Two options:
 
-If Ollama is not running, the button shows a tooltip and the input is replaced with setup instructions.
+**One-off (foreground):**
+```bash
+OLLAMA_ORIGINS="*" ollama serve
+```
+
+**Persistent (systemd, recommended):**
+```bash
+sudo systemctl edit ollama.service
+```
+
+In the editor that opens, add:
+```ini
+[Service]
+Environment="OLLAMA_ORIGINS=*"
+```
+
+Save, then reload:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+```
+
+For production, replace `*` with your actual origin (e.g. `https://yourname.dev,http://localhost:5173`).
+
+**Verify:**
+```bash
+curl http://localhost:11434/api/tags
+```
+Should return JSON of installed models.
+
+#### Setup on macOS / Windows
+
+```bash
+# Download installer from https://ollama.com/download
+ollama pull llama3.2
+# Server runs in background after install. Set OLLAMA_ORIGINS env var via:
+#   macOS: launchctl setenv OLLAMA_ORIGINS "*"
+#   Windows: setx OLLAMA_ORIGINS "*"
+```
+
+The chat widget shows a green dot when Ollama is reachable and auto-detects the loaded model. Offline by design — no API keys, no external services.
+
+### Spotify Now Playing (optional)
+
+The Spotify badge in the navbar can show a live now-playing popover with album art, track name, and animated equalizer bars.
+
+**Setup:**
+
+1. Fork [kittinan/spotify-github-profile](https://github.com/kittinan/spotify-github-profile)
+2. Deploy on Vercel (free), complete the Spotify OAuth flow once
+3. Paste the resulting API URL into `me.ts`:
+
+```ts
+{
+  id: "spotify",
+  name: "Spotify",
+  site: "https://open.spotify.com/",
+  link: "https://your-spotify-link",
+  nowPlayingApi: "https://your-vercel-app.vercel.app/api/spotify",
+},
+```
+
+Without `nowPlayingApi`, the badge stays as a normal link. With it: a pulsing green dot appears when you're playing, and clicking opens a mini-player.
 
 ## Project Structure
 

@@ -16,10 +16,9 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import { getTechIcon } from "../services/getTechIcon";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ElementType } from "react";
 import { motion } from "framer-motion";
-import { FaChevronDown } from "react-icons/fa";
-import { ElementType } from "react";
+import { FaChevronDown, FaExternalLinkAlt } from "react-icons/fa";
 
 export interface Info {
   name: string;
@@ -33,30 +32,32 @@ export interface Info {
     misc: { name: string; id: string; desc: string; link: string }[];
   };
   projects: {
-    name: string;
-    description: string;
-    type: string;
+    name: string; description: string; type: string;
     links: { name: string; link: string }[];
     skills: string[];
   }[];
-  contacts: {
-    id: string;
-    name: string;
-    site: string;
-    link: string;
-  }[];
+  contacts: { id: string; name: string; site: string; link: string }[];
   journey: {
     title: string;
     company: string;
     date: string;
     description: string;
+    evidence?: { name: string; url: string }[];
   }[];
   desc: string;
   desc_brief: string;
 }
 
+interface CurrentWorkData {
+  title: string;
+  org: string;
+  orgUrl: string;
+  startDate: string;
+}
+
 interface Props {
   data: Info;
+  currentWork?: CurrentWorkData;
   onScrollDown?: () => void;
 }
 
@@ -64,218 +65,193 @@ const MotionBox = motion(Box);
 const MotionImage = motion(Image);
 const MotionStack = motion(Stack);
 
-const Intro = ({ data, onScrollDown }: Props) => {
+const Intro = ({ data, currentWork, onScrollDown }: Props) => {
   const { isOpen, onToggle } = useDisclosure();
   const [displayedText, setDisplayedText] = useState(data.desc_brief);
 
-  // Hoisted — never call useColorModeValue inside a loop or map
-  const skillCardBg = useColorModeValue("gray.100", "rgba(255,255,255,0.05)");
+  // Hoist — never call inside loops/maps
+  const skillCardBg    = useColorModeValue("gray.100", "rgba(255,255,255,0.04)");
   const skillCardBorder = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
-  const cursorColor = useColorModeValue("gray.500", "gray.400");
+  const cursorColor    = useColorModeValue("gray.500", "gray.500");
 
   useEffect(() => {
-    if (!isOpen) {
-      setDisplayedText(data.desc_brief);
-      return;
-    }
+    if (!isOpen) { setDisplayedText(data.desc_brief); return; }
 
-    const targetText = data.desc;
     let index = 0;
-    let currentText = "";
+    let current = "";
     setDisplayedText("");
 
-    const interval = setInterval(() => {
-      if (index < targetText.length) {
-        currentText += targetText.charAt(index);
-        setDisplayedText(currentText);
+    const id = setInterval(() => {
+      if (index < data.desc.length) {
+        current += data.desc.charAt(index);
+        setDisplayedText(current);
         index++;
       } else {
-        clearInterval(interval);
+        clearInterval(id);
       }
-    }, 15);
+    }, 14);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(id);
   }, [isOpen, data.desc, data.desc_brief]);
 
   return (
-    <Box maxW="5xl" mx="auto" px={6} py={10}>
-      {/* Hero */}
+    <Box w="100%">
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <Flex
         direction={{ base: "column", md: "row" }}
-        align="center"
-        justify="center"
-        gap={10}
+        align={{ base: "flex-start", md: "center" }}
+        gap={{ base: 8, md: 12 }}
         mb={14}
       >
-        {/* Profile image */}
-        <Box position="relative" flexShrink={0}>
+        {/* Avatar */}
+        <Box position="relative" flexShrink={0} alignSelf={{ base: "center", md: "flex-start" }} mt={{ md: 1 }}>
           <Box
-            position="absolute"
-            top="50%"
-            left="50%"
+            position="absolute" top="50%" left="50%"
             transform="translate(-50%, -50%)"
-            w="170px"
-            h="170px"
-            bg="blue.500"
-            borderRadius="full"
-            filter="blur(44px)"
-            opacity={0.35}
-            zIndex={0}
+            w="160px" h="160px" borderRadius="full"
+            bg="brand.500" filter="blur(40px)" opacity={0.25} zIndex={0}
           />
           <MotionImage
-            src={data.image}
-            alt={data.name}
-            borderRadius="full"
-            boxSize="155px"
-            objectFit="cover"
-            shadow="2xl"
-            initial={{ opacity: 0, scale: 0.5 }}
+            src={data.image} alt={data.name}
+            borderRadius="full" boxSize="120px" objectFit="cover"
+            shadow="xl" position="relative" zIndex={1}
+            border="1px solid rgba(255,255,255,0.1)"
+            initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            whileHover={{ scale: 1.05 }}
-            position="relative"
-            zIndex={1}
-            border="2px solid"
-            borderColor="whiteAlpha.150"
+            transition={{ duration: 0.45 }}
+            whileHover={{ scale: 1.04 }}
           />
         </Box>
 
         {/* Text */}
         <MotionStack
           spacing={4}
-          textAlign={{ base: "center", md: "left" }}
-          maxW="lg"
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.1 }}
+          flex={1}
         >
           <Box>
-            <Text
-              fontSize="sm"
-              color="blue.400"
-              fontFamily="mono"
-              fontWeight="600"
-              letterSpacing="0.12em"
-              mb={1}
-            >
-              &gt; hello world
+            <Text fontSize="12px" color="brand.400" fontFamily="mono"
+              fontWeight="600" letterSpacing="0.12em" mb={1.5}>
+              &gt;&nbsp;hello world
             </Text>
             <Heading
-              fontSize={{ base: "3xl", md: "5xl" }}
-              bgGradient="linear(to-r, blue.400, purple.400)"
+              fontSize={{ base: "3xl", md: "4xl" }}
+              bgGradient="linear(to-br, gray.100, gray.400)"
               bgClip="text"
               lineHeight="1.15"
-              letterSpacing="-0.02em"
             >
               {data.name}
             </Heading>
           </Box>
 
-          {/* Tags */}
-          <HStack spacing={2} flexWrap="wrap" justify={{ base: "center", md: "flex-start" }}>
-            {data.tags.map((tag) => (
-              <Tag
-                key={tag}
-                size="sm"
-                colorScheme="blue"
-                variant="subtle"
-                fontFamily="mono"
-                fontSize="xs"
-                borderRadius="full"
-              >
+          <HStack spacing={1.5} flexWrap="wrap">
+            {data.tags.map(tag => (
+              <Tag key={tag} size="sm" colorScheme="purple" variant="subtle" fontSize="11px">
                 {tag}
               </Tag>
             ))}
           </HStack>
 
-          <Text
-            fontSize="md"
-            whiteSpace="pre-wrap"
-            lineHeight="1.8"
-            color="gray.400"
-          >
+          <Text fontSize="sm" color="gray.400" lineHeight="1.8" whiteSpace="pre-wrap" maxW="480px">
             {displayedText}
-            <Text
-              as="span"
-              ml="1px"
-              color={cursorColor}
-              fontWeight="bold"
-              animation="blink 1s steps(2, start) infinite"
-            >
-              |
-            </Text>
+            <Text as="span" ml="1px" color={cursorColor}
+              fontWeight="bold" animation="blink 1s steps(2, start) infinite">|</Text>
           </Text>
 
-          <Button
-            onClick={onToggle}
-            size="sm"
-            variant="link"
-            colorScheme="blue"
-            alignSelf={{ base: "center", md: "flex-start" }}
-            fontFamily="mono"
-            fontSize="xs"
-          >
-            {isOpen ? "↑ show less" : "↓ show more"}
+          <Button onClick={onToggle} size="xs" variant="link" colorScheme="purple"
+            fontFamily="mono" fontSize="11px" alignSelf="flex-start">
+            {isOpen ? "↑ less" : "↓ more"}
           </Button>
+
+          {/* Compact "Now" status */}
+          {currentWork && (
+            <MotionBox
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55 }}
+              display="inline-flex"
+              alignItems="center"
+              gap={3}
+              p={3}
+              borderRadius="10px"
+              bg="rgba(255,255,255,0.03)"
+              border="1px solid rgba(255,255,255,0.07)"
+              maxW="fit-content"
+              _hover={{ borderColor: "rgba(99,102,241,0.3)" }}
+              sx={{ transition: "border-color 0.2s" }}
+            >
+              <Box
+                w="7px" h="7px" borderRadius="full" bg="green.400"
+                flexShrink={0} animation="live-dot 2s ease-in-out infinite"
+              />
+              <Box>
+                <Text fontSize="10px" color="green.400" fontFamily="mono"
+                  fontWeight="700" letterSpacing="0.14em">
+                  NOW · {currentWork.startDate}
+                </Text>
+                <HStack spacing={1} align="center">
+                  <Text fontSize="sm" fontWeight="600">{currentWork.title}</Text>
+                  <Text fontSize="xs" color="gray.500">·</Text>
+                  <Text
+                    as="a" href={currentWork.orgUrl} target="_blank" rel="noopener noreferrer"
+                    fontSize="xs" color="brand.400" _hover={{ color: "brand.300" }}
+                    display="inline-flex" alignItems="center" gap={1}
+                  >
+                    {currentWork.org}
+                    <Icon as={FaExternalLinkAlt as ElementType} boxSize={2.5} />
+                  </Text>
+                </HStack>
+              </Box>
+            </MotionBox>
+          )}
         </MotionStack>
       </Flex>
 
-      {/* Tools grid */}
+      {/* ── Tools ────────────────────────────────────────────────────────── */}
       <MotionBox
-        textAlign="center"
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.35 }}
+        transition={{ duration: 0.45, delay: 0.3 }}
       >
-        <Heading
-          size="sm"
-          mb={8}
-          textAlign="center"
-          fontFamily="mono"
-          color="gray.500"
-          letterSpacing="0.15em"
-        >
-          TOOLS I WORK WITH
-        </Heading>
-
-        <Text
-          fontSize="10px"
-          color="gray.600"
-          fontFamily="mono"
-          letterSpacing="0.12em"
-          mb={3}
-        >
-          LANGUAGES
+        {/* Languages — pill chips, primary highlighted */}
+        <Text fontSize="10px" fontFamily="mono" color="gray.600"
+          letterSpacing="0.16em" mb={4} textTransform="uppercase">
+          Languages
         </Text>
-        <Wrap justify="center" spacing={3} mb={8}>
-          {data.languages.map((lang, index) => {
-            const { icon: IconComponent, label } = getTechIcon(lang);
+        <Wrap spacing={2} mb={9}>
+          {data.languages.map((lang, i) => {
+            const { icon: IC, label } = getTechIcon(lang);
+            const primary = i === 0;
             return (
               <WrapItem key={lang}>
-                <Tooltip label={label} hasArrow fontSize="xs">
+                <Tooltip
+                  label={primary ? `${label} · primary` : label}
+                  hasArrow fontSize="11px"
+                >
                   <MotionBox
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    gap={1.5}
-                    px={4}
-                    py={3}
-                    bg={skillCardBg}
+                    display="flex" alignItems="center" gap={2}
+                    px={3.5} py={1.5}
+                    bg={primary ? "rgba(99,102,241,0.08)" : skillCardBg}
                     border="1px solid"
-                    borderColor={skillCardBorder}
-                    borderRadius="xl"
-                    cursor="default"
-                    whileHover={{ y: -4, borderColor: "rgba(0,127,255,0.35)" }}
-                    initial={{ opacity: 0, scale: 0.85 }}
+                    borderColor={primary ? "rgba(99,102,241,0.4)" : skillCardBorder}
+                    borderRadius="full" cursor="default"
+                    whileHover={{ y: -2 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.05 * index }}
+                    transition={{ delay: 0.04 * i }}
                   >
-                    {IconComponent && (
-                      <Icon as={IconComponent as ElementType} boxSize={7} />
+                    {IC && <Icon as={IC as ElementType} boxSize={3.5} />}
+                    <Text fontSize="12px" fontWeight="500">{label}</Text>
+                    {primary && (
+                      <Text
+                        fontSize="9px" color="brand.400" fontFamily="mono"
+                        fontWeight="700" letterSpacing="0.08em" ml={-0.5}
+                      >
+                        ★
+                      </Text>
                     )}
-                    <Text fontSize="xs" fontWeight="500" fontFamily="mono">
-                      {label}
-                    </Text>
                   </MotionBox>
                 </Tooltip>
               </WrapItem>
@@ -283,84 +259,74 @@ const Intro = ({ data, onScrollDown }: Props) => {
           })}
         </Wrap>
 
-        <Text
-          fontSize="10px"
-          color="gray.600"
-          fontFamily="mono"
-          letterSpacing="0.12em"
-          mb={3}
-        >
-          FRAMEWORKS & LIBRARIES
+        {/* Frameworks — grouped by category */}
+        <Text fontSize="10px" fontFamily="mono" color="gray.600"
+          letterSpacing="0.16em" mb={5} textTransform="uppercase">
+          Frameworks & Tools
         </Text>
-        <Wrap justify="center" spacing={3}>
+        <Stack spacing={3.5}>
           {[
-            ...data.frameworks.frontend,
-            ...data.frameworks.backend,
-            ...data.frameworks.databases,
-            ...data.frameworks.misc,
-          ].map((fw, index) => {
-            const { icon: IconComponent, label } = getTechIcon(fw.id);
-            return (
-              <WrapItem key={fw.id}>
-                <Tooltip label={fw.desc} hasArrow fontSize="xs">
-                  <MotionBox
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    gap={1.5}
-                    px={4}
-                    py={3}
-                    bg={skillCardBg}
-                    border="1px solid"
-                    borderColor={skillCardBorder}
-                    borderRadius="xl"
-                    cursor="default"
-                    whileHover={{ y: -4, borderColor: "rgba(0,127,255,0.35)" }}
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.05 * index + 0.2 }}
-                  >
-                    {IconComponent && (
-                      <Icon as={IconComponent as ElementType} boxSize={7} />
-                    )}
-                    <Text fontSize="xs" fontWeight="500" fontFamily="mono">
-                      {fw.name}
-                    </Text>
-                  </MotionBox>
-                </Tooltip>
-              </WrapItem>
-            );
-          })}
-        </Wrap>
+            { key: "frontend", label: "Frontend", items: data.frameworks.frontend },
+            { key: "backend",  label: "Backend",  items: data.frameworks.backend },
+            { key: "data",     label: "Data",     items: data.frameworks.databases },
+            { key: "tools",    label: "Tools",    items: data.frameworks.misc },
+          ]
+            .filter((g) => g.items.length > 0)
+            .map((g, gi) => (
+              <Flex
+                key={g.key}
+                gap={{ base: 2, md: 4 }}
+                align={{ base: "flex-start", md: "center" }}
+                wrap={{ base: "wrap", md: "nowrap" }}
+              >
+                <Text
+                  fontSize="9px" fontFamily="mono" color="gray.600"
+                  letterSpacing="0.16em" textTransform="uppercase"
+                  w={{ base: "auto", md: "70px" }}
+                  flexShrink={0}
+                  pt={{ base: 0, md: 0 }}
+                >
+                  {g.label}
+                </Text>
+                <Wrap spacing={1.5} flex={1}>
+                  {g.items.map((fw, i) => {
+                    const { icon: IC } = getTechIcon(fw.id);
+                    return (
+                      <WrapItem key={fw.id}>
+                        <Tooltip label={fw.desc} hasArrow fontSize="11px">
+                          <MotionBox
+                            display="flex" alignItems="center" gap={1.5}
+                            px={2.5} py={1.5}
+                            bg={skillCardBg} border="1px solid" borderColor={skillCardBorder}
+                            borderRadius="md" cursor="default"
+                            whileHover={{ y: -1, borderColor: "rgba(99,102,241,0.35)" }}
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.03 * i + gi * 0.05 + 0.15 }}
+                          >
+                            {IC && <Icon as={IC as ElementType} boxSize={3} />}
+                            <Text fontSize="11px" fontFamily="mono">{fw.name}</Text>
+                          </MotionBox>
+                        </Tooltip>
+                      </WrapItem>
+                    );
+                  })}
+                </Wrap>
+              </Flex>
+            ))}
+        </Stack>
       </MotionBox>
 
       {/* Scroll cue */}
       {onScrollDown && (
-        <MotionBox
-          textAlign="center"
-          mt={14}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          <Box
-            as="button"
-            onClick={onScrollDown}
-            display="inline-flex"
-            flexDirection="column"
-            alignItems="center"
-            gap={1}
-            color="gray.600"
-            _hover={{ color: "blue.400" }}
-            transition="color 0.2s"
-          >
-            <Text fontSize="10px" fontFamily="mono" letterSpacing="0.1em">
-              scroll
-            </Text>
-            <MotionBox
-              animate={{ y: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-            >
+        <MotionBox textAlign="center" mt={12}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
+          <Box as="button" onClick={onScrollDown}
+            display="inline-flex" flexDirection="column" alignItems="center" gap={1}
+            color="gray.600" _hover={{ color: "brand.400" }} transition="color 0.2s">
+            <Text fontSize="10px" fontFamily="mono" letterSpacing="0.1em">scroll</Text>
+            <MotionBox animate={{ y: [0, 4, 0] }}
+              transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}>
               <Icon as={FaChevronDown as ElementType} boxSize={3} />
             </MotionBox>
           </Box>

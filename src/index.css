@@ -28,3 +28,32 @@ code, pre, kbd, .mono {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 127, 255, 0.25) transparent;
 }
+
+/* ── Easter egg: Konami code activates matrix mode (swap brand color) ──── */
+body.konami-active {
+  --chakra-colors-brand-300: #6effa6;
+  --chakra-colors-brand-400: #00ff41;
+  --chakra-colors-brand-500: #00cc34;
+  --chakra-colors-brand-600: #009928;
+  animation: konami-flash 0.6s ease-out;
+}
+
+body.konami-active * {
+  text-shadow: 0 0 1px rgba(0, 255, 65, 0.15);
+}
+
+@keyframes konami-flash {
+  0% { filter: hue-rotate(0deg) saturate(1); }
+  20% { filter: hue-rotate(60deg) saturate(1.5); }
+  100% { filter: hue-rotate(0deg) saturate(1); }
+}
+
+/* ── Rainbow mode: cycle hue ──── */
+body.rainbow-active {
+  animation: rainbow-cycle 3s linear infinite;
+}
+
+@keyframes rainbow-cycle {
+  0%   { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}

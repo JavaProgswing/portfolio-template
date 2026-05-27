@@ -4,155 +4,193 @@ import {
   Text,
   SimpleGrid,
   Stack,
-  Badge,
+  Tag,
   Link,
   Icon,
   useColorModeValue,
   Tooltip,
   Wrap,
   WrapItem,
-  Flex,
+  HStack,
+  Badge,
 } from "@chakra-ui/react";
-import { FaGithub, FaGlobe, FaExternalLinkAlt } from "react-icons/fa";
+import { FaGithub, FaGlobe, FaStar, FaCodeBranch } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { Info } from "./Intro";
-import { IconType } from "react-icons";
 import { ElementType } from "react";
 import { motion } from "framer-motion";
+import reposData from "../data/repos.json";
 
 interface Props {
   data: Info;
 }
 
-const getIconForType = (type: string): IconType => {
-  switch (type.toLowerCase()) {
-    case "github":
-      return FaGithub;
-    case "vercel":
-      return FaGlobe;
-    default:
-      return FaExternalLinkAlt;
-  }
+interface FetchedRepo {
+  name: string;
+  description: string;
+  url: string;
+  homepage: string;
+  language: string;
+  stars: number;
+  forks: number;
+  topics: string[];
+  pushedAt: string;
+  score: number;
+}
+
+const getTypeIcon = (name: string): ElementType => {
+  const n = name.toLowerCase();
+  if (n === "github") return FaGithub as ElementType;
+  if (n === "live" || n === "vercel" || n === "website") return FaGlobe as ElementType;
+  return FaExternalLinkAlt as ElementType;
+};
+
+const LANG_COLOR: Record<string, string> = {
+  java: "orange",
+  python: "blue",
+  typescript: "cyan",
+  javascript: "yellow",
+  rust: "orange",
+  "c#": "purple",
+  go: "cyan",
+  html: "orange",
+  css: "blue",
 };
 
 const MotionBox = motion(Box);
 
-const container = {
-  hidden: { opacity: 1, scale: 0 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      delayChildren: 0.3,
-      staggerChildren: 0.2,
-    },
-  },
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-  },
-};
-
 const Projects = ({ data }: Props) => {
-  const cardBg = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
-  const textColor = useColorModeValue("gray.600", "gray.400");
-  const headingColor = useColorModeValue("gray.800", "white");
+  const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
+
+  // Use fetched repos if available, otherwise fall back to me.ts projects
+  const fetchedRepos = (reposData as { repos: FetchedRepo[] }).repos;
+  const useFetched = fetchedRepos.length > 0;
 
   return (
-    <Box maxW="6xl" mx="auto" px={6} py={10}>
-      <Heading
-        as="h2"
-        size="xl"
-        mb={10}
-        textAlign="center"
-        bgGradient="linear(to-r, blue.400, purple.500)"
-        bgClip="text"
-      >
-        Featured Projects
-      </Heading>
-      <SimpleGrid
-        as={motion.div}
-        columns={{ base: 1, md: 2, lg: 3 }}
-        spacing={8}
-        variants={container}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-      >
-        {data.projects.map((project, index) => (
-          <MotionBox
-            key={index}
-            variants={item}
-            p={6}
-            borderRadius="xl"
-            layerStyle="glass"
-            position="relative"
-            overflow="hidden"
-            transition={{ duration: 0.3 }}
-            whileHover={{
-              y: -10,
-              boxShadow: "0 0 20px rgba(66, 153, 225, 0.4)",
-              borderColor: "blue.400",
-            }}
-          >
-            <Stack spacing={4} height="100%">
-              <Flex justify="space-between" align="center">
-                <Heading size="md" color={headingColor} noOfLines={1}>
-                  {project.name}
-                </Heading>
-                <Wrap>
-                  {project.links.map((link, idx) => {
-                    const IconComponent = getIconForType(link.name);
-                    return link.link ? (
-                      <WrapItem key={idx}>
-                        <Tooltip label={link.name} hasArrow>
-                          <Link
-                            href={link.link}
-                            isExternal
-                            aria-label={link.name}
-                            _hover={{ color: "blue.400" }}
-                          >
-                            <Icon
-                              as={IconComponent as ElementType}
-                              boxSize={5}
-                            />
+    <Box>
+      <HStack justify="space-between" align="flex-end" mb={8}>
+        <Box>
+          <Text fontSize="11px" fontFamily="mono" color="gray.500"
+            letterSpacing="0.14em" mb={2} textTransform="uppercase">
+            Projects
+          </Text>
+          <Heading size="lg">What I've Built</Heading>
+        </Box>
+        {useFetched && (
+          <Tooltip label="Ranked by stars, activity, and complexity" hasArrow fontSize="xs">
+            <Text fontSize="11px" color="gray.600" fontFamily="mono" cursor="default">
+              auto-ranked ↑
+            </Text>
+          </Tooltip>
+        )}
+      </HStack>
+
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+        {useFetched
+          ? fetchedRepos.map((repo, i) => (
+              <MotionBox
+                key={repo.name}
+                p={5} borderRadius="12px" layerStyle="card"
+                border="1px solid" borderColor={border}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                _hover={{ borderColor: "brand.500", boxShadow: "0 0 16px rgba(99,102,241,0.1)" }}
+                display="flex" flexDirection="column"
+              >
+                <Stack spacing={3} flex={1}>
+                  <HStack justify="space-between" align="flex-start">
+                    <Text fontWeight="600" fontSize="sm" isTruncated flex={1}>{repo.name}</Text>
+                    <HStack spacing={3} flexShrink={0}>
+                      {repo.homepage && (
+                        <Tooltip label="Live demo" hasArrow fontSize="xs">
+                          <Link href={repo.homepage} isExternal color="gray.500" _hover={{ color: "brand.400" }}>
+                            <Icon as={FaGlobe as ElementType} boxSize={3.5} />
                           </Link>
                         </Tooltip>
+                      )}
+                      <Link href={repo.url} isExternal color="gray.500" _hover={{ color: "brand.400" }}>
+                        <Icon as={FaGithub as ElementType} boxSize={3.5} />
+                      </Link>
+                    </HStack>
+                  </HStack>
+
+                  <Text fontSize="xs" color="gray.400" lineHeight="1.7" flex={1}>
+                    {repo.description || "No description."}
+                  </Text>
+
+                  <HStack justify="space-between" align="center" mt="auto" pt={1}>
+                    <HStack spacing={3}>
+                      {repo.stars > 0 && (
+                        <HStack spacing={1}>
+                          <Icon as={FaStar as ElementType} boxSize={3} color="yellow.400" />
+                          <Text fontSize="11px" color="gray.500" fontFamily="mono">{repo.stars}</Text>
+                        </HStack>
+                      )}
+                      {repo.forks > 0 && (
+                        <HStack spacing={1}>
+                          <Icon as={FaCodeBranch as ElementType} boxSize={3} color="gray.500" />
+                          <Text fontSize="11px" color="gray.500" fontFamily="mono">{repo.forks}</Text>
+                        </HStack>
+                      )}
+                    </HStack>
+                    {repo.language && (
+                      <Badge
+                        colorScheme={LANG_COLOR[repo.language.toLowerCase()] ?? "gray"}
+                        variant="subtle" fontSize="10px"
+                      >
+                        {repo.language}
+                      </Badge>
+                    )}
+                  </HStack>
+                </Stack>
+              </MotionBox>
+            ))
+          : data.projects.map((project, i) => (
+              <MotionBox
+                key={i}
+                p={5} borderRadius="12px" layerStyle="card"
+                border="1px solid" borderColor={border}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                _hover={{ borderColor: "brand.500", boxShadow: "0 0 16px rgba(99,102,241,0.1)" }}
+                display="flex" flexDirection="column"
+              >
+                <Stack spacing={3} flex={1}>
+                  <HStack justify="space-between" align="flex-start">
+                    <Text fontWeight="600" fontSize="sm" flex={1}>{project.name}</Text>
+                    <HStack spacing={2} flexShrink={0}>
+                      {project.links.map(l => (
+                        l.link && (
+                          <Tooltip key={l.name} label={l.name} hasArrow fontSize="xs">
+                            <Link href={l.link} isExternal color="gray.500" _hover={{ color: "brand.400" }}>
+                              <Icon as={getTypeIcon(l.name)} boxSize={3.5} />
+                            </Link>
+                          </Tooltip>
+                        )
+                      ))}
+                    </HStack>
+                  </HStack>
+
+                  <Text fontSize="xs" color="gray.400" lineHeight="1.7" flex={1}>
+                    {project.description}
+                  </Text>
+
+                  <Wrap spacing={1.5} mt="auto" pt={1}>
+                    {project.skills.map(s => (
+                      <WrapItem key={s}>
+                        <Tag size="sm" colorScheme="gray" variant="subtle" fontSize="10px">{s}</Tag>
                       </WrapItem>
-                    ) : null;
-                  })}
-                </Wrap>
-              </Flex>
-
-              <Text fontSize="sm" color={textColor} flex="1">
-                {project.description}
-              </Text>
-
-              {/* Skills */}
-              <Wrap mt="auto">
-                {project.skills.map((skill, idx) => (
-                  <WrapItem key={idx}>
-                    <Badge
-                      px={2}
-                      py={1}
-                      borderRadius="full"
-                      fontSize="xs"
-                      colorScheme="blue"
-                      variant="subtle"
-                    >
-                      {skill}
-                    </Badge>
-                  </WrapItem>
-                ))}
-              </Wrap>
-            </Stack>
-          </MotionBox>
-        ))}
+                    ))}
+                  </Wrap>
+                </Stack>
+              </MotionBox>
+            ))}
       </SimpleGrid>
+
     </Box>
   );
 };

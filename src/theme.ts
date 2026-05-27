@@ -13,98 +13,99 @@ const theme = extendTheme({
     mono: "'JetBrains Mono', monospace",
   },
   colors: {
+    // Zinc neutrals (shadcn/ui dark palette)
     gray: {
-      50: "#f9f9f9",
-      100: "#ededed",
-      200: "#d3d3d3",
-      300: "#b3b3b3",
-      400: "#a0a0a0",
-      500: "#898989",
-      600: "#6c6c6c",
-      700: "#202020",
-      800: "#121212",
-      900: "#0a0a0a",
+      50:  "#fafafa",
+      100: "#f4f4f5",
+      200: "#e4e4e7",
+      300: "#d4d4d8",
+      400: "#a1a1aa",
+      500: "#71717a",
+      600: "#52525b",
+      700: "#3f3f46",
+      800: "#27272a",
+      900: "#18181b",
+      950: "#09090b",
     },
+    // Indigo accent — more distinctive than generic blue
     brand: {
-      50: "#e0f2ff",
-      100: "#b9dbff",
-      200: "#8cc5ff",
-      300: "#5eaeff",
-      400: "#3398ff",
-      500: "#007fff",
-      600: "#0066cc",
-      700: "#004c99",
-      800: "#003366",
-      900: "#001933",
-    },
-    accent: {
-      purple: "#805ad5",
-      cyan: "#0bc5ea",
-      green: "#38a169",
+      50:  "#eef2ff",
+      100: "#e0e7ff",
+      200: "#c7d2fe",
+      300: "#a5b4fc",
+      400: "#818cf8",
+      500: "#6366f1",
+      600: "#4f46e5",
+      700: "#4338ca",
+      800: "#3730a3",
+      900: "#312e81",
     },
   },
   styles: {
     global: (props: { colorMode: string }) => ({
       "@keyframes blink": {
-        "0%": { opacity: 1 },
-        "50%": { opacity: 0 },
+        "0%":   { opacity: 1 },
+        "50%":  { opacity: 0 },
         "100%": { opacity: 1 },
-      },
-      "@keyframes pulse-glow": {
-        "0%, 100%": { opacity: 1, boxShadow: "0 0 6px rgba(72,187,120,0.8)" },
-        "50%": { opacity: 0.5, boxShadow: "0 0 2px rgba(72,187,120,0.3)" },
       },
       "@keyframes live-dot": {
         "0%, 100%": { transform: "scale(1)", opacity: 1 },
-        "50%": { transform: "scale(1.5)", opacity: 0.6 },
+        "50%":       { transform: "scale(1.6)", opacity: 0.5 },
       },
       "@keyframes float": {
         "0%, 100%": { transform: "translateY(0px)" },
-        "50%": { transform: "translateY(-6px)" },
+        "50%":       { transform: "translateY(-5px)" },
+      },
+      "html, body": {
+        fontSize: "15px",
+        fontFamily: "'Inter', system-ui, sans-serif",
+        WebkitFontSmoothing: "antialiased",
+        MozOsxFontSmoothing: "grayscale",
       },
       body: {
-        bg: props.colorMode === "light" ? "gray.50" : "gray.900",
-        color: props.colorMode === "light" ? "gray.800" : "gray.100",
-        backgroundImage:
-          props.colorMode === "dark"
-            ? "radial-gradient(ellipse at 50% 0%, #141428 0%, #0a0a0a 70%)"
-            : "none",
-        fontFamily: "'Inter', system-ui, sans-serif",
+        bg:    props.colorMode === "dark" ? "#09090b" : "#fafafa",
+        color: props.colorMode === "dark" ? "#e4e4e7" : "#18181b",
+        lineHeight: "1.6",
+      },
+      // Typography defaults
+      "h1, h2, h3, h4, h5, h6": {
+        letterSpacing: "-0.025em",
       },
     }),
   },
   layerStyles: {
+    card: {
+      bg: "rgba(255,255,255,0.03)",
+      border: "1px solid rgba(255,255,255,0.07)",
+      borderRadius: "12px",
+    },
     glass: {
-      bg: "rgba(255, 255, 255, 0.04)",
+      bg: "rgba(255,255,255,0.03)",
       backdropFilter: "blur(12px)",
-      border: "1px solid rgba(255, 255, 255, 0.08)",
-      boxShadow: "0 4px 30px rgba(0, 0, 0, 0.15)",
+      border: "1px solid rgba(255,255,255,0.07)",
     },
     glassStrong: {
-      bg: "rgba(255, 255, 255, 0.07)",
+      bg: "rgba(255,255,255,0.06)",
       backdropFilter: "blur(16px)",
-      border: "1px solid rgba(255, 255, 255, 0.12)",
-      boxShadow: "0 8px 40px rgba(0, 0, 0, 0.2)",
-    },
-    glow: {
-      boxShadow: "0 0 15px rgba(66, 153, 225, 0.5)",
+      border: "1px solid rgba(255,255,255,0.1)",
     },
   },
   components: {
-    Text: {
-      baseStyle: (props: { colorMode: string }) => ({
-        color: props.colorMode === "light" ? "gray.700" : "gray.300",
-      }),
-    },
     Heading: {
       baseStyle: {
         fontFamily: "'Inter', system-ui, sans-serif",
         fontWeight: "700",
+        letterSpacing: "-0.025em",
       },
+    },
+    Text: {
+      baseStyle: (props: { colorMode: string }) => ({
+        color: props.colorMode === "dark" ? "gray.300" : "gray.700",
+      }),
     },
     Button: {
       baseStyle: {
-        fontWeight: "600",
+        fontWeight: "500",
         fontFamily: "'Inter', system-ui, sans-serif",
       },
       variants: {
@@ -114,22 +115,41 @@ const theme = extendTheme({
           borderColor: "brand.400",
           color: "brand.400",
           _hover: {
-            boxShadow: "0 0 15px rgba(51, 152, 255, 0.6)",
-            bg: "rgba(51, 152, 255, 0.1)",
+            boxShadow: "0 0 12px rgba(99,102,241,0.4)",
+            bg: "rgba(99,102,241,0.08)",
           },
         },
-        terminal: {
-          bg: "transparent",
-          border: "1px solid",
-          borderColor: "green.500",
-          color: "green.400",
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: "sm",
-          _hover: {
-            boxShadow: "0 0 12px rgba(72, 187, 120, 0.4)",
-            bg: "rgba(72, 187, 120, 0.08)",
+      },
+    },
+    Tabs: {
+      variants: {
+        line: {
+          tab: {
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "13px",
+            color: "gray.500",
+            _selected: { color: "brand.400", borderColor: "brand.400" },
+            _hover: { color: "gray.200" },
           },
         },
+      },
+    },
+    Badge: {
+      baseStyle: {
+        fontFamily: "'JetBrains Mono', monospace",
+        fontWeight: "500",
+        fontSize: "11px",
+      },
+    },
+    Tag: {
+      baseStyle: {
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: "11px",
+      },
+    },
+    Link: {
+      baseStyle: {
+        _hover: { textDecoration: "none" },
       },
     },
   },

@@ -1,89 +1,54 @@
 import { Box, Tooltip } from "@chakra-ui/react";
 
-export type Section =
-  | "intro"
-  | "building"
-  | "cp"
-  | "journey"
-  | "projects"
-  | "blog";
+export type Section = "home" | "journey" | "projects" | "activity" | "writing";
 
 interface Props {
-  onIntroClick: () => void;
-  onBuildingClick: () => void;
-  onCpClick: () => void;
+  onHomeClick: () => void;
   onJourneyClick: () => void;
   onProjectsClick: () => void;
-  onBlogClick: () => void;
+  onActivityClick: () => void;
+  onWritingClick: () => void;
   activeSection: Section;
 }
 
 const ITEMS: { id: Section; label: string }[] = [
-  { id: "intro", label: "About" },
-  { id: "building", label: "Now" },
-  { id: "cp", label: "CP" },
-  { id: "journey", label: "Journey" },
+  { id: "home",     label: "Home" },
+  { id: "journey",  label: "Journey" },
   { id: "projects", label: "Projects" },
-  { id: "blog", label: "Writing" },
+  { id: "activity", label: "Activity" },
+  { id: "writing",  label: "Writing" },
 ];
 
 const SectionNavigator = ({
-  onIntroClick,
-  onBuildingClick,
-  onCpClick,
-  onJourneyClick,
-  onProjectsClick,
-  onBlogClick,
+  onHomeClick, onJourneyClick, onProjectsClick, onActivityClick, onWritingClick,
   activeSection,
 }: Props) => {
   const handlers: Record<Section, () => void> = {
-    intro: onIntroClick,
-    building: onBuildingClick,
-    cp: onCpClick,
+    home: onHomeClick,
     journey: onJourneyClick,
     projects: onProjectsClick,
-    blog: onBlogClick,
+    activity: onActivityClick,
+    writing: onWritingClick,
   };
 
   return (
     <Box
-      position="fixed"
-      right="32px"
-      top="50%"
-      transform="translateY(-50%)"
-      display="flex"
-      flexDirection="column"
-      gap={5}
-      zIndex={10}
+      position="fixed" right="28px" top="50%" transform="translateY(-50%)"
+      display="flex" flexDirection="column" gap={5} zIndex={10}
     >
-      {ITEMS.map((item) => {
-        const isActive = activeSection === item.id;
+      {ITEMS.map(item => {
+        const active = activeSection === item.id;
         return (
-          <Tooltip
-            key={item.id}
-            label={item.label}
-            placement="left"
-            hasArrow
-            bg="gray.800"
-            color="white"
-            fontSize="xs"
-            fontFamily="mono"
-          >
+          <Tooltip key={item.id} label={item.label} placement="left" hasArrow
+            bg="gray.800" color="white" fontSize="11px" fontFamily="mono">
             <Box
-              as="button"
-              onClick={handlers[item.id]}
-              w={isActive ? "10px" : "8px"}
-              h={isActive ? "10px" : "8px"}
+              as="button" onClick={handlers[item.id]}
+              w={active ? "8px" : "6px"} h={active ? "8px" : "6px"}
               borderRadius="full"
-              bg={isActive ? "blue.400" : "gray.600"}
-              transition="all 0.25s ease"
-              _hover={{
-                transform: "scale(1.4)",
-                bg: isActive ? "blue.300" : "gray.400",
-              }}
-              boxShadow={
-                isActive ? "0 0 10px rgba(66,153,225,0.7)" : "none"
-              }
+              bg={active ? "brand.400" : "gray.700"}
+              transition="all 0.2s ease"
+              _hover={{ transform: "scale(1.5)", bg: active ? "brand.300" : "gray.500" }}
+              boxShadow={active ? "0 0 8px rgba(99,102,241,0.6)" : "none"}
             />
           </Tooltip>
         );
