@@ -23,6 +23,18 @@ dist-ssr
 *.sln
 *.sw?
 
-# Data files
+# Personal data (each user has their own — me.example.ts is the template)
 src/data/me.ts
+src/data/repos.json
 .env
+
+# Backend runtime
+backend/.env
+backend/portfolio.db
+backend/portfolio.db-*
+backend/venv/
+backend/__pycache__/
+*.pyc
+
+# Local deploy artifacts
+backend/portfolio-api.service.local

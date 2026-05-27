@@ -20,6 +20,21 @@ import {
   applyTheme,
   resolveInitialTheme,
 } from "../themes/palettes";
+import { unlock, getStats } from "../lib/achievements";
+
+const TRIED_KEY = "portfolio-themes-tried";
+
+function recordThemeTry(key: string) {
+  try {
+    const raw = localStorage.getItem(TRIED_KEY);
+    const tried: Set<string> = new Set(raw ? JSON.parse(raw) : []);
+    tried.add(key);
+    localStorage.setItem(TRIED_KEY, JSON.stringify([...tried]));
+    if (tried.size >= THEMES.length) unlock("all-themes");
+  } catch {
+    // ignore
+  }
+}
 
 const MotionBox = motion(Box);
 
@@ -41,7 +56,11 @@ const ThemeSwitcher = () => {
   const handlePick = (key: string) => {
     setCurrent(key);
     applyTheme(key);
+    recordThemeTry(key);
   };
+
+  // Also record the initial theme as "tried" on mount
+  useEffect(() => { recordThemeTry(current); }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Popover

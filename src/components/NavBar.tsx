@@ -13,6 +13,7 @@ import ContactBadges from "./ContactBadges";
 import ColorModeToggle from "./ColorModeToggle";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Confetti from "./Confetti";
+import { unlock } from "../lib/achievements";
 
 interface Props {
   data: Info & {
@@ -42,6 +43,7 @@ const Navbar = ({ data }: Props) => {
     if (clicksRef.current.length >= 5) {
       clicksRef.current = [];
       setConfettiKey((k) => k + 1);
+      unlock("logo-burst");
       toast({
         title: "🎉 you found it",
         description: "5 clicks · keep exploring",

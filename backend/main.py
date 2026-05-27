@@ -27,11 +27,13 @@ from pydantic import BaseModel, Field
 
 DB_PATH = Path(__file__).parent / "portfolio.db"
 
-ALLOWED_ORIGINS = [
-    "https://yashasviallen.is-a.dev",
-    "http://localhost:5173",
-    "http://localhost:4173",
-]
+# Comma-separated list of allowed origins. Set in .env or as env var.
+# e.g. ALLOWED_ORIGINS="https://yourdomain.com,http://localhost:5173"
+_origins_env = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:4173",
+)
+ALLOWED_ORIGINS = [o.strip() for o in _origins_env.split(",") if o.strip()]
 
 # Spotify OAuth credentials (set in environment or .env)
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID", "")

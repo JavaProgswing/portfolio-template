@@ -30,6 +30,7 @@ import {
   FaPenNib,
 } from "react-icons/fa";
 import { THEMES, applyTheme } from "../themes/palettes";
+import { unlock } from "../lib/achievements";
 
 // ── Keyboard Shortcuts Modal (triggered by `?`) ──────────────────────────────
 
@@ -78,6 +79,7 @@ export const ShortcutsModal = () => {
       if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
         onOpen();
+        unlock("shortcuts");
       }
     };
     window.addEventListener("keydown", onKey);
@@ -321,13 +323,20 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
     });
   }, [commands, query]);
 
+  // Close palette + modal on the global "close-all" event (triple Esc)
+  useEffect(() => {
+    const handler = () => onClose();
+    window.addEventListener("close-all", handler);
+    return () => window.removeEventListener("close-all", handler);
+  }, [onClose]);
+
   // Global key listener for cmd+k
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         if (isOpen) onClose();
-        else { setQuery(""); setSelectedIdx(0); onOpen(); }
+        else { setQuery(""); setSelectedIdx(0); onOpen(); unlock("command-pal"); }
       }
     };
     window.addEventListener("keydown", onKey);

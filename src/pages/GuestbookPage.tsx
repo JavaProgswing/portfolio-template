@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link as RouterLink } from "react-router-dom";
+import { unlock } from "../lib/achievements";
 
 const MotionBox = motion(Box);
 
@@ -74,6 +75,7 @@ const GuestbookPage = () => {
       if (!res.ok) throw new Error("submit_failed");
       setName("");
       setMessage("");
+      unlock("guestbook");
       toast({
         title: "✓ message posted",
         status: "success",

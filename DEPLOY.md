@@ -2,20 +2,33 @@
 
 Two pieces:
 
-1. **Frontend** — React build → `/var/www/yashasviallen.is-a.dev/html`
+1. **Frontend** — React build → nginx html root
 2. **Backend** — FastAPI service → `127.0.0.1:27012`, proxied via nginx
 
 ---
 
-## 1. nginx changes
+## 0. Set your variables
 
-Open the config:
+Used throughout the rest of this guide. Adjust to match your setup:
 
 ```bash
-sudo nano /etc/nginx/sites-available/yashasviallen.is-a.dev.conf
+DOMAIN=yourdomain.com                           # the domain serving the site
+SERVER=user@your-server.example.com             # ssh target
+HTML_DIR=/var/www/$DOMAIN/html                  # nginx root for static files
+USER_NAME=$USER                                 # linux user owning portfolio-api
 ```
 
-Add these blocks **inside the existing `server { ... }` block**. Place them **at the end**, _just before_ the closing `}`. Order matters — exact-match `location =` blocks (like `/github`) keep priority over the catch-all.
+---
+
+## 1. nginx config
+
+Open the site config:
+
+```bash
+sudo nano /etc/nginx/sites-available/$DOMAIN.conf
+```
+
+Inside the existing `server { ... }` block, add:
 
 ```nginx
     # ── Portfolio API proxy ─────────────────────────────────────────────
@@ -37,7 +50,7 @@ Add these blocks **inside the existing `server { ... }` block**. Place them **at
         try_files $uri =404;
     }
 
-    # ── SPA fallback (must come LAST among location blocks) ─────────────
+    # ── SPA fallback ────────────────────────────────────────────────────
     # Any request that didn't match a redirect, proxy, or static file
     # falls through to index.html so React Router can handle it.
     location / {
@@ -49,117 +62,171 @@ Add these blocks **inside the existing `server { ... }` block**. Place them **at
 Test + reload:
 
 ```bash
-sudo nginx -t                  # verify config syntax
-sudo systemctl reload nginx    # zero-downtime reload
+sudo nginx -t                  # syntax check
+sudo systemctl reload nginx
 ```
+
+> **Note on order**: nginx prefix-matching uses longest-match-wins, NOT declaration order. You can place these blocks anywhere in the `server` block. Order only matters for regex `location ~` blocks.
 
 ---
 
 ## 2. Backend setup
 
 ```bash
-# On the server (Ubuntu box that runs nginx)
+# On the server
+INSTALL_DIR=/home/$USER_NAME/portfolio-api
+sudo mkdir -p $INSTALL_DIR
+sudo chown $USER_NAME:$USER_NAME $INSTALL_DIR
+```
 
-# Create app directory
-sudo mkdir -p /home/yashasvi/portfolio-api
-sudo chown yashasvi:yashasvi /home/yashasvi/portfolio-api
+From your dev machine:
 
-# Copy backend files from this repo to the server
-# From your dev machine:
-scp backend/main.py backend/requirements.txt backend/portfolio-api.service backend/.env.example yashasvi@yashasviallen.dynv6.net:/home/yashasvi/portfolio-api/
+```bash
+scp backend/main.py backend/get_spotify_token.py backend/requirements.txt \
+    backend/portfolio-api.service backend/.env.example \
+    $SERVER:/home/$USER_NAME/portfolio-api/
+```
 
-# On server: set up venv
-cd /home/yashasvi/portfolio-api
+Back on the server:
+
+```bash
+cd /home/$USER_NAME/portfolio-api
 python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
 
-# Optional: configure Spotify
+# Configure
 cp .env.example .env
-nano .env   # fill in SPOTIFY_* if you want now-playing
+nano .env                          # set ALLOWED_ORIGINS=https://$DOMAIN
+                                    # also SPOTIFY_* if you want now-playing
 
-# Install systemd unit
+# Substitute your linux username into the systemd unit
+sed -i "s/__USER__/$USER_NAME/g" portfolio-api.service
+
 sudo cp portfolio-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now portfolio-api
-sudo systemctl status portfolio-api    # should show "active (running)"
+sudo systemctl status portfolio-api    # active (running)
 ```
 
-Verify the backend is reachable:
+Verify:
 
 ```bash
 curl http://127.0.0.1:27012/health
-# expected: {"ok":true,"ts":"..."}
+# {"ok":true,"ts":"..."}
 
-curl https://yashasviallen.is-a.dev/api/portfolio/health
-# same response, but through nginx
+curl https://$DOMAIN/api/portfolio/health
+# same, via nginx
 ```
 
 ---
 
-## 3. Frontend deploy
+## 3. Frontend build + deploy
 
 On your dev machine:
 
 ```bash
 cd my-portfolio
-npm install                # only first time, or when deps changed
-npm run fetch-repos        # refresh GitHub repo ranking (optional, before each deploy)
-npm run build              # outputs to dist/
+
+# First-time deps
+npm install
+
+# (optional) refresh GitHub repo ranking — runs the scoring algorithm
+npm run fetch-repos
+
+# Build
+npm run build
 ```
 
-Push to server:
+Push to server. **CRITICAL**: trailing slash on `dist/` so contents (not the dir itself) upload. Force-readable perms so nginx can serve:
 
 ```bash
-# Option A: rsync (recommended)
-rsync -avz --delete dist/ yashasvi@yashasviallen.dynv6.net:/var/www/yashasviallen.is-a.dev/html/
+rsync -avz --delete \
+  --chmod=D755,F644 \
+  dist/ $SERVER:$HTML_DIR/
+```
 
-# Option B: scp + clean
-ssh yashasvi@yashasviallen.dynv6.net "sudo rm -rf /var/www/yashasviallen.is-a.dev/html/*"
-scp -r dist/* yashasvi@yashasviallen.dynv6.net:/var/www/yashasviallen.is-a.dev/html/
+If you skipped `--chmod`, fix perms after:
 
-# If permissions are an issue:
-ssh yashasvi@yashasviallen.dynv6.net "sudo chown -R www-data:www-data /var/www/yashasviallen.is-a.dev/html/"
+```bash
+ssh $SERVER "sudo chmod -R a+rX $HTML_DIR"
 ```
 
 ---
 
-## 4. Verify everything
+## 4. Deploy script (recommended)
 
-Open in browser:
+Save this as `scripts/deploy.sh` so you don't have to remember the flags:
 
-| URL                                                   | Should show             |
-| ----------------------------------------------------- | ----------------------- |
-| `https://yashasviallen.is-a.dev/`                     | Main portfolio          |
-| `https://yashasviallen.is-a.dev/uses`                 | What I use page         |
-| `https://yashasviallen.is-a.dev/now`                  | Current focus page      |
-| `https://yashasviallen.is-a.dev/colophon`             | How site was built      |
-| `https://yashasviallen.is-a.dev/console`              | Interactive terminal    |
-| `https://yashasviallen.is-a.dev/guestbook`            | Sign the wall           |
-| `https://yashasviallen.is-a.dev/nonexistent`          | 404 page                |
-| `https://yashasviallen.is-a.dev/api/portfolio/health` | `{"ok":true,...}`       |
-| `https://yashasviallen.is-a.dev/api/portfolio/visits` | `{"total":N,"today":M}` |
+```bash
+#!/usr/bin/env bash
+set -e
 
-Existing redirects must still work:
+DOMAIN=${DOMAIN:?set DOMAIN env var}
+SERVER=${SERVER:?set SERVER env var}
+HTML_DIR=${HTML_DIR:-/var/www/$DOMAIN/html}
 
-| `https://yashasviallen.is-a.dev/github` | Redirects to GitHub |
-| `https://yashasviallen.is-a.dev/linkedin` | Redirects to LinkedIn |
-| etc. | |
+echo "→ building…"
+npm run build
+
+echo "→ syncing to $SERVER:$HTML_DIR…"
+rsync -avz --delete --chmod=D755,F644 dist/ "$SERVER:$HTML_DIR/"
+
+echo "→ ✓ deployed to https://$DOMAIN"
+```
+
+Run with:
+
+```bash
+DOMAIN=yourdomain.com SERVER=user@your-server ./scripts/deploy.sh
+```
+
+Or `chmod +x scripts/deploy.sh` and export those vars to your shell rc.
 
 ---
 
-## 5. Troubleshooting
+## 5. Verify
 
-**SPA routes 404 instead of loading the app**
-→ The `location /` block with `try_files` is missing or not at the end. Order matters — nginx picks the most specific match, but for non-exact paths it picks the last one written.
+| URL                                       | Expected           |
+| ----------------------------------------- | ------------------ |
+| `https://$DOMAIN/`                        | Home               |
+| `https://$DOMAIN/uses`                    | Uses page          |
+| `https://$DOMAIN/now`                     | Now page           |
+| `https://$DOMAIN/colophon`                | Colophon           |
+| `https://$DOMAIN/console`                 | Terminal           |
+| `https://$DOMAIN/guestbook`               | Guestbook          |
+| `https://$DOMAIN/random-404`              | 404 page           |
+| `https://$DOMAIN/api/portfolio/health`    | `{"ok":true,...}`  |
+| `https://$DOMAIN/api/portfolio/visits`    | `{"total":N,...}`  |
 
-**API returns CORS error in browser**
-→ Check `ALLOWED_ORIGINS` in `backend/main.py` includes your domain.
+---
 
-**Backend won't start (systemctl status shows failed)**
-→ `journalctl -u portfolio-api -n 50` to see logs. Usually `pip install` didn't run inside the venv or the path to `uvicorn` in the service file is wrong.
+## 6. Troubleshooting
+
+**SPA routes 404**
+→ The `location /` block with `try_files` is missing. Add it back.
+
+**Assets return 404**
+→ Permissions. nginx (`www-data`) must read the files. Check with:
+```bash
+namei -l $HTML_DIR/assets/index-<hash>.js
+ls -la $HTML_DIR/assets/
+# Fix: sudo chmod -R a+rX $HTML_DIR
+```
+
+**Assets return 403**
+→ Directory has `drwx------`. Run the chmod above.
+
+**API returns CORS error**
+→ `ALLOWED_ORIGINS` in backend `.env` doesn't include your domain. Fix and restart: `sudo systemctl restart portfolio-api`.
+
+**Backend won't start**
+→ `journalctl -u portfolio-api -n 50` shows the error. Common causes:
+- venv path wrong (check the `__USER__` substitution actually ran)
+- `pip install` didn't complete
+- Port 27012 already in use
 
 **Spotify now-playing returns 503**
-→ `SPOTIFY_*` env vars not set. The endpoint is optional; the frontend gracefully degrades to a normal Spotify link if it returns errors.
+→ `SPOTIFY_*` env vars not set. The endpoint is optional; the frontend gracefully degrades to a normal link.
 
-**Page works locally but broken in prod**
-→ Check `npm run build` finished without errors, and that you `rsync`'d the entire `dist/` directory (not just `index.html`).
+**Page works on direct hit but stale via Cloudflare**
+→ Purge Cloudflare cache (dashboard → Caching → Purge Everything). Asset URLs are hash-based so they self-bust, but `index.html` itself may be cached. The `Cache-Control: no-cache` header on the `location /` block tells CF not to cache it, but purge anyway after deploy.

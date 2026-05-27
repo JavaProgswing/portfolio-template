@@ -14,44 +14,64 @@ Storage: SQLite at `./portfolio.db` (auto-created).
 
 ## Deployment on Ubuntu
 
+Set a variable for your linux username (used throughout):
+
 ```bash
-# 1. Clone the repo (or copy just the backend/ dir) onto the server
-sudo mkdir -p /home/yashasvi/portfolio-api
-sudo chown yashasvi:yashasvi /home/yashasvi/portfolio-api
-cd /home/yashasvi/portfolio-api
+USER_NAME=$USER                    # or set explicitly: USER_NAME=alice
+INSTALL_DIR=/home/$USER_NAME/portfolio-api
+```
 
-# Copy main.py, requirements.txt, portfolio-api.service, .env.example here
-# (e.g. via scp from your dev machine, or git clone if you push backend to a separate repo)
+```bash
+# 1. Create app directory
+sudo mkdir -p "$INSTALL_DIR"
+sudo chown "$USER_NAME:$USER_NAME" "$INSTALL_DIR"
+cd "$INSTALL_DIR"
 
-# 2. Create venv + install
+# 2. Copy backend files from this repo onto the server
+#    (run this FROM the dev machine where you have the repo)
+# scp backend/main.py backend/get_spotify_token.py backend/requirements.txt \
+#     backend/portfolio-api.service backend/.env.example \
+#     $USER_NAME@YOUR-SERVER:$INSTALL_DIR/
+
+# 3. Create venv + install deps
 python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
 
-# 3. Configure environment (only needed if you want Spotify now-playing)
+# 4. Configure environment
 cp .env.example .env
-# Edit .env and fill in SPOTIFY_* if desired
+nano .env    # set ALLOWED_ORIGINS, SPOTIFY_* if used
 
-# 4. Test it manually
-./venv/bin/uvicorn main:app --host 127.0.0.1 --port 27012
-# Hit http://127.0.0.1:27012/health from another terminal — should return {"ok": true, ...}
-# Ctrl+C to stop
+# 5. Substitute the username into the systemd unit
+sed -i "s/__USER__/$USER_NAME/g" portfolio-api.service
 
-# 5. Install systemd service
+# 6. Install + start the service
 sudo cp portfolio-api.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now portfolio-api
-sudo systemctl status portfolio-api    # verify it's running
+sudo systemctl status portfolio-api    # should show "active (running)"
 
-# 6. Logs (live tail)
-journalctl -u portfolio-api -f
+# 7. Verify
+curl http://127.0.0.1:27012/health
+# expected: {"ok": true, "ts": "..."}
+
+# 8. (optional) get Spotify refresh token for now-playing
+python3 get_spotify_token.py
+# follow the prompts, paste the returned token into .env, then:
+sudo systemctl restart portfolio-api
 ```
 
 ## Updating
 
 ```bash
-cd /home/yashasvi/portfolio-api
+cd $INSTALL_DIR
 # pull latest main.py / edit in place
 sudo systemctl restart portfolio-api
+```
+
+## Logs
+
+```bash
+journalctl -u portfolio-api -f
 ```
 
 ## Database backup

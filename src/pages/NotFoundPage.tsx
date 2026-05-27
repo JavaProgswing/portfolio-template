@@ -1,11 +1,15 @@
 import { Box, Button, Heading, HStack, Stack, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+import { unlock } from "../lib/achievements";
 
 const MotionBox = motion(Box);
 
 const NotFoundPage = () => {
   const location = useLocation();
+
+  useEffect(() => { unlock("got-404"); }, []);
 
   return (
     <Box minH="calc(100vh - 60px)" display="flex" alignItems="center" justifyContent="center" px={6}>

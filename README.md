@@ -42,6 +42,21 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173).
 
+The backend (FastAPI · guestbook + visitor count + Spotify proxy) is optional. Without it, the guestbook page shows an offline message and the Spotify badge falls back to a plain link. See [`backend/README.md`](backend/README.md) to deploy.
+
+For full production deployment (nginx + systemd + frontend + backend), see [`DEPLOY.md`](DEPLOY.md).
+
+## Easter Eggs
+
+The site has hidden interactions for visitors who poke around. The full list is intentionally undocumented — start with `?` and `⌘K`, then go from there. Track your finds:
+
+```bash
+# In the /console page, type:
+achievements
+```
+
+Or visit `/console` directly and explore.
+
 ## Customization
 
 Everything is in `src/data/me.ts`. The file is well-commented — copy from `me.example.ts` and fill in your details.

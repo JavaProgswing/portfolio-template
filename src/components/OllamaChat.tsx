@@ -294,6 +294,23 @@ const OllamaChat = ({ data }: Props) => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 200);
   }, [isOpen]);
 
+  // External triggers: `/` keyboard shortcut opens + focuses chat; "close-all" closes it
+  useEffect(() => {
+    const onFocus = () => {
+      if (!isOpen) onToggle();
+      setTimeout(() => inputRef.current?.focus(), 200);
+    };
+    const onCloseAll = () => {
+      if (isOpen) onClose();
+    };
+    window.addEventListener("focus-ai-chat", onFocus);
+    window.addEventListener("close-all", onCloseAll);
+    return () => {
+      window.removeEventListener("focus-ai-chat", onFocus);
+      window.removeEventListener("close-all", onCloseAll);
+    };
+  }, [isOpen, onToggle, onClose]);
+
   const sendMessage = async () => {
     if (!input.trim() || loading || !available) return;
 

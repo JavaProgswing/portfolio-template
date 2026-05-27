@@ -59,7 +59,7 @@ const SECTIONS = [
     label: "Hosting",
     items: [
       "nginx + Let's Encrypt on Ubuntu",
-      "Static dist/ served from /var/www/yashasviallen.is-a.dev/html",
+      "Static dist/ served from nginx html root",
       "SPA fallback: try_files $uri /index.html for client routes",
       "API proxied to 127.0.0.1:27012 via /api/portfolio/",
     ],

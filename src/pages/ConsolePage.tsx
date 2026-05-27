@@ -1,6 +1,7 @@
 import { Box, HStack, Input, Stack, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { unlock, getStats, ACHIEVEMENTS } from "../lib/achievements";
 
 type LineType = "input" | "output" | "error" | "banner";
 interface Line { type: LineType; text: string }
@@ -30,6 +31,7 @@ const COMMANDS: Record<string, (ctx: CmdContext, args: string[]) => string | nul
   now        - what i'm doing now
   ls         - virtual files
   cat <file> - read a virtual file
+  achievements - your easter egg progress
   echo <txt> - print text
   date       - current date
   pwd        - working directory
@@ -152,6 +154,18 @@ press ↑/↓ for command history`,
       : `rm: cannot remove '${args.join(" ")}': permission denied`,
 
   whois: ({ data }) => data.contacts.find((c: any) => c.id === "github")?.link || "n/a",
+
+  achievements: () => {
+    const stats = getStats();
+    if (stats.found === 0) {
+      return "no achievements yet.\n\nhint: try keyboard shortcuts (press ? on any page), type some random words,\nor press the konami code somewhere.";
+    }
+    const lines = ACHIEVEMENTS.map((a) => {
+      const got = stats.unlocked.has(a.key);
+      return got ? `  ✓ ${a.label.padEnd(22)} ${a.hint}` : `  ◌ ${a.label.padEnd(22)} ???`;
+    });
+    return `progress: ${stats.found}/${stats.total} found\n\n${lines.join("\n")}`;
+  },
 };
 
 const ConsolePage = ({ data }: { data: any }) => {
@@ -168,6 +182,7 @@ const ConsolePage = ({ data }: { data: any }) => {
 
   useEffect(() => {
     inputRef.current?.focus();
+    unlock("console");
   }, []);
 
   useEffect(() => {
