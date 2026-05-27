@@ -57,3 +57,84 @@ body.rainbow-active {
   0%   { filter: hue-rotate(0deg); }
   100% { filter: hue-rotate(360deg); }
 }
+
+/* ── Theme palettes ─────────────────────────────────────────────────────────
+   Applied via body[data-theme="..."]. Each theme overrides the brand color
+   ramp and base background. Chakra v2 stores colors as CSS variables, so
+   overriding them at body level cascades through every component.
+   ────────────────────────────────────────────────────────────────────────── */
+
+body[data-theme="catppuccin"] {
+  background-color: #1e1e2e !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #313244 0%, #11111b 70%) !important;
+  --chakra-colors-brand-300: #b4befe;
+  --chakra-colors-brand-400: #cba6f7;
+  --chakra-colors-brand-500: #b4befe;
+  --chakra-colors-brand-600: #9a82c8;
+  --cursor-glow: rgba(203, 166, 247, 0.08);
+}
+
+body[data-theme="tokyo"] {
+  background-color: #1a1b26 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #292e42 0%, #16161e 70%) !important;
+  --chakra-colors-brand-300: #a9b1d6;
+  --chakra-colors-brand-400: #7aa2f7;
+  --chakra-colors-brand-500: #5d8ce3;
+  --chakra-colors-brand-600: #3d5fb9;
+  --cursor-glow: rgba(122, 162, 247, 0.08);
+}
+
+body[data-theme="dracula"] {
+  background-color: #282a36 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #44475a 0%, #1e1f29 70%) !important;
+  --chakra-colors-brand-300: #d4b3ff;
+  --chakra-colors-brand-400: #bd93f9;
+  --chakra-colors-brand-500: #9d6df9;
+  --chakra-colors-brand-600: #7e4eea;
+  --cursor-glow: rgba(189, 147, 249, 0.09);
+}
+
+body[data-theme="nord"] {
+  background-color: #2e3440 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #3b4252 0%, #21262e 70%) !important;
+  --chakra-colors-brand-300: #8fbcbb;
+  --chakra-colors-brand-400: #88c0d0;
+  --chakra-colors-brand-500: #81a1c1;
+  --chakra-colors-brand-600: #5e81ac;
+  --cursor-glow: rgba(136, 192, 208, 0.09);
+}
+
+body[data-theme="rosepine"] {
+  background-color: #191724 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #26233a 0%, #100e1c 70%) !important;
+  --chakra-colors-brand-300: #f6c177;
+  --chakra-colors-brand-400: #ebbcba;
+  --chakra-colors-brand-500: #eb6f92;
+  --chakra-colors-brand-600: #c4a7e7;
+  --cursor-glow: rgba(235, 188, 186, 0.09);
+}
+
+body[data-theme="gruvbox"] {
+  background-color: #282828 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #3c3836 0%, #1d2021 70%) !important;
+  --chakra-colors-brand-300: #fabd2f;
+  --chakra-colors-brand-400: #fabd2f;
+  --chakra-colors-brand-500: #d79921;
+  --chakra-colors-brand-600: #fe8019;
+  --cursor-glow: rgba(250, 189, 47, 0.09);
+}
+
+body[data-theme="monokai"] {
+  background-color: #2d2a2e !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #403e41 0%, #1c1a1c 70%) !important;
+  --chakra-colors-brand-300: #ff85a3;
+  --chakra-colors-brand-400: #ff6188;
+  --chakra-colors-brand-500: #d63d65;
+  --chakra-colors-brand-600: #a9dc76;
+  --cursor-glow: rgba(255, 97, 136, 0.09);
+}
+
+/* Smooth bg transition when switching themes */
+body {
+  transition: background-color 0.3s ease;
+}

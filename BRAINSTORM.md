@@ -15,50 +15,53 @@ Hooks live in `src/components/EasterEggs.tsx` and `src/index.css`.
 
 ---
 
-## Additional Hidden Stuff to Add
+## Additional Hidden Stuff — Status
 
 ### Quick wins
-- [ ] **Logo click counter** — click `~/yashasvi` 5 times in 3 seconds → confetti + secret achievement toast
-- [ ] **URL params** for hidden themes: `?theme=matrix`, `?theme=catppuccin`, `?theme=tokyo`
-- [ ] **`?dev=1`** → shows extra debug panels (last fetched data, render counts, mode)
-- [ ] **Cursor trails** in matrix mode (canvas particles falling like Matrix rain)
-- [ ] **Typed words**: `coffee`, `pizza`, `bug` → fun tiny animations
-- [ ] **Right-click context** override on the logo → custom menu with "view source" / "send a wave"
+- [x] **Logo click counter** — 5 clicks in 3s → confetti burst + toast (`Confetti.tsx`, wired in `NavBar.tsx`)
+- [x] **URL params** for themes: `?theme=catppuccin`, `?theme=tokyo`, etc. (`themes/palettes.ts → resolveInitialTheme()`)
+- [x] **Matrix rain** canvas overlay when Konami is active (`MatrixRain.tsx`, only renders when `body.konami-active`)
+- [ ] **`?dev=1`** → debug panel showing fetched data, render counts
+- [ ] **More typed words**: `coffee`, `pizza`, `bug` → tiny animations (extend `EasterEggs.tsx → TYPED_TRIGGERS`)
+- [ ] **Right-click context** override on logo
 
 ### Bigger ideas
-- [ ] **Secret /404 page** with a mini game (snake or tetris in keyboard?)
-- [ ] **Hidden `/admin`** that just shows a fake terminal
-- [ ] **`/console`** subpage — interactive terminal-style portfolio (type `help`, `whoami`, `projects`)
+- [x] **Custom 404 page** — `NotFoundPage.tsx`. Big 404, "tried: /path" mono breadcrumb, links home + console.
+- [x] **`/console`** — full interactive terminal (`ConsolePage.tsx`). Commands: help, about, whoami, projects, skills, journey, contact, blog, cp, now, ls, cat, echo, date, pwd, open, clear, exit, sudo, rm. Tab completion + arrow-key history + Ctrl+L.
+- [ ] **Hidden `/admin`** as fake terminal — `/console` already covers it; can add alias route.
 
 ---
 
-## Themes / Color Schemes to Add
+## Themes — SHIPPED ✓
 
-Popular palettes proven to work for dev portfolios. Implement as a theme switcher in nav bar.
+8 palettes implemented as a theme switcher (palette icon in navbar, next to dark/light toggle).
+Files: `src/themes/palettes.ts`, `src/components/ThemeSwitcher.tsx`, CSS in `src/index.css`.
 
-| Theme | Background | Accent | Vibe |
-|---|---|---|---|
-| **Catppuccin Mocha** | `#1e1e2e` | `#cba6f7` (mauve) | Warm dark, beloved by devs |
-| **Tokyo Night** | `#1a1b26` | `#7aa2f7` (blue) | Cool dark, neon-leaning |
-| **Dracula** | `#282a36` | `#bd93f9` (purple) | Classic dev theme |
-| **Nord** | `#2e3440` | `#88c0d0` (cyan) | Cool, minimal, Scandinavian |
-| **Rose Pine** | `#191724` | `#ebbcba` (rose) | Soft, aesthetic |
-| **Gruvbox Dark** | `#282828` | `#fabd2f` (yellow) | Warm, retro |
-| **Solarized Dark** | `#002b36` | `#268bd2` (blue) | High-contrast, technical |
-| **Monokai Pro** | `#2d2a2e` | `#ff6188` (red) | Bold, vibrant |
+| Theme | Status |
+|---|---|
+| **Indigo** (default) | ✓ |
+| **Catppuccin Mocha** | ✓ |
+| **Tokyo Night** | ✓ |
+| **Dracula** | ✓ |
+| **Nord** | ✓ |
+| **Rose Pine** | ✓ |
+| **Gruvbox** | ✓ |
+| **Monokai** | ✓ |
 
-Implementation:
-- Add a theme switcher component in nav (icon button → popover with palette swatches)
-- Each theme overrides Chakra CSS variables (`--chakra-colors-brand-*`, body bg/fg)
-- Persist choice in `localStorage`
-- Default to current zinc/indigo
+Features:
+- Persists in `localStorage["portfolio-theme"]`
+- URL param override: `?theme=catppuccin`
+- Swatches preview each palette in switcher popover
+- CSS variable cascade — no Chakra theme rebuild needed
+- Smooth `background-color 0.3s` transition between themes
+- Also accessible via Command Palette (`cmd+k → switch to ...`)
 
 ---
 
 ## Sections / Pages to Add
 
-### `/uses` page
-Tools, hardware, setup. Hugely popular — see uses.tech directory.
+### `/uses` page — SHIPPED ✓
+Tools, hardware, setup at `/uses`. Data in `me.ts → uses`.
 
 ```
 DESK
@@ -81,19 +84,19 @@ LANGUAGES IN PRACTICE
   - Rust for learning systems
 ```
 
-### `/now` page
-[nownownow.com](https://nownownow.com) style — a longer-form version of the hero "NOW" widget.
+### `/now` page — SHIPPED ✓
+Longer-form NOW at `/now`. Data in `me.ts → now`.
 - What you're focused on this month
 - Current reading list
 - Open questions you're thinking about
 - Updated monthly
 
-### `/colophon` page
-How this site was built — stack, design decisions, fonts, deployment.
+### `/colophon` page — SHIPPED ✓
+How this site was built at `/colophon`. Categories: Stack, Design, Backend, Data Source, Interactive Touches, Hosting, Performance.
 - Meta + tasteful, signals craft to other devs
 
-### `/guestbook` page
-Anonymous or GitHub-OAuth signed messages from visitors.
+### `/guestbook` page — SHIPPED ✓
+Visitor messages at `/guestbook`. SQLite backend on FastAPI (`backend/main.py`), proxied via nginx at `/api/portfolio/guestbook`. Rate-limited 5 entries / 60s / IP.
 - Backend: Supabase / Firebase / GitHub Issues as DB
 - Show last 20 messages with timestamps
 - Optional avatar (gravatar / GH)
@@ -127,15 +130,16 @@ A public JSON endpoint of your portfolio data — `yourdomain.dev/api/me.json`. 
 
 ## Common Portfolio Features Not Yet Added
 
-### Keyboard shortcuts modal
-- Press `?` → modal showing all shortcuts
-- `g h` → go home, `g p` → projects, `g w` → writing, `cmd+k` → command palette
-- Common pattern in indie portfolios (lee robinson, paco coursey)
+### Keyboard shortcuts modal — SHIPPED ✓
+- Press `?` → modal listing all shortcuts grouped by category (`Shortcuts.tsx → ShortcutsModal`)
+- `g h/j/p/a/w` → jump to section (home, journey, projects, activity, writing) — handled by `GNavigator`
+- Esc closes modal
 
-### Command palette (`cmd+k`)
-- Searchable jump-to-anything
-- Open sections, copy email, view repos
-- Use [cmdk](https://cmdk.paco.me) library
+### Command palette (`cmd+k`) — SHIPPED ✓
+- `cmd+k` / `ctrl+k` → searchable modal (`Shortcuts.tsx → CommandPalette`)
+- Commands: jump-to-section, switch theme (8 options), open contacts, trigger easter eggs
+- Arrow nav + enter to select
+- Live fuzzy filter with keyword matching
 
 ### Mobile-first redesign
 - Current site is responsive but mobile UX could be better
@@ -193,11 +197,11 @@ A public JSON endpoint of your portfolio data — `yourdomain.dev/api/me.json`. 
 
 ## Interactive Touches
 
-### Subtle effects
-- **Cursor spotlight** — radial gradient that follows the cursor, lights up content
-- **Reactive avatar** — hero image tracks cursor position (subtle parallax)
-- **Tilt cards** — project cards tilt on hover with 3D transform (vanilla-tilt-style)
-- **Animated counter** — stars/repos count up from 0 on first view
+### Subtle effects — SHIPPED ✓
+- [x] **Cursor spotlight** — radial gradient follows cursor, themed per palette via `--cursor-glow` (`CursorSpotlight.tsx`). Auto-disabled on touch + reduced-motion.
+- [x] **Tilt cards** — project cards do subtle 3D tilt on hover, 4° max (`hooks/useTilt.ts`, applied to `FetchedRepoCard` + `LegacyProjectCard`)
+- [x] **Animated counters** — Stars + External PRs animate from 0 with easeOutQuart (`hooks/useAnimatedNumber.ts`, applied to OSS StatCards)
+- [ ] **Reactive avatar** — hero image parallax tracking cursor
 
 ### Audio (toggleable, off by default!)
 - Soft click on button presses
@@ -245,6 +249,6 @@ Worth studying:
 ## Bug Backlog
 
 - [ ] Activity → OSS tab heatmap fails silently if ghchart.rshah.org is slow → show skeleton instead
-- [ ] Particle background slows on mobile → throttle FPS or detect device
-- [ ] Theme toggle should persist across reloads (currently Chakra defaults to dark each time?)
-- [ ] Codeforces API can be slow — add 5s timeout with fallback link
+- [x] **Particle background mobile** — halved particle count (60 → 30) + frame-skip to ~30 FPS + respects `prefers-reduced-motion`
+- [x] **Theme persistence** — saves to `localStorage["portfolio-theme"]`, restores on reload, URL param overrides
+- [x] **Codeforces 5s timeout** — `AbortController` with `setTimeout(5000)`, falls back to error state + profile link

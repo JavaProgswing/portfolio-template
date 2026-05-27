@@ -1,4 +1,5 @@
 import { useEffect, useState, ElementType, ReactNode } from "react";
+import { useAnimatedNumber } from "../hooks/useAnimatedNumber";
 import {
   Box,
   Heading,
@@ -166,14 +167,18 @@ const StatCard = ({
   sub,
   icon: I,
   color,
+  animate = false,
 }: {
   label: string;
   value: string | number;
   sub: string;
   icon: ElementType;
   color: string;
+  animate?: boolean;
 }) => {
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
+  const animated = useAnimatedNumber(typeof value === "number" ? value : 0);
+  const displayValue = animate && typeof value === "number" ? animated : value;
   return (
     <Box
       p={4}
@@ -189,7 +194,7 @@ const StatCard = ({
         </Text>
       </HStack>
       <Text fontSize="2xl" fontWeight="700" color={color} lineHeight="1">
-        {value}
+        {displayValue}
       </Text>
       <Text fontSize="10px" color="gray.600" fontFamily="mono" mt={1.5}>
         {sub}
@@ -294,13 +299,18 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
 
   useEffect(() => {
     if (!cfHandle) { setCfStatus("error"); return; }
-    fetch(`https://codeforces.com/api/user.info?handles=${cfHandle}`)
+    // 5s timeout — Codeforces API can hang
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    fetch(`https://codeforces.com/api/user.info?handles=${cfHandle}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((d) => {
         if (d.status === "OK") { setCfData(d.result[0]); setCfStatus("ok"); }
         else setCfStatus("error");
       })
-      .catch(() => setCfStatus("error"));
+      .catch(() => setCfStatus("error"))
+      .finally(() => clearTimeout(timeout));
+    return () => clearTimeout(timeout);
   }, [cfHandle]);
 
   useEffect(() => {
@@ -585,6 +595,7 @@ const OSSPanel = ({ handle }: { handle: string }) => {
           sub={`${data.totalOwnRepos} own repo${data.totalOwnRepos !== 1 ? "s" : ""}`}
           icon={FaStar as ElementType}
           color="yellow.400"
+          animate
         />
         <StatCard
           label="External PRs"
@@ -592,6 +603,7 @@ const OSSPanel = ({ handle }: { handle: string }) => {
           sub="last 90 days"
           icon={FaCodeBranch as ElementType}
           color="green.400"
+          animate
         />
         <StatCard
           label="Last Active"

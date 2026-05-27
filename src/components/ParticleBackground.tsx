@@ -23,9 +23,18 @@ const ParticleBackground = () => {
 
     let animId: number;
     const particles: Particle[] = [];
-    const COUNT = 60;
-    const CONNECTION_DIST = 130;
+
+    // Reduce particle count on mobile / low-power devices for smoother scrolling
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return; // honor the user's preference
+
+    const COUNT = isMobile ? 30 : 60;
+    const CONNECTION_DIST = isMobile ? 100 : 130;
     const COLOR = isDark ? "0, 127, 255" : "0, 80, 200";
+
+    // Frame-skip on mobile (target ~30 FPS instead of 60)
+    let frameSkip = 0;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -46,6 +55,14 @@ const ParticleBackground = () => {
     }
 
     const draw = () => {
+      // Skip every other frame on mobile
+      if (isMobile) {
+        frameSkip = (frameSkip + 1) % 2;
+        if (frameSkip === 0) {
+          animId = requestAnimationFrame(draw);
+          return;
+        }
+      }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((p) => {
