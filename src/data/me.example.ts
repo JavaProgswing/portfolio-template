@@ -64,6 +64,23 @@ export default {
     "Stretch goal",
   ],
 
+  // Homelab — "how this site runs". Rendered on /colophon. Omit/delete to hide.
+  // Fill in your own hosting story (VPS, Raspberry Pi, old laptop, cloud, etc.).
+  homelab: {
+    headline: "Where this site lives",
+    intro: "One line on your hosting setup and why it's interesting.",
+    specs: [
+      { label: "Machine", value: "e.g. Raspberry Pi 5 / old laptop / $5 VPS" },
+      { label: "OS", value: "e.g. Ubuntu 22.04 LTS" },
+      { label: "Network", value: "ISP → DNS/tunnel → CDN → yourdomain.com" },
+      { label: "Workloads", value: "Docker / Kubernetes / bare nginx / etc." },
+      { label: "Monitoring", value: "Grafana / Uptime Kuma / none" },
+    ],
+    notes: [
+      "Any war stories — outages survived, hardware fixes, jank that somehow works.",
+    ],
+  },
+
   // Short descriptors shown as badges on your hero.
   tags: ["Software Engineer", "Open Source Contributor"],
 

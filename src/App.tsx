@@ -46,7 +46,7 @@ function App() {
           <Route path="/" element={<HomePage data={data} />} />
           <Route path="/uses" element={<UsesPage data={data} />} />
           <Route path="/now" element={<NowPage data={data} />} />
-          <Route path="/colophon" element={<ColophonPage />} />
+          <Route path="/colophon" element={<ColophonPage data={data} />} />
           <Route path="/console" element={<ConsolePage data={data} />} />
           <Route path="/guestbook" element={<GuestbookPage planning={data.planning} />} />
           <Route path="/resume" element={<ResumePage data={data} />} />
