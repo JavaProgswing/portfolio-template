@@ -1,8 +1,8 @@
 import {
   Box,
+  Flex,
   Heading,
   Text,
-  SimpleGrid,
   Stack,
   Tag,
   Link,
@@ -32,8 +32,24 @@ interface PinnedProject {
   skills?: string[];
 }
 
+interface CustomProject {
+  name: string;
+  description?: string;
+  url?: string;
+  homepage?: string;
+  language?: string;
+  stars?: number;
+  forks?: number;
+  score?: number;
+}
+
 interface Props {
-  data: Info & { pinnedProjects?: PinnedProject[] };
+  data: Info & {
+    pinnedProjects?: PinnedProject[];
+    excludeRepos?: string[];
+    customProjects?: CustomProject[];
+    maxProjects?: number;
+  };
 }
 
 interface FetchedRepo {
@@ -334,8 +350,31 @@ const PinnedCard = ({ project, index, border }: PinnedCardProps) => {
 
 const Projects = ({ data }: Props) => {
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
-  const fetchedRepos = (reposData as { repos: FetchedRepo[] }).repos;
-  const useFetched = fetchedRepos.length > 0;
+  const allRepos = (reposData as { repos: FetchedRepo[] }).repos;
+  // Display-time exclude — hides repos instantly without re-running fetch-repos
+  const excluded = new Set((data.excludeRepos || []).map((s) => s.toLowerCase()));
+  const autoRepos = allRepos.filter((r) => !excluded.has(r.name.toLowerCase()));
+
+  // Custom projects (me.ts → customProjects) merge INTO the ranked grid by `score`.
+  // Not pinned-on-top — they compete with auto-fetched scores.
+  const custom: FetchedRepo[] = (data.customProjects || []).map((c) => ({
+    name: c.name,
+    description: c.description || "",
+    url: c.url || "",
+    homepage: c.homepage || "",
+    language: c.language || "",
+    stars: c.stars || 0,
+    forks: c.forks || 0,
+    topics: [],
+    pushedAt: "",
+    score: c.score ?? 0,
+  }));
+
+  const merged = [...autoRepos, ...custom].sort((a, b) => b.score - a.score);
+  const limit = data.maxProjects && data.maxProjects > 0 ? data.maxProjects : merged.length;
+  const shown = merged.slice(0, limit);
+  const useFetched = shown.length > 0;
+
   const pinned = data.pinnedProjects || [];
 
   return (
@@ -349,7 +388,10 @@ const Projects = ({ data }: Props) => {
           <Heading size="lg">What I've Built</Heading>
         </Box>
         {useFetched && (
-          <Tooltip label="Ranked by stars, recency, deployment & description quality" hasArrow fontSize="xs">
+          <Tooltip
+            label="Ranked by stars, recency, deployment & description quality. Custom entries merge by their score."
+            hasArrow fontSize="xs"
+          >
             <Text fontSize="11px" color="gray.600" fontFamily="mono" cursor="default">
               auto-ranked ↑
             </Text>
@@ -357,30 +399,37 @@ const Projects = ({ data }: Props) => {
         )}
       </HStack>
 
-      {/* Pinned projects (rendered first when configured in me.ts → pinnedProjects) */}
+      {/* Pinned projects (always on top, from me.ts → pinnedProjects) */}
       {pinned.length > 0 && (
         <Box mb={6}>
           <Text fontSize="10px" fontFamily="mono" color="brand.400"
             letterSpacing="0.16em" mb={3} textTransform="uppercase">
             ★ pinned
           </Text>
-          <SimpleGrid columns={{ base: 1, md: pinned.length === 1 ? 1 : 2 }} spacing={4}>
+          <Flex wrap="wrap" justify="center" gap={4}>
             {pinned.map((p, i) => (
-              <PinnedCard key={p.name} project={p} index={i} border={border} />
+              <Box key={p.name} flex="1 1 300px" maxW={{ base: "100%", md: "360px" }}>
+                <PinnedCard project={p} index={i} border={border} />
+              </Box>
             ))}
-          </SimpleGrid>
+          </Flex>
         </Box>
       )}
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+      {/* Merged grid — centered so a lone last-row card doesn't sit left-aligned */}
+      <Flex wrap="wrap" justify="center" gap={4}>
         {useFetched
-          ? fetchedRepos.map((repo, i) => (
-              <FetchedRepoCard key={repo.name} repo={repo} index={i} border={border} />
+          ? shown.map((repo, i) => (
+              <Box key={`${repo.name}-${i}`} flex="1 1 230px" maxW={{ base: "100%", md: "320px" }}>
+                <FetchedRepoCard repo={repo} index={i} border={border} />
+              </Box>
             ))
           : data.projects.map((project, i) => (
-              <LegacyProjectCard key={i} project={project} index={i} border={border} />
+              <Box key={i} flex="1 1 230px" maxW={{ base: "100%", md: "320px" }}>
+                <LegacyProjectCard project={project} index={i} border={border} />
+              </Box>
             ))}
-      </SimpleGrid>
+      </Flex>
     </Box>
   );
 };

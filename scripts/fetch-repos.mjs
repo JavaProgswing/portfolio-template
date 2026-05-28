@@ -19,6 +19,26 @@ import { dirname, join } from "path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = join(__dirname, "../src/data/repos.json");
 
+// Read me.ts once — used for username + filter config.
+let ME_SRC = "";
+try {
+  ME_SRC = readFileSync(join(__dirname, "../src/data/me.ts"), "utf8");
+} catch {
+  // ignore — username can come from CLI arg
+}
+
+/** Parse a simple string-array field from me.ts source, e.g. excludeRepos: ["a","b"] */
+function parseStringArray(src, key) {
+  const m = src.match(new RegExp(`${key}\\s*:\\s*\\[([^\\]]*)\\]`));
+  if (!m) return [];
+  return [...m[1].matchAll(/["']([^"']+)["']/g)].map((x) => x[1].toLowerCase());
+}
+
+// Repos to never show (exact names, case-insensitive)
+const EXCLUDE = parseStringArray(ME_SRC, "excludeRepos");
+// Forks to force-include despite being forks (e.g. GSoC contributions)
+const INCLUDE = parseStringArray(ME_SRC, "includeRepos");
+
 // ── Language complexity bonus ─────────────────────────────────────────────────
 const LANG_SCORE = {
   rust: 4, zig: 4, assembly: 4, "c++": 3, c: 3, go: 3, haskell: 3, ocaml: 3,
@@ -31,9 +51,20 @@ const LANG_SCORE = {
 const GENERIC_NAME = /^(test[-_]?|hello[-_]?world|practice|playground|exercise|first[-_]?|demo[-_]?|example[-_]?|sample[-_]?|tutorial|learn[-_]|my[-_]first|untitled|new[-_]?repo|repo[-_]?\d|temp[-_]?|tmp[-_]?|wip[-_]?|sandbox|scratch)/i;
 
 function scoreRepo(repo) {
-  if (repo.fork || repo.archived || repo.private) return -1;
+  const nameLC = repo.name.toLowerCase();
+
+  // Hard exclude — never show these
+  if (EXCLUDE.includes(nameLC)) return -1;
+
+  // Forced include — bypass fork filter for named repos (GSoC forks etc.)
+  const forced = INCLUDE.includes(nameLC);
+
+  if ((repo.fork || repo.archived || repo.private) && !forced) return -1;
 
   let s = 0;
+
+  // Forced repos get a big boost so they surface near the top
+  if (forced) s += 18;
 
   // ── Validation (peer interest is the strongest signal) ──────────────────────
   s += repo.stargazers_count * 8;
@@ -106,36 +137,30 @@ function scoreRepo(repo) {
 // ── Resolve username ──────────────────────────────────────────────────────────
 let username = process.argv[2];
 
-if (!username) {
-  try {
-    const src = readFileSync(join(__dirname, "../src/data/me.ts"), "utf8");
+if (!username && ME_SRC) {
+  // Find ALL github.com/<username> matches and pick the most frequent one.
+  // Avoids picking upstream/dependency repos (e.g. BartoszCichecki in a fork link)
+  // over the actual portfolio owner.
+  const matches = [...ME_SRC.matchAll(/github\.com\/([a-zA-Z0-9][a-zA-Z0-9-]*)/g)];
+  const counts = {};
+  for (const m of matches) {
+    const u = m[1];
+    if (u) counts[u] = (counts[u] || 0) + 1;
+  }
 
-    // Find ALL github.com/<username> matches and pick the most frequent one.
-    // Avoids picking upstream/dependency repos (e.g. BartoszCichecki in a fork link)
-    // over the actual portfolio owner.
-    const matches = [...src.matchAll(/github\.com\/([a-zA-Z0-9][a-zA-Z0-9-]*)/g)];
-    const counts = {};
-    for (const m of matches) {
-      const u = m[1];
-      if (u) counts[u] = (counts[u] || 0) + 1;
+  const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  if (ranked.length > 0) {
+    username = ranked[0][0];
+    console.log(`Detected username: ${username} (${ranked[0][1]} mentions in me.ts)`);
+    if (ranked.length > 1) {
+      const others = ranked.slice(1, 4).map(([u, c]) => `${u}(${c})`).join(", ");
+      console.log(`Other candidates skipped: ${others}`);
     }
-
-    const ranked = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    if (ranked.length > 0) {
-      username = ranked[0][0];
-      console.log(`Detected username: ${username} (${ranked[0][1]} mentions in me.ts)`);
-      if (ranked.length > 1) {
-        const others = ranked
-          .slice(1, 4)
-          .map(([u, c]) => `${u}(${c})`)
-          .join(", ");
-        console.log(`Other candidates skipped: ${others}`);
-      }
-    }
-  } catch {
-    // ignore
   }
 }
+
+if (EXCLUDE.length) console.log(`Excluding repos: ${EXCLUDE.join(", ")}`);
+if (INCLUDE.length) console.log(`Force-including (forks ok): ${INCLUDE.join(", ")}`);
 
 if (!username) {
   console.error(

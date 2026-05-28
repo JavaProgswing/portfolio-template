@@ -3,11 +3,11 @@ import {
   Button,
   Collapse,
   Divider,
+  Flex,
   Heading,
   HStack,
   Icon,
   Input,
-  SimpleGrid,
   Stack,
   Tag,
   Text,
@@ -500,11 +500,17 @@ const Blog = ({ blogs }: { blogs: BlogPost[] }) => {
       </Text>
       <Heading size="lg" mb={8}>Notes & Posts</Heading>
 
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+      <Flex wrap="wrap" justify="center" gap={4} align="stretch">
         {blogs.map((post, index) => (
-          <BlogCard key={post.title} post={post} index={index} featured={index === 0} />
+          <Box
+            key={post.title}
+            flex={index === 0 ? "1 1 100%" : "1 1 320px"}
+            maxW={index === 0 ? "100%" : { base: "100%", md: "calc(50% - 8px)" }}
+          >
+            <BlogCard post={post} index={index} featured={index === 0} />
+          </Box>
         ))}
-      </SimpleGrid>
+      </Flex>
     </Box>
   );
 };

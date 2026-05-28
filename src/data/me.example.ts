@@ -29,6 +29,34 @@ export default {
     },
   ],
 
+  // Max cards in the auto-ranked grid (pinned always show on top, not counted).
+  // 0 or omit = show all.
+  maxProjects: 9,
+
+  // Custom projects merged INTO the auto-ranked grid by `score` (not pinned-on-top).
+  // For private repos, other accounts, GitLab, or non-code work the script can't see.
+  // `score` competes with auto-fetched scores (~15-60). Higher = higher in the grid.
+  customProjects: [
+    // {
+    //   name: "My Private Tool",
+    //   description: "What it does, in one line.",
+    //   url: "https://github.com/you/tool",
+    //   homepage: "",
+    //   language: "Rust",
+    //   stars: 0,
+    //   forks: 0,
+    //   score: 35,
+    // },
+  ],
+
+  // Auto-ranking filters for "What I've Built" (used by scripts/fetch-repos.mjs).
+  //  excludeRepos: exact repo names to NEVER show — old/throwaway side projects.
+  //                Also applied at display time (hides instantly, no re-fetch needed).
+  //  includeRepos: forks to force-include despite being forks (e.g. a GSoC fork
+  //                where you opened PRs / fixed issues). Gets a score boost.
+  excludeRepos: ["old-tutorial-project", "first-website"],
+  includeRepos: [],
+
   // Planning — shown at top of /guestbook so visitors know what's next.
   planning: [
     "What you're shipping this month",
