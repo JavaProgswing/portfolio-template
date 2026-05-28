@@ -51,6 +51,14 @@ const DIR_DELTA: Record<Direction, Point> = {
 };
 const HS_KEY = "portfolio-snake-highscore";
 
+interface Ripple { x: number; y: number; t: number }
+
+// Lerp between two RGB colors
+const lerpColor = (a: number[], b: number[], t: number) =>
+  `rgb(${Math.round(a[0] + (b[0] - a[0]) * t)},${Math.round(a[1] + (b[1] - a[1]) * t)},${Math.round(a[2] + (b[2] - a[2]) * t)})`;
+const HEAD_RGB = [129, 140, 248]; // brand.400
+const TAIL_RGB = [67, 56, 202];   // brand.700
+
 const SnakeGame = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef = useRef({
@@ -61,6 +69,8 @@ const SnakeGame = () => {
     growBy: 0,
     speed: 130,
     alive: true,
+    ripple: null as Ripple | null,
+    diedAt: 0,
   });
 
   const [score, setScore] = useState(0);
@@ -69,6 +79,7 @@ const SnakeGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [started, setStarted] = useState(false);
   const [scorePulse, setScorePulse] = useState(0);
+  const [length, setLength] = useState(3);
   const touch = isTouchDevice();
 
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.08)");
@@ -100,8 +111,11 @@ const SnakeGame = () => {
       growBy: 0,
       speed: 130,
       alive: true,
+      ripple: null,
+      diedAt: 0,
     };
     setScore(0);
+    setLength(3);
     setGameOver(false);
     setPaused(false);
     setStarted(true);
@@ -114,6 +128,22 @@ const SnakeGame = () => {
     if (!started) reset();
   };
 
+  const die = () => {
+    const s = stateRef.current;
+    s.alive = false;
+    s.diedAt = Date.now();
+    setGameOver(true);
+    setScore((sc) => {
+      if (sc > highScore) {
+        setHighScore(sc);
+        try { localStorage.setItem(HS_KEY, String(sc)); } catch { /* ignore */ }
+      }
+      if (sc >= 50) unlock("snake-50");
+      if (sc >= 100) unlock("snake-100");
+      return sc;
+    });
+  };
+
   const step = () => {
     const s = stateRef.current;
     if (!s.alive) return;
@@ -121,23 +151,17 @@ const SnakeGame = () => {
     s.dir = s.nextDir;
     const d = DIR_DELTA[s.dir];
     const head = s.snake[0];
-    const newHead: Point = {
-      x: (head.x + d.x + GRID) % GRID,
-      y: (head.y + d.y + GRID) % GRID,
-    };
+    const newHead: Point = { x: head.x + d.x, y: head.y + d.y };
 
+    // Wall collision — death (no wrap)
+    if (newHead.x < 0 || newHead.x >= GRID || newHead.y < 0 || newHead.y >= GRID) {
+      die();
+      return;
+    }
+
+    // Self collision
     if (s.snake.some((p) => p.x === newHead.x && p.y === newHead.y)) {
-      s.alive = false;
-      setGameOver(true);
-      setScore((sc) => {
-        if (sc > highScore) {
-          setHighScore(sc);
-          try { localStorage.setItem(HS_KEY, String(sc)); } catch { /* ignore */ }
-        }
-        if (sc >= 50) unlock("snake-50");
-        if (sc >= 100) unlock("snake-100");
-        return sc;
-      });
+      die();
       return;
     }
 
@@ -145,8 +169,10 @@ const SnakeGame = () => {
 
     if (newHead.x === s.food.x && newHead.y === s.food.y) {
       s.growBy += 1;
+      s.ripple = { x: s.food.x, y: s.food.y, t: Date.now() };
       setScore((sc) => sc + 10);
       setScorePulse((p) => p + 1);
+      setLength(s.snake.length);
       placeFood();
       s.speed = Math.max(60, s.speed - 3);
     }
@@ -157,10 +183,12 @@ const SnakeGame = () => {
 
   const draw = (ctx: CanvasRenderingContext2D) => {
     const s = stateRef.current;
+    const now = Date.now();
 
     ctx.fillStyle = COLORS.bg;
     ctx.fillRect(0, 0, CANVAS, CANVAS);
 
+    // Grid
     ctx.strokeStyle = COLORS.grid;
     ctx.lineWidth = 1;
     for (let i = 0; i <= GRID; i++) {
@@ -170,28 +198,66 @@ const SnakeGame = () => {
       ctx.moveTo(0, i * CELL + 0.5); ctx.lineTo(CANVAS, i * CELL + 0.5); ctx.stroke();
     }
 
-    const pulse = (Math.sin(Date.now() / 300) + 1) / 2;
+    // Walls — visible boundary (red flash on death)
+    const deadFlash = !s.alive && now - s.diedAt < 600;
+    const wallProg = deadFlash ? 1 - (now - s.diedAt) / 600 : 0;
+    ctx.strokeStyle = deadFlash
+      ? `rgba(248,113,113,${0.4 + wallProg * 0.6})`
+      : "rgba(129,140,248,0.25)";
+    ctx.lineWidth = deadFlash ? 3 + wallProg * 3 : 2;
+    ctx.strokeRect(1, 1, CANVAS - 2, CANVAS - 2);
+
+    // Eat ripple
+    if (s.ripple) {
+      const age = (now - s.ripple.t) / 400;
+      if (age < 1) {
+        const cx = s.ripple.x * CELL + CELL / 2;
+        const cy = s.ripple.y * CELL + CELL / 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, age * CELL * 2.2, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(74,222,128,${(1 - age) * 0.6})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      } else {
+        s.ripple = null;
+      }
+    }
+
+    // Food — pulsing with glow
+    const pulse = (Math.sin(now / 300) + 1) / 2;
+    const cx = s.food.x * CELL + CELL / 2;
+    const cy = s.food.y * CELL + CELL / 2;
+    ctx.save();
+    ctx.shadowColor = COLORS.food;
+    ctx.shadowBlur = 8 + pulse * 6;
+    ctx.fillStyle = COLORS.food;
     const foodSize = CELL - 6 - pulse * 2;
     const foodPad = (CELL - foodSize) / 2;
-    ctx.fillStyle = COLORS.food;
     ctx.beginPath();
-    ctx.roundRect(
-      s.food.x * CELL + foodPad,
-      s.food.y * CELL + foodPad,
-      foodSize, foodSize, 4
-    );
+    ctx.roundRect(s.food.x * CELL + foodPad, s.food.y * CELL + foodPad, foodSize, foodSize, 4);
     ctx.fill();
+    ctx.restore();
 
+    // Snake — head bright indigo → tail dim, fades on death
+    const len = s.snake.length;
     s.snake.forEach((p, i) => {
-      ctx.fillStyle = i === 0 ? COLORS.snakeHead : COLORS.snake;
-      const pad = 2;
+      const t = len > 1 ? i / (len - 1) : 0;
+      ctx.fillStyle = lerpColor(HEAD_RGB, TAIL_RGB, t);
+      if (deadFlash) ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(now / 60));
+      const pad = i === 0 ? 1.5 : 2;
       ctx.beginPath();
-      ctx.roundRect(
-        p.x * CELL + pad, p.y * CELL + pad,
-        CELL - pad * 2, CELL - pad * 2,
-        i === 0 ? 6 : 4
-      );
+      ctx.roundRect(p.x * CELL + pad, p.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, i === 0 ? 6 : 4);
       ctx.fill();
+      // Head eyes
+      if (i === 0) {
+        ctx.fillStyle = "#09090b";
+        const eye = CELL * 0.13;
+        ctx.beginPath();
+        ctx.arc(p.x * CELL + CELL * 0.34, p.y * CELL + CELL * 0.36, eye, 0, Math.PI * 2);
+        ctx.arc(p.x * CELL + CELL * 0.66, p.y * CELL + CELL * 0.36, eye, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
     });
   };
 
@@ -314,6 +380,10 @@ const SnakeGame = () => {
             </MotionBox>
           </HStack>
           <HStack spacing={1.5}>
+            <Text color="gray.500">len</Text>
+            <Text color="gray.300" fontWeight="700">{length}</Text>
+          </HStack>
+          <HStack spacing={1.5}>
             <Icon as={FaTrophy as ElementType} boxSize={3} color="yellow.500" />
             <Text color="gray.500">best</Text>
             <Text color="yellow.400" fontWeight="700">{highScore}</Text>
@@ -371,6 +441,9 @@ const SnakeGame = () => {
               </Button>
               <Text fontFamily="mono" fontSize="10px" color="gray.600" textAlign="center" lineHeight="1.8">
                 {touch ? "swipe inside grid · D-pad below" : "↑↓←→ or WASD · space pause · R restart"}
+              </Text>
+              <Text fontFamily="mono" fontSize="10px" color="red.300" textAlign="center">
+                ⚠ hit a wall or yourself = game over
               </Text>
             </Stack>
           </Box>

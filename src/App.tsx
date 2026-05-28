@@ -24,6 +24,7 @@ import ResumePage from "./pages/ResumePage";
 import PlayPage from "./pages/PlayPage";
 import SnakeGame from "./pages/games/SnakeGame";
 import Game2048 from "./pages/games/Game2048";
+import TypingGame from "./pages/games/TypingGame";
 import NotFoundPage from "./pages/NotFoundPage";
 import data from "./data/me";
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="/play" element={<PlayPage />} />
           <Route path="/play/snake" element={<SnakeGame />} />
           <Route path="/play/2048" element={<Game2048 />} />
+          <Route path="/play/typing" element={<TypingGame />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
 

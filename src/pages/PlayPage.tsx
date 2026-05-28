@@ -43,6 +43,13 @@ const GAMES: GameCard[] = [
     emoji: "🔢",
     difficulty: "medium",
   },
+  {
+    slug: "typing",
+    label: "Type Race",
+    blurb: "Dev quotes, one keystroke at a time. Measure your WPM + accuracy.",
+    emoji: "⌨️",
+    difficulty: "easy",
+  },
 ];
 
 const DIFF_COLOR: Record<string, string> = {

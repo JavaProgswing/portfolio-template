@@ -4,6 +4,28 @@ Living doc of ideas that haven't shipped yet. Pick what excites you, ignore the 
 
 ---
 
+## Mini-Games
+
+**Shipped** (`/play` selector → `/play/<slug>`):
+- **Snake** (`/play/snake`) — walls = death, snake gradient head→tail, food glow + eat ripple, death flash, length + score + best stats, D-pad + swipe + keyboard. Achievements: snake-played / snake-50 / snake-100.
+- **2048** (`/play/2048`) — id-tracked tiles, real slide + merge + spawn animations (framer-motion absolute positioning, two-phase move), win/stuck overlays. Achievements: 2048-played / 2048-1k / 2048-win.
+- **Type Race** (`/play/typing`) — dev-quote typing test, live per-char coloring, WPM + accuracy + errors, best WPM saved. Achievements: typing-played / typing-40 / typing-80.
+
+Shared: `src/pages/games/common.ts` (touch detection). Console: `play [game]`, or `snake`/`2048`/`typing` direct.
+
+**Candidate games to add next** (theme-fit, effort estimate):
+- [ ] **Tech Wordle** — guess a 5-letter tech word, daily-puzzle feel. Green/yellow/gray tiles already match palette. Medium effort. Very sticky.
+- [ ] **Minesweeper** — classic grid, fits the terminal aesthetic. Flag mode for mobile. Medium.
+- [ ] **Conway's Game of Life** — not a game but mesmerizing; "systems programmer" flex. Click to seed, play/pause/step, speed slider, presets (glider, pulsar). Easy-medium, low interaction.
+- [ ] **Memory / Concentration** — flip cards with tech-stack logos (react-icons). Easy. Good mobile.
+- [ ] **Lights Out** — toggle-grid puzzle, satisfying. Easy.
+- [ ] **Pong / Breakout vs wall** — retro canvas, paddle. Medium.
+- [ ] **Flappy-style** one-button — quick, addictive. Medium.
+
+Design principles that worked: big "WAITING TO START" overlay, D-pad for touch + swipe + keyboard all wired, high score in localStorage, score-tier achievements, indigo/zinc theming, motion on score change.
+
+---
+
 ## Hidden / Easter Eggs Already Shipped
 
 - **Konami code** (↑↑↓↓←→←→ba) → brand color swaps to Matrix neon green for 8s + toast

@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useRef, useEffect, ElementType } from "react";
 import { FaRobot, FaTimes, FaPaperPlane } from "react-icons/fa";
+import { unlock } from "../lib/achievements";
 import { motion, AnimatePresence } from "framer-motion";
 
 type Role = "user" | "assistant" | "system";
@@ -274,6 +275,7 @@ const AiChat = ({ data }: Props) => {
 
     const userMsg = input.trim();
     setInput("");
+    unlock("ai-chat");
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setLoading(true);
 

@@ -37,9 +37,10 @@ const COMMANDS: Record<
   achievements - your easter egg progress
 
   play [game] - mini-games selector or launch direct
-              available games: snake, 2048
+              available games: snake, 2048, typing
   snake      - launch snake directly
   2048       - launch 2048 directly
+  typing     - launch type:race directly
   suggest <text> - send moderated feedback
   sign       - go to guestbook
   wander     - navigate to a 404 path (unlocks Wanderer)
@@ -151,6 +152,8 @@ press ↑/↓ for command history`,
       games: "/play",
       snake: "/play/snake",
       "2048": "/play/2048",
+      typing: "/play/typing",
+      type: "/play/typing",
     };
     const path = routes[target.toLowerCase()];
     if (!path) return `open: unknown destination: ${target}`;
@@ -178,14 +181,16 @@ press ↑/↓ for command history`,
     const routes: Record<string, string> = {
       snake: "/play/snake",
       "2048": "/play/2048",
+      typing: "/play/typing",
+      type: "/play/typing",
     };
     if (game && routes[game]) {
       setTimeout(() => navigate(routes[game]), 200);
       return `→ launching ${game}…`;
     }
-    if (game) return `play: unknown game '${game}'\navailable: snake, 2048`;
+    if (game) return `play: unknown game '${game}'\navailable: snake, 2048, typing`;
     setTimeout(() => navigate("/play"), 200);
-    return "→ opening game selector…\n\navailable: snake, 2048\nuse 'play snake' to launch directly";
+    return "→ opening game selector…\n\navailable: snake, 2048, typing\nuse 'play snake' to launch directly";
   },
 
   snake: ({ navigate }) => {
@@ -196,6 +201,11 @@ press ↑/↓ for command history`,
   "2048": ({ navigate }) => {
     setTimeout(() => navigate("/play/2048"), 200);
     return "→ launching 2048…";
+  },
+
+  typing: ({ navigate }) => {
+    setTimeout(() => navigate("/play/typing"), 200);
+    return "→ launching type:race…";
   },
 
   suggest: async (_, args) => {

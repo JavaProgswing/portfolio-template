@@ -63,6 +63,10 @@ type Status = "loading" | "ok" | "error";
 
 const MotionBox = motion(Box);
 
+// Fixed brand colors for CP platforms — distinct from the (theme-variable) accent.
+// LeetCode keeps its gold; Codeforces gets its signature blue so the two cards read apart.
+const CF_COLOR = "#1f8acb";   // Codeforces blue
+
 // ── GitHub canonical language colors ──────────────────────────────────────────
 
 const LANG_COLOR: Record<string, string> = {
@@ -362,28 +366,28 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
         p={5} borderRadius="12px" layerStyle="card" border="1px solid" borderColor={border}
         initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }} transition={{ duration: 0.4 }}
-        _hover={{ borderColor: "brand.500" }}
+        _hover={{ borderColor: CF_COLOR }}
       >
         <HStack justify="space-between" mb={4}>
           <HStack spacing={2}>
-            <Icon as={SiCodeforces as ElementType} color="brand.400" boxSize={4} />
+            <Icon as={SiCodeforces as ElementType} color={CF_COLOR} boxSize={4} />
             <Text fontWeight="600" fontSize="sm">Codeforces</Text>
           </HStack>
           <Link href={`https://codeforces.com/profile/${cfHandle}`} isExternal>
             <Badge
               variant="outline"
-              borderColor="brand.400"
-              color="brand.400"
+              borderColor={CF_COLOR}
+              color={CF_COLOR}
               fontFamily="mono"
             >
               @{cfHandle}
             </Badge>
           </Link>
         </HStack>
-        {cfStatus === "loading" && <Center h="80px"><Spinner size="sm" color="brand.400" /></Center>}
+        {cfStatus === "loading" && <Center h="80px"><Spinner size="sm" color={CF_COLOR} /></Center>}
         {cfStatus === "error" && (
           <Link href={`https://codeforces.com/profile/${cfHandle}`} isExternal
-            color="brand.400" fontSize="sm" display="flex" alignItems="center" gap={1}>
+            color={CF_COLOR} fontSize="sm" display="flex" alignItems="center" gap={1}>
             View profile <Icon as={FaExternalLinkAlt as ElementType} boxSize={3} />
           </Link>
         )}
@@ -392,7 +396,7 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
             <HStack spacing={8}>
               <Stat size="sm">
                 <StatLabel color="gray.500" fontSize="xs">Rating</StatLabel>
-                <StatNumber color="brand.400" fontSize="xl">{String(cfData.rating ?? "—")}</StatNumber>
+                <StatNumber color={CF_COLOR} fontSize="xl">{String(cfData.rating ?? "—")}</StatNumber>
                 <StatHelpText fontSize="xs" mb={0}>max {String(cfData.maxRating ?? "—")}</StatHelpText>
               </Stat>
               <Stat size="sm">

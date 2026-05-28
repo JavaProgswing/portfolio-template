@@ -40,6 +40,10 @@ export const ACHIEVEMENTS: Achievement[] = [
   { key: "2048-played",  label: "Slider",            hint: "Loaded the 2048 board" },
   { key: "2048-1k",      label: "Powers of Two",     hint: "Scored 1000+ in 2048" },
   { key: "2048-win",     label: "★ 2048",            hint: "Merged your way to the 2048 tile" },
+  { key: "typing-played", label: "Home Row",         hint: "Tried the typing race" },
+  { key: "typing-40",    label: "Touch Typist",      hint: "Hit 40+ WPM" },
+  { key: "typing-80",    label: "Keyboard Warrior",  hint: "Hit 80+ WPM" },
+  { key: "ai-chat",      label: "Ghost in the Machine", hint: "Struck up a conversation with the portfolio AI" },
   { key: "suggester",    label: "Helpful Hand",      hint: "Sent a site suggestion" },
 ];
 
