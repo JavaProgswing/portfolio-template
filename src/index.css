@@ -64,26 +64,15 @@ body.rainbow-active {
    overriding them at body level cascades through every component.
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Dracula — classic dev purple on charcoal */
-body[data-theme="dracula"] {
-  background-color: #282a36 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #343746 0%, #1e1f29 70%) !important;
-  --chakra-colors-brand-300: #d4b3ff;
-  --chakra-colors-brand-400: #bd93f9;
-  --chakra-colors-brand-500: #ff79c6;
-  --chakra-colors-brand-600: #50fa7b;
-  --cursor-glow: rgba(189, 147, 249, 0.14);
-}
-
-/* Monokai — bold pink + green on warm dark */
-body[data-theme="monokai"] {
-  background-color: #2d2a2e !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #3e3b40 0%, #221f22 70%) !important;
-  --chakra-colors-brand-300: #ff85a1;
-  --chakra-colors-brand-400: #ff6188;
-  --chakra-colors-brand-500: #a9dc76;
-  --chakra-colors-brand-600: #78dce8;
-  --cursor-glow: rgba(255, 97, 136, 0.12);
+/* Evergreen — deep forest + sage green */
+body[data-theme="evergreen"] {
+  background-color: #1a1f16 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #2a3320 0%, #121610 70%) !important;
+  --chakra-colors-brand-300: #bbf7d0;
+  --chakra-colors-brand-400: #86efac;
+  --chakra-colors-brand-500: #4ade80;
+  --chakra-colors-brand-600: #22c55e;
+  --cursor-glow: rgba(134, 239, 172, 0.12);
 }
 
 /* Cyberpunk — electric yellow + cyan, near-black */
@@ -120,6 +109,28 @@ body[data-theme="amber"] {
 }
 body[data-theme="amber"] * {
   text-shadow: 0 0 2px rgba(255, 176, 0, 0.15);
+}
+
+/* Rosé Pine — soft rose + iris on dawn-dark */
+body[data-theme="rosepine"] {
+  background-color: #191724 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #26233a 0%, #110f1e 70%) !important;
+  --chakra-colors-brand-300: #f0d6d6;
+  --chakra-colors-brand-400: #ebbcba;
+  --chakra-colors-brand-500: #c4a7e7;
+  --chakra-colors-brand-600: #9ccfd8;
+  --cursor-glow: rgba(235, 188, 186, 0.12);
+}
+
+/* Gruvbox — warm yellow + orange retro */
+body[data-theme="gruvbox"] {
+  background-color: #282828 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #3c3836 0%, #1d2021 70%) !important;
+  --chakra-colors-brand-300: #fce38a;
+  --chakra-colors-brand-400: #fabd2f;
+  --chakra-colors-brand-500: #fe8019;
+  --chakra-colors-brand-600: #b8bb26;
+  --cursor-glow: rgba(250, 189, 47, 0.12);
 }
 
 /* ── Pop-culture themes ────────────────────────────────────────────────── */
@@ -170,19 +181,7 @@ body[data-theme="pragmata"] * {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="10" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="12" y1="14" x2="12" y2="22" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="2" y1="12" x2="10" y2="12" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="14" y1="12" x2="22" y2="12" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><circle cx="12" cy="12" r="1" fill="%2300d4ff" opacity="0.9"/></svg>') 12 12, crosshair;
 }
 
-/* Stranger Things — flickering red + Christmas lights on deep dark */
-body[data-theme="stranger"] {
-  background-color: #0a0000 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #1a0808 0%, #050000 70%) !important;
-  --chakra-colors-brand-300: #f07a6e;
-  --chakra-colors-brand-400: #e74033;
-  --chakra-colors-brand-500: #c0392b;
-  --chakra-colors-brand-600: #f5d76e;
-  --cursor-glow: rgba(231, 64, 51, 0.14);
-}
-body[data-theme="stranger"] * {
-  text-shadow: 0 0 1px rgba(231, 64, 51, 0.06);
-}
+
 
 /* Smooth bg transition when switching themes */
 body {
@@ -217,38 +216,9 @@ body[data-theme="amber"]::before {
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
 }
 
-/* Dracula — purple mist glow at top */
-body[data-theme="dracula"]::after {
-  content: "";
-  position: fixed;
-  top: -30px; left: -10%; right: -10%;
-  height: 180px;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(ellipse at 50% 0%, rgba(189, 147, 249, 0.06), transparent 70%);
-  filter: blur(10px);
-}
 
-/* Stranger Things — flickering red vignette */
-body[data-theme="stranger"]::after {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none;
-  z-index: 0;
-  box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.04);
-  animation: fx-stranger-flicker 4s ease-in-out infinite;
-}
 
-@keyframes fx-stranger-flicker {
-  0%, 100% { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
-  15%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.04); }
-  18%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
-  22%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.05); }
-  50%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
-  75%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.03); }
-  78%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
-}
+
 
 
 /* Aurora — northern lights shimmer bands */
@@ -410,21 +380,7 @@ body[data-theme="cyberpunk"] button:hover {
   100% { transform: translateY(100vh); }
 }
 
-/* Dracula: bat fly-across */
-@keyframes fx-bat-fly {
-  0%   { transform: translateX(100vw) translateY(0) scaleX(-1); opacity: 0; }
-  5%   { opacity: 0.6; }
-  90%  { opacity: 0.4; }
-  100% { transform: translateX(-100px) translateY(-40px) scaleX(-1); opacity: 0; }
-}
 
-/* Dracula: purple mist particle */
-@keyframes fx-mist-float {
-  0%   { transform: translateY(0) scale(1); opacity: 0; }
-  15%  { opacity: 0.15; }
-  85%  { opacity: 0.05; }
-  100% { transform: translateY(-60vh) scale(2); opacity: 0; }
-}
 
 /* Monokai: color pop flash on click */
 @keyframes fx-monokai-pop {
@@ -453,25 +409,5 @@ body[data-theme="cyberpunk"] button:hover {
   100% { opacity: 0; transform: scale(1.5); }
 }
 
-/* Stranger Things: Christmas light blink sequence */
-@keyframes fx-light-blink {
-  0%, 100% { opacity: 0.3; }
-  50%      { opacity: 1; }
-}
 
-/* Stranger Things: alphabet wall letter flash */
-@keyframes fx-letter-flash {
-  0%   { opacity: 0; transform: scale(0.8); }
-  20%  { opacity: 1; transform: scale(1.1); }
-  80%  { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.9); }
-}
-
-/* Stranger Things: Upside Down visual invert */
-@keyframes fx-upside-down {
-  0%   { filter: invert(0) hue-rotate(0deg); opacity: 0; }
-  10%  { filter: invert(0.8) hue-rotate(180deg); opacity: 0.15; }
-  90%  { filter: invert(0.8) hue-rotate(180deg); opacity: 0.1; }
-  100% { filter: invert(0) hue-rotate(0deg); opacity: 0; }
-}
 

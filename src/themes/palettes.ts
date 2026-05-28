@@ -15,7 +15,7 @@ export interface ThemePalette {
 }
 
 export const THEMES: ThemePalette[] = [
-  // ── Normal themes ──
+  // ── Normal themes (minimal / no FX) ──
   {
     key: "indigo",
     name: "Indigo",
@@ -23,17 +23,24 @@ export const THEMES: ThemePalette[] = [
     swatch: ["#09090b", "#818cf8", "#a5b4fc"],
   },
   {
-    key: "dracula",
-    name: "Dracula",
-    desc: "Classic dev purple",
-    swatch: ["#282a36", "#bd93f9", "#ff79c6"],
+    key: "rosepine",
+    name: "Rosé Pine",
+    desc: "Soft rose aesthetic",
+    swatch: ["#191724", "#ebbcba", "#c4a7e7"],
   },
   {
-    key: "monokai",
-    name: "Monokai",
-    desc: "Bold pink + green",
-    swatch: ["#2d2a2e", "#ff6188", "#a9dc76"],
+    key: "gruvbox",
+    name: "Gruvbox",
+    desc: "Warm yellow retro",
+    swatch: ["#282828", "#fabd2f", "#fe8019"],
   },
+  {
+    key: "evergreen",
+    name: "Evergreen",
+    desc: "Deep forest · sage green",
+    swatch: ["#1a1f16", "#86efac", "#4ade80"],
+  },
+  // ── Immersive FX themes ──
   {
     key: "cyberpunk",
     name: "Cyberpunk",
@@ -70,12 +77,6 @@ export const THEMES: ThemePalette[] = [
     name: "Pragmata",
     desc: "Lunar void · cold cyan",
     swatch: ["#050508", "#e8e8f0", "#00d4ff"],
-  },
-  {
-    key: "stranger",
-    name: "Stranger Things",
-    desc: "Flickering red · Hawkins",
-    swatch: ["#0a0000", "#e74033", "#f5d76e"],
   },
 ];
 

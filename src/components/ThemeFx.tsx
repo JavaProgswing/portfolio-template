@@ -905,386 +905,33 @@ const setupCyberpunk: SetupFn = (getCtx) => {
 };
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  DRACULA — classic dev purple                                          ║
-// ║  organ chord · bat silhouettes · purple mist · "bleh bleh bleh"        ║
+// ║  EVERGREEN — deep forest + sage green (clean, no FX)                    ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
-const setupDracula: SetupFn = (getCtx) => {
-  let batInterval: ReturnType<typeof setInterval> | null = null;
-  let mistInterval: ReturnType<typeof setInterval> | null = null;
-  const clickTimes: number[] = [];
-
-  /** Spooky organ chord */
-  function organChord(ctx: AudioContext) {
-    const now = ctx.currentTime;
-    [196, 233, 294].forEach((freq, i) => { // G3, Bb3, D4 — diminished
-      const osc = ctx.createOscillator(); osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, now);
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0.03, now);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
-      osc.connect(g).connect(ctx.destination);
-      osc.start(now + i * 0.03); osc.stop(now + 0.85);
-    });
-  }
-
-  /** Subtle purple chime on click */
-  function purpleChime(ctx: AudioContext) {
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator(); osc.type = "sine";
-    osc.frequency.setValueAtTime(880, now);
-    osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.04, now);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(now); osc.stop(now + 0.22);
-  }
-
-  function spawnBat() {
-    const y = 5 + Math.random() * 40;
-    const bat = createEl("div", {
-      position: "fixed", right: "-60px", top: `${y}%`,
-      width: "40px", height: "20px",
-      pointerEvents: "none", zIndex: "1",
-      animation: "fx-bat-fly 4s linear forwards",
-    });
-    bat.innerHTML = `<svg width="40" height="20" viewBox="0 0 40 20" opacity="0.5">
-      <path d="M20,10 Q12,2 2,6 Q8,8 12,12 Q14,14 20,16 Q26,14 28,12 Q32,8 38,6 Q28,2 20,10Z"
-        fill="#bd93f9" opacity="0.5"/>
-    </svg>`;
-    document.body.appendChild(bat);
-    setTimeout(() => bat.remove(), 4200);
-  }
-
-  function spawnMist() {
-    const x = Math.random() * 100;
-    const size = 30 + Math.random() * 50;
-    const duration = 12 + Math.random() * 8;
-    const mist = createEl("div", {
-      position: "fixed", bottom: "-20px", left: `${x}%`,
-      width: `${size}px`, height: `${size}px`, borderRadius: "50%",
-      background: "radial-gradient(circle, rgba(189, 147, 249, 0.08), transparent)",
-      pointerEvents: "none", zIndex: "0",
-      animation: `fx-mist-float ${duration}s linear forwards`,
-    });
-    document.body.appendChild(mist);
-    setTimeout(() => mist.remove(), duration * 1000 + 100);
-  }
-
-  const onClick = (e: MouseEvent) => {
-    const t = e.target as HTMLElement;
-    if (!isInteractive(t)) return;
-    const ctx = getCtx();
-    if (ctx) purpleChime(ctx);
-
-    // Purple ripple
-    const ripple = createEl("div", {
-      position: "fixed",
-      left: `${e.clientX - 16}px`, top: `${e.clientY - 16}px`,
-      width: "32px", height: "32px", borderRadius: "50%",
-      border: "1px solid rgba(189, 147, 249, 0.3)",
-      boxShadow: "0 0 10px rgba(189, 147, 249, 0.15)",
-      pointerEvents: "none", zIndex: "10000",
-      opacity: "1", transform: "scale(1)",
-      transition: "all 0.5s ease-out",
-    });
-    document.body.appendChild(ripple);
-    requestAnimationFrame(() => { ripple.style.transform = "scale(2.5)"; ripple.style.opacity = "0"; });
-    setTimeout(() => ripple.remove(), 550);
-
-    // "bleh bleh bleh" easter egg (3 rapid clicks in 1.5s)
-    const now = Date.now();
-    clickTimes.push(now);
-    while (clickTimes.length > 3) clickTimes.shift();
-    if (clickTimes.length === 3 && now - clickTimes[0] < 1500) {
-      clickTimes.length = 0;
-      if (ctx) organChord(ctx);
-      const bleh = createEl("div", {
-        position: "fixed", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontSize: "28px", fontWeight: "800", fontStyle: "italic",
-        fontFamily: "'Inter', system-ui, sans-serif",
-        color: "#bd93f9",
-        textShadow: "0 0 20px rgba(189, 147, 249, 0.5), 0 0 40px rgba(255, 121, 198, 0.3)",
-        pointerEvents: "none", zIndex: "10001",
-        animation: "fx-ace-flash 1.2s ease-out forwards",
-        userSelect: "none", letterSpacing: "0.1em",
-      });
-      bleh.textContent = "bleh bleh bleh!";
-      document.body.appendChild(bleh);
-      setTimeout(() => bleh.remove(), 1300);
-    }
-  };
-
-  // Activation
+const setupEvergreen: SetupFn = (getCtx) => {
   const ctx = getCtx();
-  if (ctx) { swoosh(ctx, 400, "sine"); setTimeout(() => { const c = getCtx(); if (c) organChord(c); }, 200); }
-
-  batInterval = setInterval(spawnBat, 20000 + Math.random() * 15000);
-  mistInterval = setInterval(spawnMist, 4000);
-  for (let i = 0; i < 5; i++) setTimeout(spawnMist, i * 800);
-  setTimeout(spawnBat, 5000);
-
-  window.addEventListener("click", onClick);
-  return () => {
-    window.removeEventListener("click", onClick);
-    if (batInterval) clearInterval(batInterval);
-    if (mistInterval) clearInterval(mistInterval);
-    removeAllFxElements();
-  };
+  if (ctx) swoosh(ctx, 500, "sine");
+  return () => {};
 };
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  MONOKAI — bold pink + green                                           ║
-// ║  color pop ripple · warm synth click · syntax-themed                   ║
+// ║  ROSÉ PINE — soft rose aesthetic (clean, no FX)                        ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
-const setupMonokai: SetupFn = (getCtx) => {
-  const COLORS = ["#ff6188", "#a9dc76", "#78dce8", "#ffd866", "#ab9df2"];
-  let colorIdx = 0;
-
-  /** Warm synth pop */
-  function synthPop(ctx: AudioContext) {
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator(); osc.type = "triangle";
-    osc.frequency.setValueAtTime(523 + Math.random() * 200, now);
-    osc.frequency.exponentialRampToValueAtTime(330, now + 0.12);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.05, now);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(now); osc.stop(now + 0.17);
-  }
-
-  const onClick = (e: MouseEvent) => {
-    const t = e.target as HTMLElement;
-    if (!isInteractive(t)) return;
-    const ctx = getCtx();
-    if (ctx) synthPop(ctx);
-
-    // Color pop ripple — cycles through Monokai palette
-    const color = COLORS[colorIdx % COLORS.length];
-    colorIdx++;
-    const pop = createEl("div", {
-      position: "fixed",
-      left: `${e.clientX - 12}px`, top: `${e.clientY - 12}px`,
-      width: "24px", height: "24px", borderRadius: "50%",
-      background: color,
-      pointerEvents: "none", zIndex: "10000",
-      animation: "fx-monokai-pop 0.4s ease-out forwards",
-    });
-    document.body.appendChild(pop);
-    setTimeout(() => pop.remove(), 450);
-  };
-
-  // Activation
+const setupRosepine: SetupFn = (getCtx) => {
   const ctx = getCtx();
-  if (ctx) swoosh(ctx, 500, "triangle");
-
-  window.addEventListener("click", onClick);
-  return () => {
-    window.removeEventListener("click", onClick);
-    removeAllFxElements();
-  };
+  if (ctx) swoosh(ctx, 580, "sine");
+  return () => {};
 };
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  STRANGER THINGS — Hawkins nightmare                                   ║
-// ║  Christmas lights · alphabet wall · flickering · Upside Down           ║
+// ║  GRUVBOX — warm yellow retro (clean, no FX)                            ║
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
-const setupStranger: SetupFn = (getCtx) => {
-  let lightsContainer: HTMLElement | null = null;
-  let flickerInterval: ReturnType<typeof setInterval> | null = null;
-  let upsideDownInterval: ReturnType<typeof setInterval> | null = null;
-  const clickTimes: number[] = [];
-
-  const LIGHT_COLORS = ["#e74033", "#f5d76e", "#4fc3f7", "#50fa7b", "#ff6188", "#ffa726"];
-
-  /** Flickering light bulb sound */
-  function flickerSound(ctx: AudioContext) {
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator(); osc.type = "sine";
-    osc.frequency.setValueAtTime(60, now); // mains hum
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.02, now);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(now); osc.stop(now + 0.12);
-  }
-
-  /** Demogorgon growl (for easter egg) */
-  function demogorgonGrowl(ctx: AudioContext) {
-    const now = ctx.currentTime;
-    // Low rumble
-    const osc = ctx.createOscillator(); osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(50, now);
-    osc.frequency.exponentialRampToValueAtTime(30, now + 0.8);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.08, now);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 1);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(now); osc.stop(now + 1.05);
-    // High screech
-    const screech = ctx.createOscillator(); screech.type = "sawtooth";
-    screech.frequency.setValueAtTime(800, now + 0.1);
-    screech.frequency.exponentialRampToValueAtTime(200, now + 0.6);
-    const sg = ctx.createGain();
-    sg.gain.setValueAtTime(0.04, now + 0.1);
-    sg.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
-    const sf = ctx.createBiquadFilter();
-    sf.type = "bandpass"; sf.frequency.setValueAtTime(600, now); sf.Q.setValueAtTime(3, now);
-    screech.connect(sf).connect(sg).connect(ctx.destination);
-    screech.start(now + 0.1); screech.stop(now + 0.75);
-  }
-
-  // ── Christmas lights along top ──
-  lightsContainer = createEl("div", {
-    position: "fixed", top: "0", left: "0", right: "0",
-    height: "3px", display: "flex", gap: "0",
-    pointerEvents: "none", zIndex: "10000",
-    animation: "fx-hud-fadein 1s ease-out forwards",
-  });
-
-  const lightCount = Math.floor(window.innerWidth / 20);
-  for (let i = 0; i < lightCount; i++) {
-    const light = document.createElement("div");
-    const color = LIGHT_COLORS[i % LIGHT_COLORS.length];
-    Object.assign(light.style, {
-      flex: "1",
-      height: "3px",
-      background: color,
-      boxShadow: `0 0 6px ${color}, 0 2px 4px ${color}`,
-      opacity: "0.4",
-      animation: `fx-light-blink ${1.5 + Math.random() * 2}s ease-in-out ${Math.random() * 2}s infinite`,
-    });
-    lightsContainer.appendChild(light);
-  }
-  document.body.appendChild(lightsContainer);
-
-  // ── Alphabet wall display on click ──
-  function showAlphabetLetter(letter: string) {
-    const letterEl = createEl("div", {
-      position: "fixed",
-      top: "45%",
-      left: `${20 + Math.random() * 60}%`,
-      fontSize: "64px", fontWeight: "900",
-      fontFamily: "'Inter', system-ui, sans-serif",
-      color: "#e74033",
-      textShadow: "0 0 20px rgba(231, 64, 51, 0.5), 0 0 40px rgba(231, 64, 51, 0.3)",
-      pointerEvents: "none", zIndex: "10001",
-      animation: "fx-letter-flash 1.5s ease-out forwards",
-      userSelect: "none",
-      textTransform: "uppercase",
-    });
-    letterEl.textContent = letter;
-    document.body.appendChild(letterEl);
-    setTimeout(() => letterEl.remove(), 1600);
-  }
-
-  // ── Random flicker ──
-  function doFlicker() {
-    const ctx = getCtx();
-    if (ctx) flickerSound(ctx);
-
-    // All lights briefly intensify
-    if (lightsContainer) {
-      const lights = lightsContainer.children;
-      const randomLight = lights[Math.floor(Math.random() * lights.length)] as HTMLElement;
-      if (randomLight) {
-        randomLight.style.opacity = "1";
-        randomLight.style.filter = "brightness(2)";
-        setTimeout(() => {
-          randomLight.style.opacity = "0.4";
-          randomLight.style.filter = "";
-        }, 200);
-      }
-    }
-  }
-
-  // ── Upside Down effect (brief visual distortion every 40-60s) ──
-  function upsideDownFlash() {
-    const overlay = createEl("div", {
-      position: "fixed", top: "0", left: "0", right: "0", bottom: "0",
-      pointerEvents: "none", zIndex: "10000",
-      animation: "fx-upside-down 2s ease-in-out forwards",
-    });
-    document.body.appendChild(overlay);
-    const ctx = getCtx();
-    if (ctx) radioStatic(ctx, 0.3);
-    setTimeout(() => overlay.remove(), 2100);
-  }
-
-  const onClick = (e: MouseEvent) => {
-    const t = e.target as HTMLElement;
-    if (!isInteractive(t)) return;
-    const ctx = getCtx();
-    if (ctx) flickerSound(ctx);
-
-    // Show a random alphabet letter
-    const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-    showAlphabetLetter(letter);
-
-    // Track for Upside Down (4 rapid clicks in 2s)
-    const now = Date.now();
-    clickTimes.push(now);
-    while (clickTimes.length > 4) clickTimes.shift();
-    if (clickTimes.length === 4 && now - clickTimes[0] < 2000) {
-      clickTimes.length = 0;
-      if (ctx) demogorgonGrowl(ctx);
-
-      // "THE UPSIDE DOWN" text
-      const text = createEl("div", {
-        position: "fixed", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%) rotate(180deg)",
-        fontSize: "28px", fontWeight: "900",
-        fontFamily: "'Inter', system-ui, sans-serif",
-        color: "#e74033",
-        textShadow: "0 0 15px rgba(231, 64, 51, 0.6), 0 0 40px rgba(231, 64, 51, 0.3)",
-        pointerEvents: "none", zIndex: "10002",
-        animation: "fx-ace-flash 2s ease-out forwards",
-        userSelect: "none", letterSpacing: "0.2em", textTransform: "uppercase",
-      });
-      text.textContent = "THE UPSIDE DOWN";
-      document.body.appendChild(text);
-      upsideDownFlash();
-      setTimeout(() => text.remove(), 2100);
-    }
-  };
-
-  // Activation
+const setupGruvbox: SetupFn = (getCtx) => {
   const ctx = getCtx();
-  if (ctx) {
-    swoosh(ctx, 350, "triangle");
-    // Eerie activation: descending tone
-    setTimeout(() => {
-      const c = getCtx();
-      if (c) {
-        const now = c.currentTime;
-        const osc = c.createOscillator(); osc.type = "sine";
-        osc.frequency.setValueAtTime(440, now);
-        osc.frequency.exponentialRampToValueAtTime(110, now + 0.6);
-        const g = c.createGain();
-        g.gain.setValueAtTime(0.04, now);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
-        osc.connect(g).connect(c.destination);
-        osc.start(now); osc.stop(now + 0.75);
-      }
-    }, 200);
-  }
-
-  flickerInterval = setInterval(doFlicker, 5000 + Math.random() * 5000);
-  upsideDownInterval = setInterval(upsideDownFlash, 45000 + Math.random() * 15000);
-
-  window.addEventListener("click", onClick);
-  return () => {
-    window.removeEventListener("click", onClick);
-    if (flickerInterval) clearInterval(flickerInterval);
-    if (upsideDownInterval) clearInterval(upsideDownInterval);
-    lightsContainer = null;
-    removeAllFxElements();
-  };
+  if (ctx) swoosh(ctx, 440, "triangle");
+  return () => {};
 };
 
 // ╔══════════════════════════════════════════════════════════════════════════╗
@@ -1478,15 +1125,15 @@ const setupIndigo: SetupFn = (getCtx) => {
 
 const THEME_FX: Record<string, SetupFn> = {
   indigo: setupIndigo,
-  dracula: setupDracula,
-  monokai: setupMonokai,
+  rosepine: setupRosepine,
+  gruvbox: setupGruvbox,
+  evergreen: setupEvergreen,
   cyberpunk: setupCyberpunk,
   aurora: setupAurora,
   amber: setupAmber,
   valorant: setupValorant,
   arcane: setupArcane,
   pragmata: setupPragmata,
-  stranger: setupStranger,
 };
 
 const ThemeFx = () => {
