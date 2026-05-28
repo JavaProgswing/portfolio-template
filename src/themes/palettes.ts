@@ -2,6 +2,8 @@
  * Theme palette definitions.
  * Applied at runtime via `document.body.dataset.theme = key`.
  * CSS variables for each theme are defined in src/index.css under `body[data-theme="X"]`.
+ *
+ * Ordering: default → normal dev themes → pop-culture/custom themes.
  */
 
 export interface ThemePalette {
@@ -13,23 +15,12 @@ export interface ThemePalette {
 }
 
 export const THEMES: ThemePalette[] = [
+  // ── Normal themes ──
   {
     key: "indigo",
     name: "Indigo",
     desc: "Default · zinc + indigo",
     swatch: ["#09090b", "#818cf8", "#a5b4fc"],
-  },
-  {
-    key: "catppuccin",
-    name: "Catppuccin",
-    desc: "Mocha · warm dark + mauve",
-    swatch: ["#1e1e2e", "#cba6f7", "#f5c2e7"],
-  },
-  {
-    key: "tokyo",
-    name: "Tokyo Night",
-    desc: "Cool dark + neon blue",
-    swatch: ["#1a1b26", "#7aa2f7", "#bb9af7"],
   },
   {
     key: "dracula",
@@ -38,28 +29,53 @@ export const THEMES: ThemePalette[] = [
     swatch: ["#282a36", "#bd93f9", "#ff79c6"],
   },
   {
-    key: "nord",
-    name: "Nord",
-    desc: "Cool cyan · Scandinavian",
-    swatch: ["#2e3440", "#88c0d0", "#81a1c1"],
-  },
-  {
-    key: "rosepine",
-    name: "Rose Pine",
-    desc: "Soft rose aesthetic",
-    swatch: ["#191724", "#ebbcba", "#c4a7e7"],
-  },
-  {
-    key: "gruvbox",
-    name: "Gruvbox",
-    desc: "Warm yellow retro",
-    swatch: ["#282828", "#fabd2f", "#fe8019"],
-  },
-  {
     key: "monokai",
     name: "Monokai",
     desc: "Bold pink + green",
     swatch: ["#2d2a2e", "#ff6188", "#a9dc76"],
+  },
+  {
+    key: "cyberpunk",
+    name: "Cyberpunk",
+    desc: "Electric yellow + cyan",
+    swatch: ["#0a0a0f", "#fcee0a", "#00f0ff"],
+  },
+  {
+    key: "aurora",
+    name: "Aurora",
+    desc: "Cyan + emerald · navy",
+    swatch: ["#0a1120", "#22d3ee", "#34d399"],
+  },
+  {
+    key: "amber",
+    name: "Amber CRT",
+    desc: "Old terminal glow",
+    swatch: ["#0a0700", "#ffb000", "#ffd060"],
+  },
+  // ── Pop-culture / custom themes ──
+  {
+    key: "valorant",
+    name: "Valorant",
+    desc: "Tactical red · gunmetal",
+    swatch: ["#0f1923", "#ff4655", "#ece8e1"],
+  },
+  {
+    key: "arcane",
+    name: "Arcane",
+    desc: "Hextech blue + gold",
+    swatch: ["#0a0e1a", "#1e90ff", "#c8aa6e"],
+  },
+  {
+    key: "pragmata",
+    name: "Pragmata",
+    desc: "Lunar void · cold cyan",
+    swatch: ["#050508", "#e8e8f0", "#00d4ff"],
+  },
+  {
+    key: "stranger",
+    name: "Stranger Things",
+    desc: "Flickering red · Hawkins",
+    swatch: ["#0a0000", "#e74033", "#f5d76e"],
   },
 ];
 

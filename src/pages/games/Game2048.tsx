@@ -141,8 +141,25 @@ const Game2048 = () => {
   const [won, setWon] = useState(false);
   const [over, setOver] = useState(false);
   const [scorePulse, setScorePulse] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const startAtRef = useRef<number | null>(null);
   const lockRef = useRef(false);
   const touch = isTouchDevice();
+
+  // Tick the timer while a game is in progress
+  useEffect(() => {
+    if (over || won || startAtRef.current === null) return;
+    const id = setInterval(() => {
+      if (startAtRef.current !== null) setElapsed((Date.now() - startAtRef.current) / 1000);
+    }, 200);
+    return () => clearInterval(id);
+  }, [over, won, scorePulse]);
+
+  const fmtTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
 
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.08)");
   const boardBg = useColorModeValue("gray.100", "rgba(255,255,255,0.03)");
@@ -181,6 +198,8 @@ const Game2048 = () => {
     setScore(0);
     setWon(false);
     setOver(false);
+    setElapsed(0);
+    startAtRef.current = null;
     lockRef.current = false;
   };
 
@@ -234,6 +253,12 @@ const Game2048 = () => {
     );
 
     if (!moved) return;
+
+    // Start the clock on the first real move
+    if (startAtRef.current === null) {
+      startAtRef.current = Date.now();
+      setScorePulse((p) => p + 1); // kick the timer effect to subscribe
+    }
 
     lockRef.current = true;
 
@@ -356,6 +381,10 @@ const Game2048 = () => {
             <MotionBox key={scorePulse} animate={{ scale: [1, 1.25, 1] }} transition={{ duration: 0.25 }}>
               <Text color="brand.400" fontWeight="700">{score}</Text>
             </MotionBox>
+          </HStack>
+          <HStack spacing={1.5}>
+            <Text color="gray.500">time</Text>
+            <Text color="gray.300" fontWeight="700">{fmtTime(elapsed)}</Text>
           </HStack>
           <HStack spacing={1.5}>
             <Icon as={FaTrophy as ElementType} boxSize={3} color="yellow.500" />

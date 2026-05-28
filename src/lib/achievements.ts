@@ -43,6 +43,13 @@ export const ACHIEVEMENTS: Achievement[] = [
   { key: "typing-played", label: "Home Row",         hint: "Tried the typing race" },
   { key: "typing-40",    label: "Touch Typist",      hint: "Hit 40+ WPM" },
   { key: "typing-80",    label: "Keyboard Warrior",  hint: "Hit 80+ WPM" },
+  { key: "type-cheese",  label: "Tryna Cheese It?",  hint: "Mashed the keyboard for fake WPM. We saw that." },
+  { key: "wordle-played", label: "Word Nerd",        hint: "Played Tech Wordle" },
+  { key: "wordle-win",   label: "Five Letters",      hint: "Solved a Tech Wordle" },
+  { key: "wordle-streak", label: "On a Roll",        hint: "3-win Wordle streak" },
+  { key: "mines-played", label: "Bomb Squad",        hint: "Played Minesweeper" },
+  { key: "mines-win",    label: "Defused",           hint: "Cleared a Minesweeper board" },
+  { key: "life-played",  label: "It's Alive",        hint: "Ran Conway's Game of Life" },
   { key: "ai-chat",      label: "Ghost in the Machine", hint: "Struck up a conversation with the portfolio AI" },
   { key: "suggester",    label: "Helpful Hand",      hint: "Sent a site suggestion" },
 ];

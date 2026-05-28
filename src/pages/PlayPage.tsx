@@ -50,6 +50,27 @@ const GAMES: GameCard[] = [
     emoji: "⌨️",
     difficulty: "easy",
   },
+  {
+    slug: "wordle",
+    label: "Tech Wordle",
+    blurb: "Guess the 5-letter dev term in 6 tries. Build a win streak.",
+    emoji: "🟩",
+    difficulty: "medium",
+  },
+  {
+    slug: "mines",
+    label: "Minesweeper",
+    blurb: "Clear the grid without detonating. First click is always safe.",
+    emoji: "💣",
+    difficulty: "medium",
+  },
+  {
+    slug: "life",
+    label: "Game of Life",
+    blurb: "Conway's cellular automaton. Draw cells, hit play, watch it evolve.",
+    emoji: "🦠",
+    difficulty: "easy",
+  },
 ];
 
 const DIFF_COLOR: Record<string, string> = {

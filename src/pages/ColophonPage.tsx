@@ -41,7 +41,7 @@ const SECTIONS = [
     label: "Design",
     items: [
       "Inter (body) + JetBrains Mono (code/mono labels)",
-      "Zinc/Indigo default · 7 alt themes (Catppuccin, Tokyo, Dracula, Nord, etc.)",
+      "Zinc/Indigo default · 9 alt themes (Dracula, Monokai, Cyberpunk, Aurora, Amber CRT, Valorant, Arcane, Pragmata, Stranger Things)",
       "780px max content width — single-column document feel",
       "Dark-first · respects prefers-color-scheme",
     ],

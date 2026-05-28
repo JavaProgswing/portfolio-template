@@ -48,6 +48,7 @@ const TypingGame = () => {
   const [accuracy, setAccuracy] = useState(100);
   const [bestWpm, setBestWpm] = useState(0);
   const [errors, setErrors] = useState(0);
+  const [cheesed, setCheesed] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -82,6 +83,7 @@ const TypingGame = () => {
     setWpm(0);
     setAccuracy(100);
     setErrors(0);
+    setCheesed(false);
     setTimeout(() => inputRef.current?.focus(), 50);
   };
 
@@ -99,12 +101,22 @@ const TypingGame = () => {
     setAccuracy(acc);
     setPhase("done");
 
-    if (finalWpm > bestWpm) {
+    // Anti-cheese: high WPM with garbage accuracy = key-spam. No best, no real
+    // achievements — but a cheeky one for the effort.
+    const legit = acc >= 70;
+    if (!legit && finalWpm >= 60) {
+      setCheesed(true);
+      unlock("type-cheese");
+      return;
+    }
+    setCheesed(false);
+
+    if (legit && finalWpm > bestWpm) {
       setBestWpm(finalWpm);
       try { localStorage.setItem(HS_KEY, String(finalWpm)); } catch { /* ignore */ }
     }
-    if (finalWpm >= 40) unlock("typing-40");
-    if (finalWpm >= 80) unlock("typing-80");
+    if (legit && finalWpm >= 40) unlock("typing-40");
+    if (legit && finalWpm >= 80) unlock("typing-80");
   };
 
   const onChange = (val: string) => {
@@ -275,11 +287,22 @@ const TypingGame = () => {
           borderRadius="12px"
           layerStyle="card"
           border="1px solid"
-          borderColor="brand.500"
+          borderColor={cheesed ? "orange.400" : "brand.500"}
         >
+          {cheesed && (
+            <Box mb={4} textAlign="center">
+              <Text fontFamily="mono" fontSize="sm" color="orange.300" fontWeight="700">
+                tryna cheese the game huh? 🧀
+              </Text>
+              <Text fontFamily="mono" fontSize="11px" color="gray.500" mt={1}>
+                key-spam detected — no best score for you. type it properly.
+              </Text>
+            </Box>
+          )}
           <HStack spacing={8} justify="center" flexWrap="wrap">
-            <Stat icon={FaBolt} label="wpm" value={`${wpm}`} color="brand.400"
-              note={wpm === bestWpm && wpm > 0 ? "★ new best" : ""} />
+            <Stat icon={FaBolt} label="wpm" value={`${wpm}`}
+              color={cheesed ? "gray.500" : "brand.400"}
+              note={!cheesed && wpm === bestWpm && wpm > 0 ? "★ new best" : ""} />
             <Stat icon={FaBullseye} label="accuracy" value={`${accuracy}%`}
               color={accuracy >= 95 ? "green.400" : accuracy >= 80 ? "yellow.400" : "red.400"} />
             <Stat icon={FaRedo} label="errors" value={`${errors}`} color="gray.300" />
@@ -291,7 +314,7 @@ const TypingGame = () => {
             </Button>
           </HStack>
           <Text mt={3} textAlign="center" fontSize="10px" color="gray.600" fontFamily="mono">
-            enter or tab to retry · 40 / 80 wpm unlock achievements
+            enter or tab to retry · 40 / 80 wpm (≥70% acc) unlock achievements
           </Text>
         </MotionBox>
       )}

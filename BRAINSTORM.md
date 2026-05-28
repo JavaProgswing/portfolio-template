@@ -13,14 +13,16 @@ Living doc of ideas that haven't shipped yet. Pick what excites you, ignore the 
 
 Shared: `src/pages/games/common.ts` (touch detection). Console: `play [game]`, or `snake`/`2048`/`typing` direct.
 
-**Candidate games to add next** (theme-fit, effort estimate):
-- [ ] **Tech Wordle** — guess a 5-letter tech word, daily-puzzle feel. Green/yellow/gray tiles already match palette. Medium effort. Very sticky.
-- [ ] **Minesweeper** — classic grid, fits the terminal aesthetic. Flag mode for mobile. Medium.
-- [ ] **Conway's Game of Life** — not a game but mesmerizing; "systems programmer" flex. Click to seed, play/pause/step, speed slider, presets (glider, pulsar). Easy-medium, low interaction.
-- [ ] **Memory / Concentration** — flip cards with tech-stack logos (react-icons). Easy. Good mobile.
-- [ ] **Lights Out** — toggle-grid puzzle, satisfying. Easy.
-- [ ] **Pong / Breakout vs wall** — retro canvas, paddle. Medium.
-- [ ] **Flappy-style** one-button — quick, addictive. Medium.
+**Shipped (round 2):**
+- [x] **Tech Wordle** (`/play/wordle`) — 50-word dev dictionary, 6 tries, flip animation, on-screen + physical keyboard, win-streak in localStorage. Achievements: wordle-played / wordle-win / wordle-streak.
+- [x] **Minesweeper** (`/play/mines`) — 10×10, 15 mines, first-click-safe, flood fill, flag mode toggle + right-click, timer + best, mine counter. Achievements: mines-played / mines-win.
+- [x] **Conway's Game of Life** (`/play/life`) — toroidal 50×32 canvas, click/drag to draw, play/pause/step/clear/random, speed slider, presets (glider, pulsar, Gosper gun), gen + pop counters. Achievement: life-played.
+
+**Still candidate:**
+- [ ] **Memory / Concentration** — flip cards with tech-stack logos. Easy. Good mobile.
+- [ ] **Lights Out** — toggle-grid puzzle. Easy.
+- [ ] **Pong / Breakout** — retro canvas paddle. Medium.
+- [ ] **Flappy-style** one-button. Medium.
 
 Design principles that worked: big "WAITING TO START" overlay, D-pad for touch + swipe + keyboard all wired, high score in localStorage, score-tier achievements, indigo/zinc theming, motion on score change.
 

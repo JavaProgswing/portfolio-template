@@ -7,6 +7,7 @@ import ParticleBackground from "./components/ParticleBackground";
 import AiChat from "./components/AiChat";
 import EasterEggs from "./components/EasterEggs";
 import AchievementToast from "./components/AchievementToast";
+import ThemeFx from "./components/ThemeFx";
 import CursorSpotlight from "./components/CursorSpotlight";
 import MatrixRain from "./components/MatrixRain";
 import {
@@ -25,6 +26,9 @@ import PlayPage from "./pages/PlayPage";
 import SnakeGame from "./pages/games/SnakeGame";
 import Game2048 from "./pages/games/Game2048";
 import TypingGame from "./pages/games/TypingGame";
+import WordleGame from "./pages/games/WordleGame";
+import MinesweeperGame from "./pages/games/MinesweeperGame";
+import LifeGame from "./pages/games/LifeGame";
 import NotFoundPage from "./pages/NotFoundPage";
 import data from "./data/me";
 
@@ -54,6 +58,9 @@ function App() {
           <Route path="/play/snake" element={<SnakeGame />} />
           <Route path="/play/2048" element={<Game2048 />} />
           <Route path="/play/typing" element={<TypingGame />} />
+          <Route path="/play/wordle" element={<WordleGame />} />
+          <Route path="/play/mines" element={<MinesweeperGame />} />
+          <Route path="/play/life" element={<LifeGame />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
@@ -63,6 +70,7 @@ function App() {
       <AiChat data={data} />
       <EasterEggs />
       <AchievementToast />
+      <ThemeFx />
       <CursorSpotlight />
       <MatrixRain />
       <ShortcutsModal />

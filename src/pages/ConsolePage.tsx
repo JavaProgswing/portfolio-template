@@ -1,7 +1,8 @@
-import { Box, HStack, Input, Stack, Text } from "@chakra-ui/react";
-import { useEffect, useRef, useState, KeyboardEvent } from "react";
+import { Box, HStack, IconButton, Input, Stack, Text, Tooltip } from "@chakra-ui/react";
+import { useEffect, useRef, useState, useCallback, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { unlock, getStats, ACHIEVEMENTS } from "../lib/achievements";
+import { useKeystrokeSounds } from "../hooks/useKeystrokeSounds";
 
 type LineType = "input" | "output" | "error" | "banner";
 interface Line { type: LineType; text: string }
@@ -37,10 +38,8 @@ const COMMANDS: Record<
   achievements - your easter egg progress
 
   play [game] - mini-games selector or launch direct
-              available games: snake, 2048, typing
-  snake      - launch snake directly
-  2048       - launch 2048 directly
-  typing     - launch type:race directly
+              games: snake, 2048, typing, wordle, mines, life
+  snake / 2048 / typing / wordle / mines / life - launch direct
   suggest <text> - send moderated feedback
   sign       - go to guestbook
   wander     - navigate to a 404 path (unlocks Wanderer)
@@ -154,6 +153,10 @@ press ↑/↓ for command history`,
       "2048": "/play/2048",
       typing: "/play/typing",
       type: "/play/typing",
+      wordle: "/play/wordle",
+      mines: "/play/mines",
+      minesweeper: "/play/mines",
+      life: "/play/life",
     };
     const path = routes[target.toLowerCase()];
     if (!path) return `open: unknown destination: ${target}`;
@@ -183,14 +186,18 @@ press ↑/↓ for command history`,
       "2048": "/play/2048",
       typing: "/play/typing",
       type: "/play/typing",
+      wordle: "/play/wordle",
+      mines: "/play/mines",
+      minesweeper: "/play/mines",
+      life: "/play/life",
     };
     if (game && routes[game]) {
       setTimeout(() => navigate(routes[game]), 200);
       return `→ launching ${game}…`;
     }
-    if (game) return `play: unknown game '${game}'\navailable: snake, 2048, typing`;
+    if (game) return `play: unknown game '${game}'\navailable: snake, 2048, typing, wordle, mines, life`;
     setTimeout(() => navigate("/play"), 200);
-    return "→ opening game selector…\n\navailable: snake, 2048, typing\nuse 'play snake' to launch directly";
+    return "→ opening game selector…\n\navailable: snake, 2048, typing, wordle, mines, life\nuse 'play wordle' to launch directly";
   },
 
   snake: ({ navigate }) => {
@@ -275,8 +282,10 @@ const ConsolePage = ({ data }: { data: any }) => {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyIdx, setHistoryIdx] = useState(-1);
+  const [soundMuted, setSoundMuted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const { playKeystroke } = useKeystrokeSounds({ volume: 0.45, muted: soundMuted });
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -345,6 +354,9 @@ const ConsolePage = ({ data }: { data: any }) => {
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Play keystroke sound for every key
+    playKeystroke(e.key);
+
     if (e.key === "Enter") {
       e.preventDefault();
       runCommand(input);
@@ -394,7 +406,28 @@ const ConsolePage = ({ data }: { data: any }) => {
       minH="calc(100vh - 60px)"
       onClick={focusInput}
       cursor="text"
+      position="relative"
     >
+      {/* Sound toggle */}
+      <Tooltip label={soundMuted ? "Unmute keystrokes" : "Mute keystrokes"} placement="left">
+        <IconButton
+          aria-label={soundMuted ? "Unmute keystroke sounds" : "Mute keystroke sounds"}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSoundMuted((m) => !m);
+          }}
+          position="absolute"
+          top={3}
+          right={3}
+          size="sm"
+          variant="ghost"
+          color={soundMuted ? "gray.500" : "brand.400"}
+          _hover={{ bg: "whiteAlpha.100" }}
+          fontSize="16px"
+        >
+          {soundMuted ? "🔇" : "🔊"}
+        </IconButton>
+      </Tooltip>
       <Stack spacing={1} fontFamily="mono" fontSize="13px">
         {lines.map((l, i) => (
           <Text

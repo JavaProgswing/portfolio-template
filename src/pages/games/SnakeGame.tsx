@@ -29,57 +29,68 @@ import { isTouchDevice } from "./common";
 const MotionBox = motion(Box);
 
 const GRID = 22;
-const CELL = 22;
-const CANVAS = GRID * CELL;
-const COLORS = {
-  bg: "#09090b",
-  grid: "rgba(255,255,255,0.025)",
-  snake: "#a5b4fc",
-  snakeHead: "#6366f1",
-  food: "#4ade80",
-};
+const CELL = 20;
+const LOGICAL = GRID * CELL; // 440 logical px
+const FOOD = "#4ade80";
+const HEAD_RGB = [129, 140, 248]; // brand.400
+const TAIL_RGB = [67, 56, 202]; // brand.700
+const HS_KEY = "portfolio-snake-highscore";
 
 type Direction = "up" | "down" | "left" | "right";
 type Point = { x: number; y: number };
+interface Ripple { x: number; y: number; t: number }
 
-const OPPOSITES: Record<Direction, Direction> = {
+const OPPOSITE: Record<Direction, Direction> = {
   up: "down", down: "up", left: "right", right: "left",
 };
-const DIR_DELTA: Record<Direction, Point> = {
+const DELTA: Record<Direction, Point> = {
   up: { x: 0, y: -1 }, down: { x: 0, y: 1 },
   left: { x: -1, y: 0 }, right: { x: 1, y: 0 },
 };
-const HS_KEY = "portfolio-snake-highscore";
 
-interface Ripple { x: number; y: number; t: number }
-
-// Lerp between two RGB colors
 const lerpColor = (a: number[], b: number[], t: number) =>
   `rgb(${Math.round(a[0] + (b[0] - a[0]) * t)},${Math.round(a[1] + (b[1] - a[1]) * t)},${Math.round(a[2] + (b[2] - a[2]) * t)})`;
-const HEAD_RGB = [129, 140, 248]; // brand.400
-const TAIL_RGB = [67, 56, 202];   // brand.700
+
+interface GameState {
+  snake: Point[];
+  dir: Direction;
+  nextDir: Direction;
+  food: Point;
+  growBy: number;
+  speed: number;
+  alive: boolean;
+  started: boolean;
+  paused: boolean;
+  ripple: Ripple | null;
+  diedAt: number;
+}
+
+const freshState = (): GameState => ({
+  snake: [{ x: 8, y: 11 }, { x: 7, y: 11 }, { x: 6, y: 11 }],
+  dir: "right",
+  nextDir: "right",
+  food: { x: 15, y: 11 },
+  growBy: 0,
+  speed: 130,
+  alive: true,
+  started: false,
+  paused: false,
+  ripple: null,
+  diedAt: 0,
+});
 
 const SnakeGame = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const stateRef = useRef({
-    snake: [{ x: 10, y: 11 }, { x: 9, y: 11 }, { x: 8, y: 11 }],
-    dir: "right" as Direction,
-    nextDir: "right" as Direction,
-    food: { x: 15, y: 11 },
-    growBy: 0,
-    speed: 130,
-    alive: true,
-    ripple: null as Ripple | null,
-    diedAt: 0,
-  });
+  const stRef = useRef<GameState>(freshState());
 
+  // UI mirror state (drives overlays/stats; the game loop reads stRef, not these)
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [started, setStarted] = useState(false);
-  const [scorePulse, setScorePulse] = useState(0);
   const [length, setLength] = useState(3);
+  const [highScore, setHighScore] = useState(0);
+  const [started, setStarted] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [over, setOver] = useState(false);
+  const [scorePulse, setScorePulse] = useState(0);
   const touch = isTouchDevice();
 
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.08)");
@@ -92,47 +103,54 @@ const SnakeGame = () => {
     unlock("snake-played");
   }, []);
 
-  const placeFood = () => {
-    const s = stateRef.current;
-    const occupied = new Set(s.snake.map((p) => `${p.x},${p.y}`));
+  const placeFood = (st: GameState) => {
+    const occ = new Set(st.snake.map((p) => `${p.x},${p.y}`));
     let f: Point;
     do {
       f = { x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID) };
-    } while (occupied.has(`${f.x},${f.y}`));
-    s.food = f;
+    } while (occ.has(`${f.x},${f.y}`));
+    st.food = f;
   };
 
-  const reset = () => {
-    stateRef.current = {
-      snake: [{ x: 10, y: 11 }, { x: 9, y: 11 }, { x: 8, y: 11 }],
-      dir: "right",
-      nextDir: "right",
-      food: { x: 15, y: 11 },
-      growBy: 0,
-      speed: 130,
-      alive: true,
-      ripple: null,
-      diedAt: 0,
-    };
+  // Begin a new game. Optional first direction (from the key/swipe that started it).
+  const begin = (firstDir?: Direction) => {
+    const st = freshState();
+    st.started = true;
+    if (firstDir && OPPOSITE[st.dir] !== firstDir) {
+      st.dir = firstDir;
+      st.nextDir = firstDir;
+    }
+    placeFood(st);
+    stRef.current = st;
     setScore(0);
     setLength(3);
-    setGameOver(false);
+    setOver(false);
     setPaused(false);
     setStarted(true);
-    placeFood();
   };
 
-  const changeDir = (dir: Direction) => {
-    const cur = stateRef.current.dir;
-    if (OPPOSITES[cur] !== dir) stateRef.current.nextDir = dir;
-    if (!started) reset();
+  const setDir = (dir: Direction) => {
+    const st = stRef.current;
+    if (!st.started || st.alive === false) {
+      begin(dir);
+      return;
+    }
+    // Prevent reversing into self (compare against the last committed dir)
+    if (OPPOSITE[st.dir] !== dir) st.nextDir = dir;
   };
 
-  const die = () => {
-    const s = stateRef.current;
-    s.alive = false;
-    s.diedAt = Date.now();
-    setGameOver(true);
+  const togglePause = () => {
+    const st = stRef.current;
+    if (st.alive === false) { begin(); return; }
+    if (!st.started) { begin(); return; }
+    st.paused = !st.paused;
+    setPaused(st.paused);
+  };
+
+  const die = (st: GameState) => {
+    st.alive = false;
+    st.diedAt = performance.now();
+    setOver(true);
     setScore((sc) => {
       if (sc > highScore) {
         setHighScore(sc);
@@ -144,196 +162,177 @@ const SnakeGame = () => {
     });
   };
 
-  const step = () => {
-    const s = stateRef.current;
-    if (!s.alive) return;
+  const step = (st: GameState) => {
+    st.dir = st.nextDir;
+    const d = DELTA[st.dir];
+    const head = st.snake[0];
+    const nh: Point = { x: head.x + d.x, y: head.y + d.y };
 
-    s.dir = s.nextDir;
-    const d = DIR_DELTA[s.dir];
-    const head = s.snake[0];
-    const newHead: Point = { x: head.x + d.x, y: head.y + d.y };
+    // Wall = death (no wrap)
+    if (nh.x < 0 || nh.x >= GRID || nh.y < 0 || nh.y >= GRID) { die(st); return; }
+    // Self = death
+    if (st.snake.some((p) => p.x === nh.x && p.y === nh.y)) { die(st); return; }
 
-    // Wall collision — death (no wrap)
-    if (newHead.x < 0 || newHead.x >= GRID || newHead.y < 0 || newHead.y >= GRID) {
-      die();
-      return;
-    }
+    st.snake.unshift(nh);
 
-    // Self collision
-    if (s.snake.some((p) => p.x === newHead.x && p.y === newHead.y)) {
-      die();
-      return;
-    }
-
-    s.snake.unshift(newHead);
-
-    if (newHead.x === s.food.x && newHead.y === s.food.y) {
-      s.growBy += 1;
-      s.ripple = { x: s.food.x, y: s.food.y, t: Date.now() };
+    if (nh.x === st.food.x && nh.y === st.food.y) {
+      st.growBy += 1;
+      st.ripple = { x: st.food.x, y: st.food.y, t: performance.now() };
+      st.speed = Math.max(60, st.speed - 3);
+      placeFood(st);
       setScore((sc) => sc + 10);
       setScorePulse((p) => p + 1);
-      setLength(s.snake.length);
-      placeFood();
-      s.speed = Math.max(60, s.speed - 3);
+      setLength(st.snake.length);
     }
 
-    if (s.growBy > 0) s.growBy -= 1;
-    else s.snake.pop();
+    if (st.growBy > 0) st.growBy -= 1;
+    else st.snake.pop();
   };
 
-  const draw = (ctx: CanvasRenderingContext2D) => {
-    const s = stateRef.current;
-    const now = Date.now();
-
-    ctx.fillStyle = COLORS.bg;
-    ctx.fillRect(0, 0, CANVAS, CANVAS);
-
-    // Grid
-    ctx.strokeStyle = COLORS.grid;
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= GRID; i++) {
-      ctx.beginPath();
-      ctx.moveTo(i * CELL + 0.5, 0); ctx.lineTo(i * CELL + 0.5, CANVAS); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, i * CELL + 0.5); ctx.lineTo(CANVAS, i * CELL + 0.5); ctx.stroke();
-    }
-
-    // Walls — visible boundary (red flash on death)
-    const deadFlash = !s.alive && now - s.diedAt < 600;
-    const wallProg = deadFlash ? 1 - (now - s.diedAt) / 600 : 0;
-    ctx.strokeStyle = deadFlash
-      ? `rgba(248,113,113,${0.4 + wallProg * 0.6})`
-      : "rgba(129,140,248,0.25)";
-    ctx.lineWidth = deadFlash ? 3 + wallProg * 3 : 2;
-    ctx.strokeRect(1, 1, CANVAS - 2, CANVAS - 2);
-
-    // Eat ripple
-    if (s.ripple) {
-      const age = (now - s.ripple.t) / 400;
-      if (age < 1) {
-        const cx = s.ripple.x * CELL + CELL / 2;
-        const cy = s.ripple.y * CELL + CELL / 2;
-        ctx.beginPath();
-        ctx.arc(cx, cy, age * CELL * 2.2, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(74,222,128,${(1 - age) * 0.6})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      } else {
-        s.ripple = null;
-      }
-    }
-
-    // Food — pulsing with glow
-    const pulse = (Math.sin(now / 300) + 1) / 2;
-    const cx = s.food.x * CELL + CELL / 2;
-    const cy = s.food.y * CELL + CELL / 2;
-    ctx.save();
-    ctx.shadowColor = COLORS.food;
-    ctx.shadowBlur = 8 + pulse * 6;
-    ctx.fillStyle = COLORS.food;
-    const foodSize = CELL - 6 - pulse * 2;
-    const foodPad = (CELL - foodSize) / 2;
-    ctx.beginPath();
-    ctx.roundRect(s.food.x * CELL + foodPad, s.food.y * CELL + foodPad, foodSize, foodSize, 4);
-    ctx.fill();
-    ctx.restore();
-
-    // Snake — head bright indigo → tail dim, fades on death
-    const len = s.snake.length;
-    s.snake.forEach((p, i) => {
-      const t = len > 1 ? i / (len - 1) : 0;
-      ctx.fillStyle = lerpColor(HEAD_RGB, TAIL_RGB, t);
-      if (deadFlash) ctx.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(now / 60));
-      const pad = i === 0 ? 1.5 : 2;
-      ctx.beginPath();
-      ctx.roundRect(p.x * CELL + pad, p.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, i === 0 ? 6 : 4);
-      ctx.fill();
-      // Head eyes
-      if (i === 0) {
-        ctx.fillStyle = "#09090b";
-        const eye = CELL * 0.13;
-        ctx.beginPath();
-        ctx.arc(p.x * CELL + CELL * 0.34, p.y * CELL + CELL * 0.36, eye, 0, Math.PI * 2);
-        ctx.arc(p.x * CELL + CELL * 0.66, p.y * CELL + CELL * 0.36, eye, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    });
-  };
-
+  // ── Single stable render+tick loop (reads refs, never re-subscribes) ────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Crisp canvas: backing store scaled by devicePixelRatio
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = LOGICAL * dpr;
+    canvas.height = LOGICAL * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     let raf = 0;
     let last = performance.now();
 
+    const draw = (now: number) => {
+      const st = stRef.current;
+
+      ctx.fillStyle = "#09090b";
+      ctx.fillRect(0, 0, LOGICAL, LOGICAL);
+
+      // Grid
+      ctx.strokeStyle = "rgba(255,255,255,0.025)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= GRID; i++) {
+        const o = i * CELL + 0.5;
+        ctx.beginPath(); ctx.moveTo(o, 0); ctx.lineTo(o, LOGICAL); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, o); ctx.lineTo(LOGICAL, o); ctx.stroke();
+      }
+
+      // Walls
+      const deadFlash = !st.alive && now - st.diedAt < 600;
+      const wp = deadFlash ? 1 - (now - st.diedAt) / 600 : 0;
+      ctx.strokeStyle = deadFlash
+        ? `rgba(248,113,113,${0.4 + wp * 0.6})`
+        : "rgba(129,140,248,0.22)";
+      ctx.lineWidth = deadFlash ? 3 + wp * 4 : 2;
+      ctx.strokeRect(1, 1, LOGICAL - 2, LOGICAL - 2);
+
+      // Eat ripple
+      if (st.ripple) {
+        const age = (now - st.ripple.t) / 400;
+        if (age < 1) {
+          ctx.beginPath();
+          ctx.arc(st.ripple.x * CELL + CELL / 2, st.ripple.y * CELL + CELL / 2, age * CELL * 2.2, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(74,222,128,${(1 - age) * 0.6})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        } else st.ripple = null;
+      }
+
+      // Food
+      const pulse = (Math.sin(now / 300) + 1) / 2;
+      ctx.save();
+      ctx.shadowColor = FOOD;
+      ctx.shadowBlur = 8 + pulse * 6;
+      ctx.fillStyle = FOOD;
+      const fs = CELL - 6 - pulse * 2;
+      const fp = (CELL - fs) / 2;
+      ctx.beginPath();
+      ctx.roundRect(st.food.x * CELL + fp, st.food.y * CELL + fp, fs, fs, 4);
+      ctx.fill();
+      ctx.restore();
+
+      // Snake — gradient head→tail
+      const len = st.snake.length;
+      st.snake.forEach((p, i) => {
+        const t = len > 1 ? i / (len - 1) : 0;
+        ctx.fillStyle = lerpColor(HEAD_RGB, TAIL_RGB, t);
+        if (deadFlash) ctx.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(now / 70));
+        const pad = i === 0 ? 1.5 : 2;
+        ctx.beginPath();
+        ctx.roundRect(p.x * CELL + pad, p.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, i === 0 ? 6 : 4);
+        ctx.fill();
+        if (i === 0) {
+          // Two eyes shifted toward the direction of travel
+          ctx.fillStyle = "#09090b";
+          const e = CELL * 0.12;
+          const cx = p.x * CELL + CELL / 2;
+          const cy = p.y * CELL + CELL / 2;
+          const dx = DELTA[st.dir].x, dy = DELTA[st.dir].y;
+          const fwd = CELL * 0.18; // forward offset
+          const sep = CELL * 0.2;  // perpendicular separation
+          // perpendicular axis
+          const px = dy, py = dx;
+          ctx.beginPath();
+          ctx.arc(cx + dx * fwd + px * sep, cy + dy * fwd + py * sep, e, 0, Math.PI * 2);
+          ctx.arc(cx + dx * fwd - px * sep, cy + dy * fwd - py * sep, e, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      });
+    };
+
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
-      if (!started || paused || gameOver) {
-        draw(ctx);
-        return;
+      const st = stRef.current;
+      if (st.started && st.alive && !st.paused) {
+        if (now - last >= st.speed) {
+          step(st);
+          last = now;
+        }
+      } else {
+        last = now; // keep timer fresh while idle/paused
       }
-      const s = stateRef.current;
-      if (now - last >= s.speed) {
-        step();
-        last = now;
-      }
-      draw(ctx);
+      draw(now);
     };
 
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [started, paused, gameOver]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  // Keyboard
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
-
-      const dirs: Record<string, Direction> = {
-        ArrowUp: "up", w: "up",
-        ArrowDown: "down", s: "down",
-        ArrowLeft: "left", a: "left",
-        ArrowRight: "right", d: "right",
+      const tg = e.target as HTMLElement;
+      if (tg.tagName === "INPUT" || tg.tagName === "TEXTAREA") return;
+      const map: Record<string, Direction> = {
+        ArrowUp: "up", w: "up", ArrowDown: "down", s: "down",
+        ArrowLeft: "left", a: "left", ArrowRight: "right", d: "right",
       };
-      const key = e.key.toLowerCase();
-      const dir = dirs[e.key] || dirs[key];
-      if (dir) { e.preventDefault(); changeDir(dir); return; }
-
-      if (e.key === " ") {
-        e.preventDefault();
-        if (gameOver) reset();
-        else if (started) setPaused((p) => !p);
-        else reset();
-      }
-      if (e.key.toLowerCase() === "r") { e.preventDefault(); reset(); }
+      const dir = map[e.key] || map[e.key.toLowerCase()];
+      if (dir) { e.preventDefault(); setDir(dir); return; }
+      if (e.key === " ") { e.preventDefault(); togglePause(); }
+      if (e.key.toLowerCase() === "r") { e.preventDefault(); begin(); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [started, gameOver]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [highScore]);
 
-  // Touch swipe (alternative to D-pad)
+  // Touch swipe
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     let sx = 0, sy = 0;
-    const ts = (e: TouchEvent) => {
-      const t = e.touches[0];
-      sx = t.clientX; sy = t.clientY;
-    };
+    const ts = (e: TouchEvent) => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; };
     const te = (e: TouchEvent) => {
       const t = e.changedTouches[0];
-      const dx = t.clientX - sx;
-      const dy = t.clientY - sy;
+      const dx = t.clientX - sx, dy = t.clientY - sy;
       if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
-      const dir: Direction =
-        Math.abs(dx) > Math.abs(dy)
-          ? dx > 0 ? "right" : "left"
-          : dy > 0 ? "down" : "up";
-      changeDir(dir);
+      setDir(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up"));
     };
     canvas.addEventListener("touchstart", ts, { passive: true });
     canvas.addEventListener("touchend", te, { passive: true });
@@ -341,22 +340,17 @@ const SnakeGame = () => {
       canvas.removeEventListener("touchstart", ts);
       canvas.removeEventListener("touchend", te);
     };
-  }, [started]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Box maxW="780px" mx="auto" px={{ base: 4, md: 8 }} py={12}>
       <HStack spacing={4} mb={6}>
         <RouterLink to="/play">
-          <Text fontSize="11px" color="brand.400" fontFamily="mono"
-            _hover={{ color: "brand.300" }}>
-            ← games
-          </Text>
+          <Text fontSize="11px" color="brand.400" fontFamily="mono" _hover={{ color: "brand.300" }}>← games</Text>
         </RouterLink>
         <RouterLink to="/">
-          <Text fontSize="11px" color="gray.600" fontFamily="mono"
-            _hover={{ color: "brand.300" }}>
-            home
-          </Text>
+          <Text fontSize="11px" color="gray.600" fontFamily="mono" _hover={{ color: "brand.300" }}>home</Text>
         </RouterLink>
       </HStack>
 
@@ -371,11 +365,7 @@ const SnakeGame = () => {
         <HStack spacing={4} fontFamily="mono" fontSize="13px">
           <HStack spacing={1.5}>
             <Text color="gray.500">score</Text>
-            <MotionBox
-              key={scorePulse}
-              animate={{ scale: [1, 1.25, 1] }}
-              transition={{ duration: 0.25 }}
-            >
+            <MotionBox key={scorePulse} animate={{ scale: [1, 1.25, 1] }} transition={{ duration: 0.25 }}>
               <Text color="brand.400" fontWeight="700">{score}</Text>
             </MotionBox>
           </HStack>
@@ -398,44 +388,38 @@ const SnakeGame = () => {
         border="1px solid"
         borderColor={border}
         overflow="hidden"
-        bg={COLORS.bg}
+        bg="#09090b"
         mx="auto"
-        w="fit-content"
-        maxW="100%"
-        boxShadow={started && !gameOver && !paused ? "0 0 24px rgba(99,102,241,0.18)" : "none"}
-        sx={{ transition: "box-shadow 0.4s" }}
+        w="100%"
+        maxW={`${LOGICAL}px`}
+        sx={{ aspectRatio: "1" }}
+        boxShadow={started && !over && !paused ? "0 0 24px rgba(99,102,241,0.18)" : "none"}
       >
         <Box
           as="canvas"
           ref={canvasRef}
-          width={CANVAS}
-          height={CANVAS}
           display="block"
-          maxW="100%"
-          sx={{ touchAction: "none" }}
+          w="100%"
+          h="100%"
+          sx={{ touchAction: "none", imageRendering: "auto" }}
         />
 
-        {/* Big overlay: NOT STARTED */}
-        {!started && !gameOver && (
-          <Box position="absolute" inset={0} display="flex"
-            alignItems="center" justifyContent="center"
+        {/* NOT STARTED */}
+        {!started && !over && (
+          <Box position="absolute" inset={0} display="flex" alignItems="center" justifyContent="center"
             bg="rgba(9,9,11,0.92)" backdropFilter="blur(4px)">
             <Stack spacing={4} align="center" maxW="320px" px={4}>
-              <MotionBox
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-              >
+              <MotionBox animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}>
                 <Text fontFamily="mono" fontSize="md" fontWeight="700"
                   color="brand.400" letterSpacing="0.2em" textAlign="center">
                   ▶ WAITING TO START
                 </Text>
               </MotionBox>
               <Text fontFamily="mono" fontSize="13px" color="gray.300" textAlign="center" lineHeight="1.7">
-                {touch
-                  ? "tap a direction below or swipe to begin"
-                  : "press space or any arrow key"}
+                {touch ? "tap a direction below or swipe to begin" : "press space or any arrow key"}
               </Text>
-              <Button size="md" onClick={reset} variant="glow"
+              <Button size="md" onClick={() => begin()} variant="glow"
                 leftIcon={<Icon as={FaPlay as ElementType} boxSize={3} />}>
                 start
               </Button>
@@ -450,40 +434,29 @@ const SnakeGame = () => {
         )}
 
         {/* Paused */}
-        {paused && started && !gameOver && (
-          <Box position="absolute" inset={0} display="flex"
-            alignItems="center" justifyContent="center"
+        {paused && started && !over && (
+          <Box position="absolute" inset={0} display="flex" alignItems="center" justifyContent="center"
             bg="rgba(9,9,11,0.75)" backdropFilter="blur(2px)">
             <Stack spacing={2} align="center">
               <Icon as={FaPause as ElementType} color="brand.400" boxSize={8} />
               <Text fontFamily="mono" fontSize="sm" color="gray.300" fontWeight="600">paused</Text>
-              <Text fontFamily="mono" fontSize="10px" color="gray.500">
-                space to resume
-              </Text>
+              <Text fontFamily="mono" fontSize="10px" color="gray.500">space to resume</Text>
             </Stack>
           </Box>
         )}
 
         {/* Game over */}
-        {gameOver && (
-          <MotionBox position="absolute" inset={0} display="flex"
-            alignItems="center" justifyContent="center"
+        {over && (
+          <MotionBox position="absolute" inset={0} display="flex" alignItems="center" justifyContent="center"
             bg="rgba(9,9,11,0.92)" backdropFilter="blur(4px)"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <Stack spacing={3} align="center">
-              <Text fontFamily="mono" fontSize="2xl" color="red.400" fontWeight="700">
-                game over
-              </Text>
+              <Text fontFamily="mono" fontSize="2xl" color="red.400" fontWeight="700">game over</Text>
               <HStack spacing={4} fontFamily="mono" fontSize="sm">
-                <Text color="gray.400">
-                  score:{" "}
-                  <Text as="span" color="brand.400" fontWeight="700">{score}</Text>
-                </Text>
-                {score === highScore && score > 0 && (
-                  <Text color="yellow.400">★ new best</Text>
-                )}
+                <Text color="gray.400">score: <Text as="span" color="brand.400" fontWeight="700">{score}</Text></Text>
+                {score === highScore && score > 0 && <Text color="yellow.400">★ new best</Text>}
               </HStack>
-              <Button size="sm" onClick={reset} variant="glow"
+              <Button size="sm" onClick={() => begin()} variant="glow"
                 leftIcon={<Icon as={FaRedo as ElementType} boxSize={3} />}>
                 play again
               </Button>
@@ -492,39 +465,25 @@ const SnakeGame = () => {
         )}
       </Box>
 
-      {/* D-pad — always shown on touch, optional on desktop */}
-      {(touch || true) && (
-        <Box mt={5} mx="auto" w="fit-content">
-          <Text fontSize="10px" color="gray.600" fontFamily="mono"
-            textAlign="center" mb={2} display={{ base: "block", md: "none" }}>
-            tap to play
-          </Text>
-          <Stack spacing={1} align="center">
-            <DPadBtn onClick={() => changeDir("up")} icon={FaChevronUp} ariaLabel="up" />
-            <HStack spacing={1}>
-              <DPadBtn onClick={() => changeDir("left")} icon={FaChevronLeft} ariaLabel="left" />
-              <Button
-                size="sm"
-                onClick={() => {
-                  if (gameOver) reset();
-                  else if (started) setPaused((p) => !p);
-                  else reset();
-                }}
-                variant="ghost"
-                color="gray.500"
-                fontFamily="mono"
-                fontSize="10px"
-                h="44px" w="44px"
-                p={0}
-              >
-                {!started ? "▶" : paused ? "▶" : "⏸"}
-              </Button>
-              <DPadBtn onClick={() => changeDir("right")} icon={FaChevronRight} ariaLabel="right" />
-            </HStack>
-            <DPadBtn onClick={() => changeDir("down")} icon={FaChevronDown} ariaLabel="down" />
-          </Stack>
-        </Box>
-      )}
+      {/* D-pad */}
+      <Box mt={5} mx="auto" w="fit-content">
+        <Text fontSize="10px" color="gray.600" fontFamily="mono"
+          textAlign="center" mb={2} display={{ base: "block", md: "none" }}>
+          tap to play
+        </Text>
+        <Stack spacing={1} align="center">
+          <DPadBtn onClick={() => setDir("up")} icon={FaChevronUp} ariaLabel="up" />
+          <HStack spacing={1}>
+            <DPadBtn onClick={() => setDir("left")} icon={FaChevronLeft} ariaLabel="left" />
+            <Button size="sm" onClick={togglePause} variant="ghost" color="gray.500"
+              fontFamily="mono" fontSize="10px" h="44px" w="44px" p={0}>
+              {!started ? "▶" : paused ? "▶" : "⏸"}
+            </Button>
+            <DPadBtn onClick={() => setDir("right")} icon={FaChevronRight} ariaLabel="right" />
+          </HStack>
+          <DPadBtn onClick={() => setDir("down")} icon={FaChevronDown} ariaLabel="down" />
+        </Stack>
+      </Box>
 
       <Stack spacing={1} mt={6} align="center">
         <HStack fontSize="11px" fontFamily="mono" color="gray.600" spacing={4}>
@@ -532,43 +491,27 @@ const SnakeGame = () => {
           <Text>arrows · WASD · space pause · R restart</Text>
         </HStack>
         <Text fontSize="10px" color="gray.600" fontFamily="mono">
-          score 50 / 100 unlocks achievements
+          walls = death · score 50 / 100 unlocks achievements
         </Text>
       </Stack>
     </Box>
   );
 };
 
-// ── D-pad button ─────────────────────────────────────────────────────────────
-
-interface DPadProps {
-  onClick: () => void;
-  icon: IconType;
-  ariaLabel: string;
-}
-
-const DPadBtn = ({ onClick, icon: I, ariaLabel }: DPadProps) => {
-  return (
-    <Button
-      onClick={onClick}
-      onTouchStart={(e) => { e.preventDefault(); onClick(); }}
-      size="sm"
-      variant="outline"
-      borderColor="rgba(255,255,255,0.14)"
-      color="gray.400"
-      bg="rgba(255,255,255,0.03)"
-      h="44px" w="44px" p={0} minW={0}
-      _hover={{
-        color: "brand.400",
-        borderColor: "rgba(99,102,241,0.4)",
-        bg: "rgba(99,102,241,0.08)",
-      }}
-      _active={{ bg: "rgba(99,102,241,0.15)" }}
-      aria-label={ariaLabel}
-    >
-      <Icon as={I as ElementType} boxSize={3.5} />
-    </Button>
-  );
-};
+interface DPadProps { onClick: () => void; icon: IconType; ariaLabel: string }
+const DPadBtn = ({ onClick, icon: I, ariaLabel }: DPadProps) => (
+  <Button
+    onClick={onClick}
+    onTouchStart={(e) => { e.preventDefault(); onClick(); }}
+    size="sm" variant="outline"
+    borderColor="rgba(255,255,255,0.14)" color="gray.400" bg="rgba(255,255,255,0.03)"
+    h="44px" w="44px" p={0} minW={0}
+    _hover={{ color: "brand.400", borderColor: "rgba(99,102,241,0.4)", bg: "rgba(99,102,241,0.08)" }}
+    _active={{ bg: "rgba(99,102,241,0.15)" }}
+    aria-label={ariaLabel}
+  >
+    <Icon as={I as ElementType} boxSize={3.5} />
+  </Button>
+);
 
 export default SnakeGame;

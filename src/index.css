@@ -64,77 +64,414 @@ body.rainbow-active {
    overriding them at body level cascades through every component.
    ────────────────────────────────────────────────────────────────────────── */
 
-body[data-theme="catppuccin"] {
-  background-color: #1e1e2e !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #313244 0%, #11111b 70%) !important;
-  --chakra-colors-brand-300: #b4befe;
-  --chakra-colors-brand-400: #cba6f7;
-  --chakra-colors-brand-500: #b4befe;
-  --chakra-colors-brand-600: #9a82c8;
-  --cursor-glow: rgba(203, 166, 247, 0.08);
-}
-
-body[data-theme="tokyo"] {
-  background-color: #1a1b26 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #292e42 0%, #16161e 70%) !important;
-  --chakra-colors-brand-300: #a9b1d6;
-  --chakra-colors-brand-400: #7aa2f7;
-  --chakra-colors-brand-500: #5d8ce3;
-  --chakra-colors-brand-600: #3d5fb9;
-  --cursor-glow: rgba(122, 162, 247, 0.08);
-}
-
+/* Dracula — classic dev purple on charcoal */
 body[data-theme="dracula"] {
   background-color: #282a36 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #44475a 0%, #1e1f29 70%) !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #343746 0%, #1e1f29 70%) !important;
   --chakra-colors-brand-300: #d4b3ff;
   --chakra-colors-brand-400: #bd93f9;
-  --chakra-colors-brand-500: #9d6df9;
-  --chakra-colors-brand-600: #7e4eea;
-  --cursor-glow: rgba(189, 147, 249, 0.09);
+  --chakra-colors-brand-500: #ff79c6;
+  --chakra-colors-brand-600: #50fa7b;
+  --cursor-glow: rgba(189, 147, 249, 0.14);
 }
 
-body[data-theme="nord"] {
-  background-color: #2e3440 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #3b4252 0%, #21262e 70%) !important;
-  --chakra-colors-brand-300: #8fbcbb;
-  --chakra-colors-brand-400: #88c0d0;
-  --chakra-colors-brand-500: #81a1c1;
-  --chakra-colors-brand-600: #5e81ac;
-  --cursor-glow: rgba(136, 192, 208, 0.09);
-}
-
-body[data-theme="rosepine"] {
-  background-color: #191724 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #26233a 0%, #100e1c 70%) !important;
-  --chakra-colors-brand-300: #f6c177;
-  --chakra-colors-brand-400: #ebbcba;
-  --chakra-colors-brand-500: #eb6f92;
-  --chakra-colors-brand-600: #c4a7e7;
-  --cursor-glow: rgba(235, 188, 186, 0.09);
-}
-
-body[data-theme="gruvbox"] {
-  background-color: #282828 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #3c3836 0%, #1d2021 70%) !important;
-  --chakra-colors-brand-300: #fabd2f;
-  --chakra-colors-brand-400: #fabd2f;
-  --chakra-colors-brand-500: #d79921;
-  --chakra-colors-brand-600: #fe8019;
-  --cursor-glow: rgba(250, 189, 47, 0.09);
-}
-
+/* Monokai — bold pink + green on warm dark */
 body[data-theme="monokai"] {
   background-color: #2d2a2e !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #403e41 0%, #1c1a1c 70%) !important;
-  --chakra-colors-brand-300: #ff85a3;
+  background-image: radial-gradient(ellipse at 50% 0%, #3e3b40 0%, #221f22 70%) !important;
+  --chakra-colors-brand-300: #ff85a1;
   --chakra-colors-brand-400: #ff6188;
-  --chakra-colors-brand-500: #d63d65;
-  --chakra-colors-brand-600: #a9dc76;
-  --cursor-glow: rgba(255, 97, 136, 0.09);
+  --chakra-colors-brand-500: #a9dc76;
+  --chakra-colors-brand-600: #78dce8;
+  --cursor-glow: rgba(255, 97, 136, 0.12);
+}
+
+/* Cyberpunk — electric yellow + cyan, near-black */
+body[data-theme="cyberpunk"] {
+  background-color: #0a0a0f !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #16161f 0%, #050507 70%) !important;
+  --chakra-colors-brand-300: #fff45e;
+  --chakra-colors-brand-400: #fcee0a;
+  --chakra-colors-brand-500: #00f0ff;
+  --chakra-colors-brand-600: #00b8c4;
+  --cursor-glow: rgba(252, 238, 10, 0.12);
+}
+
+/* Aurora — cyan + emerald on deep navy (northern lights) */
+body[data-theme="aurora"] {
+  background-color: #0a1120 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #102a3a 0%, #060c16 70%) !important;
+  --chakra-colors-brand-300: #67e8f9;
+  --chakra-colors-brand-400: #22d3ee;
+  --chakra-colors-brand-500: #34d399;
+  --chakra-colors-brand-600: #10b981;
+  --cursor-glow: rgba(34, 211, 238, 0.12);
+}
+
+/* Amber CRT — old terminal */
+body[data-theme="amber"] {
+  background-color: #0a0700 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #1f1500 0%, #060400 70%) !important;
+  --chakra-colors-brand-300: #ffd060;
+  --chakra-colors-brand-400: #ffb000;
+  --chakra-colors-brand-500: #d68f00;
+  --chakra-colors-brand-600: #a86f00;
+  --cursor-glow: rgba(255, 176, 0, 0.12);
+}
+body[data-theme="amber"] * {
+  text-shadow: 0 0 2px rgba(255, 176, 0, 0.15);
+}
+
+/* ── Pop-culture themes ────────────────────────────────────────────────── */
+
+/* Valorant — tactical red + gunmetal HUD */
+body[data-theme="valorant"] {
+  background-color: #0f1923 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #1a2836 0%, #0a1018 70%) !important;
+  --chakra-colors-brand-300: #ff6b75;
+  --chakra-colors-brand-400: #ff4655;
+  --chakra-colors-brand-500: #d6343f;
+  --chakra-colors-brand-600: #ece8e1;
+  --cursor-glow: rgba(255, 70, 85, 0.14);
+}
+/* Valorant crosshair cursor — clean dot sight */
+body[data-theme="valorant"],
+body[data-theme="valorant"] * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="4" x2="12" y2="9" stroke="%23ff4655" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="20" stroke="%23ff4655" stroke-width="2"/><line x1="4" y1="12" x2="9" y2="12" stroke="%23ff4655" stroke-width="2"/><line x1="15" y1="12" x2="20" y2="12" stroke="%23ff4655" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="%23ff4655"/></svg>') 12 12, crosshair;
+}
+
+/* Arcane — hextech blue + shimmer gold on deep Piltover navy */
+body[data-theme="arcane"] {
+  background-color: #0a0e1a !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #141c30 0%, #060810 70%) !important;
+  --chakra-colors-brand-300: #4fc3f7;
+  --chakra-colors-brand-400: #1e90ff;
+  --chakra-colors-brand-500: #c8aa6e;
+  --chakra-colors-brand-600: #a68b50;
+  --cursor-glow: rgba(30, 144, 255, 0.14);
+}
+body[data-theme="arcane"] * {
+  text-shadow: 0 0 1px rgba(30, 144, 255, 0.08);
+}
+
+/* Pragmata — lunar void, near-black + cold cyan signal */
+body[data-theme="pragmata"] {
+  background-color: #050508 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #0c0c14 0%, #020204 70%) !important;
+  --chakra-colors-brand-300: #e8e8f0;
+  --chakra-colors-brand-400: #00d4ff;
+  --chakra-colors-brand-500: #00b0d4;
+  --chakra-colors-brand-600: #a0a0b0;
+  --cursor-glow: rgba(0, 212, 255, 0.10);
+}
+/* Pragmata thin crosshair — astronaut HUD visor */
+body[data-theme="pragmata"],
+body[data-theme="pragmata"] * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="10" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="12" y1="14" x2="12" y2="22" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="2" y1="12" x2="10" y2="12" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="14" y1="12" x2="22" y2="12" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><circle cx="12" cy="12" r="1" fill="%2300d4ff" opacity="0.9"/></svg>') 12 12, crosshair;
+}
+
+/* Stranger Things — flickering red + Christmas lights on deep dark */
+body[data-theme="stranger"] {
+  background-color: #0a0000 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #1a0808 0%, #050000 70%) !important;
+  --chakra-colors-brand-300: #f07a6e;
+  --chakra-colors-brand-400: #e74033;
+  --chakra-colors-brand-500: #c0392b;
+  --chakra-colors-brand-600: #f5d76e;
+  --cursor-glow: rgba(231, 64, 51, 0.14);
+}
+body[data-theme="stranger"] * {
+  text-shadow: 0 0 1px rgba(231, 64, 51, 0.06);
 }
 
 /* Smooth bg transition when switching themes */
 body {
   transition: background-color 0.3s ease;
 }
+
+/* ── Theme FX: persistent visual overlays ───────────────────────────── */
+
+/* Amber CRT — scanline overlay */
+body[data-theme="amber"]::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.08) 0px,
+    rgba(0, 0, 0, 0.08) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Amber CRT — vignette (darkened edges) */
+body[data-theme="amber"]::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9997;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+/* Dracula — purple mist glow at top */
+body[data-theme="dracula"]::after {
+  content: "";
+  position: fixed;
+  top: -30px; left: -10%; right: -10%;
+  height: 180px;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(189, 147, 249, 0.06), transparent 70%);
+  filter: blur(10px);
+}
+
+/* Stranger Things — flickering red vignette */
+body[data-theme="stranger"]::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.04);
+  animation: fx-stranger-flicker 4s ease-in-out infinite;
+}
+
+@keyframes fx-stranger-flicker {
+  0%, 100% { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
+  15%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.04); }
+  18%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
+  22%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.05); }
+  50%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
+  75%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0.03); }
+  78%      { box-shadow: inset 0 0 140px rgba(231, 64, 51, 0); }
+}
+
+
+/* Aurora — northern lights shimmer bands */
+body[data-theme="aurora"]::after {
+  content: "";
+  position: fixed;
+  top: -20px; left: -10%; right: -10%;
+  height: 220px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(34, 211, 238, 0.05) 0%,
+    rgba(52, 211, 153, 0.03) 30%,
+    rgba(34, 211, 238, 0.02) 60%,
+    transparent 100%
+  );
+  animation: fx-aurora-wave 12s ease-in-out infinite;
+  filter: blur(8px);
+}
+
+@keyframes fx-aurora-wave {
+  0%, 100% { transform: translateX(-5%) scaleY(1); opacity: 0.6; }
+  33%      { transform: translateX(3%) scaleY(1.3); opacity: 1; }
+  66%      { transform: translateX(-2%) scaleY(0.7); opacity: 0.8; }
+}
+
+/* Cyberpunk — subtle neon text flicker on interactive elements */
+body[data-theme="cyberpunk"] a:hover,
+body[data-theme="cyberpunk"] button:hover {
+  animation: fx-neon-flicker 0.15s ease-in-out;
+}
+
+@keyframes fx-neon-flicker {
+  0%  { opacity: 1; }
+  25% { opacity: 0.8; }
+  50% { opacity: 1; }
+  75% { opacity: 0.85; }
+  100%{ opacity: 1; }
+}
+
+/* ── Theme FX: keyframes for JS-created elements ────────────────────── */
+
+/* Valorant hit marker (× at click point) */
+@keyframes fx-hit-marker {
+  0%   { transform: scale(1.5) rotate(45deg); opacity: 1; }
+  100% { transform: scale(0.8) rotate(45deg); opacity: 0; }
+}
+
+/* Valorant ACE flash */
+@keyframes fx-ace-flash {
+  0%   { transform: scale(0.5); opacity: 0; }
+  30%  { transform: scale(1.1); opacity: 1; }
+  70%  { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.2); opacity: 0; }
+}
+
+/* Cyberpunk glitch overlay */
+@keyframes fx-glitch {
+  0%   { clip-path: inset(40% 0 20% 0); transform: translate(-2px, 0); }
+  20%  { clip-path: inset(10% 0 60% 0); transform: translate(2px, 0); }
+  40%  { clip-path: inset(70% 0 5% 0); transform: translate(-1px, 0); }
+  60%  { clip-path: inset(20% 0 30% 0); transform: translate(1px, 0); }
+  80%  { clip-path: inset(50% 0 10% 0); transform: translate(2px, 0); }
+  100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+}
+
+/* Pragmata HUD scan sweep */
+@keyframes fx-scan-sweep {
+  0%   { top: -2px; opacity: 0; }
+  5%   { opacity: 0.6; }
+  95%  { opacity: 0.6; }
+  100% { top: 100vh; opacity: 0; }
+}
+
+/* Arcane floating particles */
+@keyframes fx-float-up {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-100vh) translateX(var(--fx-drift, 20px)) scale(0.3); opacity: 0; }
+}
+
+/* Aurora shooting star */
+@keyframes fx-shooting-star {
+  0%   { transform: translateX(0) translateY(0) rotate(-35deg); opacity: 1; width: 3px; }
+  100% { transform: translateX(-350px) translateY(200px) rotate(-35deg); opacity: 0; width: 90px; }
+}
+
+/* Amber CRT boot text cursor blink */
+@keyframes fx-boot-cursor {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* CRT screen flicker (used by JS) */
+@keyframes fx-crt-flicker {
+  0%   { opacity: 1; }
+  5%   { opacity: 0.65; }
+  10%  { opacity: 1; }
+  15%  { opacity: 0.8; }
+  20%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/* Pragmata transmission notification */
+@keyframes fx-transmission-in {
+  0%   { transform: translateX(120%); opacity: 0; }
+  8%   { transform: translateX(0); opacity: 1; }
+  82%  { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+
+/* ── Enhanced FX keyframes ──────────────────────────────────────────── */
+
+/* Valorant: kill feed notification slide-in */
+@keyframes fx-killfeed-in {
+  0%   { transform: translateX(100%); opacity: 0; }
+  15%  { transform: translateX(0); opacity: 1; }
+  80%  { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Valorant: spike pulse */
+@keyframes fx-spike-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 70, 85, 0.3); transform: scale(1); }
+  50%      { box-shadow: 0 0 20px rgba(255, 70, 85, 0.6); transform: scale(1.15); }
+}
+
+/* Pragmata: companion hologram pulse */
+@keyframes fx-companion-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.4)); opacity: 0.6; }
+  50%      { filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.7)); opacity: 0.9; }
+}
+
+/* Pragmata: companion slow rotation */
+@keyframes fx-companion-rotate {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Pragmata: signal interference bands */
+@keyframes fx-signal-interference {
+  0%   { top: -5%; opacity: 0; }
+  5%   { opacity: 0.7; }
+  95%  { opacity: 0.7; }
+  100% { top: 105%; opacity: 0; }
+}
+
+/* Pragmata: HUD bracket fade-in */
+@keyframes fx-hud-fadein {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Cyberpunk: data rain character scroll */
+@keyframes fx-data-rain {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Dracula: bat fly-across */
+@keyframes fx-bat-fly {
+  0%   { transform: translateX(100vw) translateY(0) scaleX(-1); opacity: 0; }
+  5%   { opacity: 0.6; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateX(-100px) translateY(-40px) scaleX(-1); opacity: 0; }
+}
+
+/* Dracula: purple mist particle */
+@keyframes fx-mist-float {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  15%  { opacity: 0.15; }
+  85%  { opacity: 0.05; }
+  100% { transform: translateY(-60vh) scale(2); opacity: 0; }
+}
+
+/* Monokai: color pop flash on click */
+@keyframes fx-monokai-pop {
+  0%   { transform: scale(0.5); opacity: 0.8; }
+  50%  { transform: scale(1.5); opacity: 0.4; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Arcane: hexagonal ripple expand */
+@keyframes fx-hex-ripple {
+  0%   { transform: scale(0.5) rotate(0deg); opacity: 0.8; }
+  100% { transform: scale(2.5) rotate(30deg); opacity: 0; }
+}
+
+/* Aurora: enhanced shooting star (longer trail) */
+@keyframes fx-shooting-star-long {
+  0%   { transform: translateX(0) translateY(0) rotate(-35deg); opacity: 0; width: 2px; }
+  5%   { opacity: 1; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateX(-500px) translateY(280px) rotate(-35deg); opacity: 0; width: 120px; }
+}
+
+/* Amber CRT: phosphor afterglow trail */
+@keyframes fx-phosphor-fade {
+  0%   { opacity: 0.3; }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+/* Stranger Things: Christmas light blink sequence */
+@keyframes fx-light-blink {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 1; }
+}
+
+/* Stranger Things: alphabet wall letter flash */
+@keyframes fx-letter-flash {
+  0%   { opacity: 0; transform: scale(0.8); }
+  20%  { opacity: 1; transform: scale(1.1); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9); }
+}
+
+/* Stranger Things: Upside Down visual invert */
+@keyframes fx-upside-down {
+  0%   { filter: invert(0) hue-rotate(0deg); opacity: 0; }
+  10%  { filter: invert(0.8) hue-rotate(180deg); opacity: 0.15; }
+  90%  { filter: invert(0.8) hue-rotate(180deg); opacity: 0.1; }
+  100% { filter: invert(0) hue-rotate(0deg); opacity: 0; }
+}
+
