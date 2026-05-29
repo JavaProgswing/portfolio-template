@@ -2,15 +2,11 @@
 
 A personal portfolio template built with React, TypeScript, and Vite. All content lives in one file (`src/data/me.ts`), so you fill in your details and never touch component code.
 
-![Hero](./screenshots/demo1.png)
-
-## The Front Page
-
-One scrolling page, six sections. A right-side dot navigator (desktop) and a sticky top nav both jump between them.
-
 ### Hero
 
 ![Hero](./screenshots/demo1.png)
+
+One scrolling page, six sections. A right-side dot navigator (desktop) and a sticky top nav both jump between them.
 
 Avatar, an animated typing bio, and role tags. A live **Now** card highlights what you are currently working on. Below it, your stack: primary languages as pills (first one starred), then frameworks and tools grouped side by side into **Frontend**, **Backend**, **Data**, and **Tools**. Unrecognized tools show their name without a placeholder icon.
 
