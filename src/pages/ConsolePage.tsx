@@ -226,8 +226,8 @@ press ↑/↓ for command history`,
         body: JSON.stringify({ name: "console-visitor", message }),
       });
       if (!res.ok) return `suggest: backend returned ${res.status}`;
-      // Track in achievements
-      import("../lib/achievements").then(({ unlock }) => unlock("suggester"));
+      // Track in achievements (unlock is statically imported above)
+      unlock("suggester");
       return "✓ suggestion received · moderated before publishing · thanks!";
     } catch {
       return "suggest: backend unreachable. is portfolio-api running?";

@@ -43,7 +43,7 @@ Hooks live in `src/components/EasterEggs.tsx` and `src/index.css`.
 
 ### Quick wins
 - [x] **Logo click counter** — 5 clicks in 3s → confetti burst + toast (`Confetti.tsx`, wired in `NavBar.tsx`)
-- [x] **URL params** for themes: `?theme=catppuccin`, `?theme=tokyo`, etc. (`themes/palettes.ts → resolveInitialTheme()`)
+- [x] **URL params** for themes: `?theme=valorant`, `?theme=arcane`, etc. (`themes/palettes.ts → resolveInitialTheme()`)
 - [x] **Matrix rain** canvas overlay when Konami is active (`MatrixRain.tsx`, only renders when `body.konami-active`)
 - [ ] **`?dev=1`** → debug panel showing fetched data, render counts
 - [ ] **More typed words**: `coffee`, `pizza`, `bug` → tiny animations (extend `EasterEggs.tsx → TYPED_TRIGGERS`)
@@ -58,23 +58,26 @@ Hooks live in `src/components/EasterEggs.tsx` and `src/index.css`.
 
 ## Themes — SHIPPED ✓
 
-8 palettes implemented as a theme switcher (palette icon in navbar, next to dark/light toggle).
+10 palettes implemented as a theme switcher (palette icon in navbar, next to dark/light toggle).
 Files: `src/themes/palettes.ts`, `src/components/ThemeSwitcher.tsx`, CSS in `src/index.css`.
+Game/tool-inspired themes (Valorant, Arcane, Pragmata) ship with custom Web Audio cues + cursors via `ThemeFx.tsx`.
 
 | Theme | Status |
 |---|---|
 | **Indigo** (default) | ✓ |
-| **Catppuccin Mocha** | ✓ |
-| **Tokyo Night** | ✓ |
-| **Dracula** | ✓ |
-| **Nord** | ✓ |
-| **Rose Pine** | ✓ |
+| **Rosé Pine** | ✓ |
 | **Gruvbox** | ✓ |
-| **Monokai** | ✓ |
+| **Evergreen** | ✓ |
+| **Cyberpunk** | ✓ |
+| **Aurora** | ✓ |
+| **Amber CRT** | ✓ |
+| **Valorant** | ✓ |
+| **Arcane** | ✓ |
+| **Pragmata** | ✓ |
 
 Features:
 - Persists in `localStorage["portfolio-theme"]`
-- URL param override: `?theme=catppuccin`
+- URL param override: `?theme=valorant`
 - Swatches preview each palette in switcher popover
 - CSS variable cascade — no Chakra theme rebuild needed
 - Smooth `background-color 0.3s` transition between themes

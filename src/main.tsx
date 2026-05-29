@@ -19,7 +19,7 @@ if (typeof window !== "undefined") {
     "color:#818cf8;font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1.4;"
   );
   console.log(
-    `%chey, you opened DevTools. nice.\n\n%c→ source: ${ghUrl}\n→ stack: react + chakra + framer + vite + fastapi\n→ ai chat: gemma-3 via gemini api (server proxy)\n\n%ctry the konami code  ↑↑↓↓←→←→ba  🎮\nor type "matrix" / "rainbow" anywhere on the page`,
+    `%chey, you opened DevTools. nice.\n\n%c→ source: ${ghUrl}\n→ stack: react + chakra + framer + vite + fastapi\n→ ai chat: gemini via server proxy\n\n%ctry the konami code  ↑↑↓↓←→←→ba  🎮\nor type "matrix" / "rainbow" anywhere on the page`,
     "color:#a1a1aa;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;",
     "color:#6b7280;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;",
     "color:#818cf8;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;font-style:italic;"
