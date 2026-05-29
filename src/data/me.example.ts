@@ -161,13 +161,16 @@ export default {
     startDate: "Month Year",
   },
 
-  // Blog posts - rendered inline with expand/collapse.
+  // Blog posts - clicking a card opens a full-screen reader.
   // Set link to an external URL (e.g. dev.to post) or leave null for inline content.
+  // authors: list of author names. Defaults to just you for solo posts.
+  //          Add co-authors for collaborative posts: ["You", "Co-Author Name"]
   blogs: [
     {
       title: "Your First Blog Post Title",
       date: "Month Year",
       readTime: "5 min read",
+      authors: ["Your Name"],
       excerpt:
         "A one-sentence hook that gets someone to click read more.",
       tags: ["Tag1", "Tag2"],
@@ -178,9 +181,10 @@ You can use line breaks for paragraphs. Markdown is not rendered — keep it as 
 This is a good place to share what you learned, what you built, or a story about your journey.`,
     },
     {
-      title: "Another Post",
+      title: "A Co-Authored Post",
       date: "Month Year",
       readTime: "3 min read",
+      authors: ["Your Name", "Co-Author Name"],
       excerpt: "Another compelling excerpt.",
       tags: ["Tag1"],
       content: `Content here.`,

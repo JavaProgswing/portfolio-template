@@ -1,10 +1,9 @@
-import { Box, Show } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { Box } from "@chakra-ui/react";
+import { useRef } from "react";
 import Intro from "../components/Intro";
 import Projects from "../components/Projects";
 import Journey from "../components/Journey";
 import Experience from "../components/Experience";
-import SectionNavigator, { Section } from "../components/SectionNavigator";
 import Activity from "../components/Activity";
 import Blog from "../components/Blog";
 
@@ -22,54 +21,14 @@ const HomePage = ({ data }: Props) => {
   const activityRef   = useRef<HTMLDivElement>(null);
   const writingRef    = useRef<HTMLDivElement>(null);
 
-  const [activeSection, setActiveSection] = useState<Section>("home");
 
-  useEffect(() => {
-    const refs: [React.RefObject<HTMLDivElement>, Section][] = [
-      [homeRef, "home"],
-      [journeyRef, "journey"],
-      ...(hasExperience ? [[experienceRef, "experience"] as [React.RefObject<HTMLDivElement>, Section]] : []),
-      [projectsRef, "projects"],
-      [activityRef, "activity"],
-      [writingRef, "writing"],
-    ];
-
-    const onScroll = () => {
-      const mid = window.innerHeight * 0.4;
-      let closest: Section = "home";
-      let minDist = Infinity;
-
-      for (const [ref, id] of refs) {
-        const top = ref.current?.getBoundingClientRect().top ?? Infinity;
-        const dist = Math.abs(top - mid);
-        if (dist < minDist) { minDist = dist; closest = id; }
-      }
-
-      setActiveSection(closest);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [hasExperience]);
 
   const scrollTo = (ref: React.RefObject<HTMLDivElement>) =>
     ref.current?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <>
-      <Show above="md">
-        <SectionNavigator
-          onHomeClick={()       => scrollTo(homeRef)}
-          onJourneyClick={()    => scrollTo(journeyRef)}
-          onExperienceClick={hasExperience ? () => scrollTo(experienceRef) : undefined}
-          onProjectsClick={()   => scrollTo(projectsRef)}
-          onActivityClick={()   => scrollTo(activityRef)}
-          onWritingClick={()    => scrollTo(writingRef)}
-          activeSection={activeSection}
-        />
-      </Show>
-
-      <Box mr={{ base: 0, md: "60px" }}>
+      <Box>
         <Box maxW="780px" mx="auto" px={{ base: 5, md: 8 }}>
           <Box id="home" ref={homeRef} minH="100dvh"
             display="flex" alignItems="center" py={20}>

@@ -1,12 +1,12 @@
 import {
   Box,
   Button,
-  Collapse,
   Divider,
   Flex,
   Heading,
   HStack,
   Icon,
+  IconButton,
   Input,
   Stack,
   Tag,
@@ -18,8 +18,16 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState, ElementType } from "react";
-import { motion } from "framer-motion";
-import { FaStar, FaRegStar, FaCommentDots, FaReply } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaStar,
+  FaRegStar,
+  FaCommentDots,
+  FaReply,
+  FaArrowRight,
+  FaTimes,
+  FaArrowUp,
+} from "react-icons/fa";
 
 export interface BlogPost {
   title: string;
@@ -29,6 +37,7 @@ export interface BlogPost {
   tags: string[];
   link?: string;
   content?: string;
+  authors?: string[];
 }
 
 const MotionBox = motion(Box);
@@ -68,19 +77,19 @@ const formatDate = (iso: string) => {
 const ContentRenderer = ({ text }: { text: string }) => {
   const border = useColorModeValue("purple.300", "purple.700");
   return (
-    <Stack spacing={4} mt={4}>
+    <Stack spacing={5} mt={2}>
       {text.split("\n\n").map((para, i) => {
         if (para.startsWith("> ")) {
           return (
-            <Box key={i} borderLeft="2px solid" borderColor={border} pl={4}>
-              <Text fontSize="sm" color="gray.400" fontStyle="italic" lineHeight="1.8">
+            <Box key={i} borderLeft="3px solid" borderColor={border} pl={5}>
+              <Text fontSize="md" color="gray.400" fontStyle="italic" lineHeight="1.9">
                 {para.slice(2)}
               </Text>
             </Box>
           );
         }
         return (
-          <Text key={i} fontSize="sm" color="gray.400" lineHeight="1.85">
+          <Text key={i} fontSize="md" color="gray.400" lineHeight="1.9">
             {para}
           </Text>
         );
@@ -150,37 +159,43 @@ const RatingBar = ({ slug }: { slug: string }) => {
   if (!available) return null;
 
   return (
-    <HStack spacing={3} fontFamily="mono" fontSize="11px">
-      <HStack spacing={0.5}>
-        {[1, 2, 3, 4, 5].map((n) => {
-          const filled = (hover || myRating) >= n;
-          return (
-            <Box
-              key={n}
-              as="button"
-              onMouseEnter={() => setHover(n)}
-              onMouseLeave={() => setHover(0)}
-              onClick={() => rate(n)}
-              color={filled ? "yellow.400" : "gray.600"}
-              _hover={{ color: "yellow.300", transform: "scale(1.2)" }}
-              sx={{ transition: "all 0.15s" }}
-              cursor="pointer"
-              p={0.5}
-            >
-              <Icon as={(filled ? FaStar : FaRegStar) as ElementType} boxSize={3.5} />
-            </Box>
-          );
-        })}
+    <Box>
+      <Text fontSize="10px" fontFamily="mono" color="gray.500"
+        letterSpacing="0.14em" textTransform="uppercase" mb={3}>
+        Rate this post
+      </Text>
+      <HStack spacing={3} fontFamily="mono" fontSize="12px">
+        <HStack spacing={1}>
+          {[1, 2, 3, 4, 5].map((n) => {
+            const filled = (hover || myRating) >= n;
+            return (
+              <Box
+                key={n}
+                as="button"
+                onMouseEnter={() => setHover(n)}
+                onMouseLeave={() => setHover(0)}
+                onClick={() => rate(n)}
+                color={filled ? "yellow.400" : "gray.600"}
+                _hover={{ color: "yellow.300", transform: "scale(1.25)" }}
+                sx={{ transition: "all 0.15s" }}
+                cursor="pointer"
+                p={1}
+              >
+                <Icon as={(filled ? FaStar : FaRegStar) as ElementType} boxSize={4} />
+              </Box>
+            );
+          })}
+        </HStack>
+        {stats && stats.count > 0 ? (
+          <Text color="gray.500">
+            <Text as="span" color="yellow.400" fontWeight="600">{stats.average?.toFixed(1)}</Text>
+            {" "}· {stats.count} {stats.count === 1 ? "vote" : "votes"}
+          </Text>
+        ) : (
+          <Text color="gray.600">be first to rate</Text>
+        )}
       </HStack>
-      {stats && stats.count > 0 ? (
-        <Text color="gray.500">
-          <Text as="span" color="yellow.400" fontWeight="600">{stats.average?.toFixed(1)}</Text>
-          {" "}· {stats.count} {stats.count === 1 ? "vote" : "votes"}
-        </Text>
-      ) : (
-        <Text color="gray.600">be first to rate</Text>
-      )}
-    </HStack>
+    </Box>
   );
 };
 
@@ -269,9 +284,9 @@ const CommentsSection = ({ slug }: { slug: string }) => {
   });
 
   return (
-    <Box mt={6}>
-      <HStack spacing={2} mb={3}>
-        <Icon as={FaCommentDots as ElementType} boxSize={3} color="gray.500" />
+    <Box>
+      <HStack spacing={2} mb={4}>
+        <Icon as={FaCommentDots as ElementType} boxSize={3.5} color="gray.500" />
         <Text fontSize="10px" fontFamily="mono" color="gray.500"
           letterSpacing="0.14em" textTransform="uppercase">
           {comments.length} {comments.length === 1 ? "comment" : "comments"}
@@ -305,11 +320,11 @@ const CommentsSection = ({ slug }: { slug: string }) => {
 
       {/* Submit form */}
       <Box
-        mt={4} p={3}
-        borderRadius="10px"
-        layerStyle="card"
+        mt={4} p={4}
+        borderRadius="12px"
         border="1px solid"
         borderColor={border}
+        bg={useColorModeValue("white", "rgba(255,255,255,0.02)")}
       >
         {replyTo !== null && (
           <HStack
@@ -343,7 +358,7 @@ const CommentsSection = ({ slug }: { slug: string }) => {
             onChange={(e) => setMessage(e.target.value)}
             maxLength={1000}
             size="sm"
-            rows={2}
+            rows={3}
             resize="vertical"
             isDisabled={submitting}
           />
@@ -417,14 +432,211 @@ const CommentBubble = ({
   );
 };
 
-// Blog card
+// Full-screen reader overlay
+
+const overlayVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.25 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
+};
+
+const panelVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.97 },
+  visible: {
+    opacity: 1, y: 0, scale: 1,
+    transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  },
+  exit: {
+    opacity: 0, y: 30, scale: 0.97,
+    transition: { duration: 0.2, ease: "easeIn" as const },
+  },
+};
+
+const BlogReader = ({ post, onClose }: { post: BlogPost; onClose: () => void }) => {
+  const slug = slugify(post.title);
+  const overlayBg = useColorModeValue("rgba(255,255,255,0.85)", "rgba(0,0,0,0.82)");
+  const panelBg = useColorModeValue("white", "gray.900");
+  const headerBg = useColorModeValue(
+    "rgba(255,255,255,0.75)",
+    "rgba(17,17,25,0.78)"
+  );
+  const dividerColor = useColorModeValue("gray.200", "rgba(255,255,255,0.06)");
+
+  // Lock body scroll
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  // ESC to close
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  const scrollToTop = () => {
+    const el = document.getElementById("blog-reader-scroll");
+    el?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <MotionBox
+      position="fixed"
+      inset={0}
+      zIndex={1500}
+      variants={overlayVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      {/* Backdrop */}
+      <Box
+        position="absolute" inset={0}
+        bg={overlayBg}
+        backdropFilter="blur(16px)"
+        onClick={onClose}
+      />
+
+      {/* Panel */}
+      <MotionBox
+        position="relative"
+        zIndex={1}
+        h="100%"
+        display="flex"
+        flexDirection="column"
+        variants={panelVariants}
+      >
+        {/* Sticky header */}
+        <Box
+          position="sticky" top={0} zIndex={2}
+          bg={headerBg}
+          backdropFilter="blur(20px)"
+          borderBottom="1px solid"
+          borderColor={dividerColor}
+          px={{ base: 5, md: 10 }}
+          py={3}
+        >
+          <Flex
+            maxW="720px" mx="auto"
+            justify="space-between" align="center"
+          >
+            <HStack spacing={3}>
+              <IconButton
+                aria-label="Close"
+                icon={<Icon as={FaTimes as ElementType} />}
+                onClick={onClose}
+                variant="ghost"
+                size="sm"
+                borderRadius="full"
+                color="gray.400"
+                _hover={{ color: "gray.200", bg: "rgba(255,255,255,0.08)" }}
+              />
+              {post.authors && post.authors.length > 0 && (
+                <Text fontSize="11px" fontFamily="mono" color="gray.500"
+                  display={{ base: "none", sm: "block" }}>
+                  by {post.authors.join(", ")}
+                </Text>
+              )}
+            </HStack>
+            <HStack spacing={2}>
+              <Text fontSize="11px" fontFamily="mono" color="gray.600">
+                esc to close
+              </Text>
+            </HStack>
+          </Flex>
+        </Box>
+
+        {/* Scrollable content */}
+        <Box
+          id="blog-reader-scroll"
+          flex={1}
+          overflowY="auto"
+          bg={panelBg}
+          sx={{
+            "&::-webkit-scrollbar": { width: "6px" },
+            "&::-webkit-scrollbar-track": { bg: "transparent" },
+            "&::-webkit-scrollbar-thumb": {
+              bg: "rgba(255,255,255,0.08)",
+              borderRadius: "3px",
+            },
+          }}
+        >
+          <Box maxW="720px" mx="auto" px={{ base: 5, md: 10 }} py={10}>
+            {/* Meta */}
+            <HStack spacing={3} mb={4}>
+              <Text fontSize="12px" fontFamily="mono" color="gray.500">{post.date}</Text>
+              <Text fontSize="12px" color="gray.700">·</Text>
+              <Text fontSize="12px" fontFamily="mono" color="gray.500">{post.readTime}</Text>
+            </HStack>
+
+            {/* Title */}
+            <Heading size="xl" lineHeight="1.3" mb={4}>
+              {post.title}
+            </Heading>
+
+            {/* Tags */}
+            <Wrap spacing={2} mb={8}>
+              {post.tags.map((tag) => (
+                <WrapItem key={tag}>
+                  <Tag size="sm" colorScheme="purple" variant="subtle" fontSize="10px">{tag}</Tag>
+                </WrapItem>
+              ))}
+            </Wrap>
+
+            {/* Excerpt as lead */}
+            <Text fontSize="lg" color="gray.400" lineHeight="1.8" mb={6}
+              fontStyle="italic" borderLeft="3px solid" borderColor="brand.500" pl={5}>
+              {post.excerpt}
+            </Text>
+
+            {/* Content body */}
+            {post.content && <ContentRenderer text={post.content} />}
+
+            {/* Divider → Rating */}
+            <Divider borderColor={dividerColor} my={10} />
+            <RatingBar slug={slug} />
+
+            {/* Divider → Comments */}
+            <Divider borderColor={dividerColor} my={10} />
+            <CommentsSection slug={slug} />
+
+            {/* Scroll to top */}
+            <Flex justify="center" mt={12} mb={4}>
+              <Button
+                size="sm" variant="ghost" fontFamily="mono" fontSize="11px"
+                leftIcon={<Icon as={FaArrowUp as ElementType} boxSize={3} />}
+                color="gray.500"
+                _hover={{ color: "brand.400" }}
+                onClick={scrollToTop}
+              >
+                back to top
+              </Button>
+            </Flex>
+          </Box>
+        </Box>
+      </MotionBox>
+    </MotionBox>
+  );
+};
+
+
 
 const BlogCard = ({
-  post, index, featured,
-}: { post: BlogPost; index: number; featured?: boolean }) => {
-  const [expanded, setExpanded] = useState(false);
+  post, index, featured, onOpen,
+}: { post: BlogPost; index: number; featured?: boolean; onOpen: () => void }) => {
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
-  const slug = slugify(post.title);
+
+  const handleClick = () => {
+    if (post.link) {
+      window.open(post.link, "_blank", "noopener,noreferrer");
+    } else if (post.content) {
+      onOpen();
+    }
+  };
 
   return (
     <MotionBox
@@ -432,13 +644,25 @@ const BlogCard = ({
       borderRadius="12px"
       layerStyle="card"
       border="1px solid"
-      borderColor={expanded ? "brand.600" : border}
+      borderColor={border}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.08 }}
-      _hover={{ borderColor: "brand.600" }}
+      _hover={{
+        borderColor: "brand.600",
+        transform: "translateY(-2px)",
+        boxShadow: "0 8px 30px rgba(99,102,241,0.10)",
+      }}
+      sx={{ transition: "all 0.25s ease" }}
       gridColumn={featured ? { base: "1", md: "1 / -1" } : undefined}
+      cursor={post.content || post.link ? "pointer" : undefined}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); }
+      }}
     >
       <Stack spacing={3}>
         <HStack justify="space-between" align="flex-start">
@@ -456,17 +680,6 @@ const BlogCard = ({
           {post.excerpt}
         </Text>
 
-        <Collapse in={expanded} animateOpacity>
-          {post.content && <ContentRenderer text={post.content} />}
-
-          {/* Rating + comments only shown when expanded */}
-          <Box mt={6}>
-            <Divider borderColor="rgba(255,255,255,0.08)" mb={4} />
-            <RatingBar slug={slug} />
-            <CommentsSection slug={slug} />
-          </Box>
-        </Collapse>
-
         <Wrap spacing={1.5}>
           {post.tags.map((tag) => (
             <WrapItem key={tag}>
@@ -475,30 +688,34 @@ const BlogCard = ({
           ))}
         </Wrap>
 
-        {post.link ? (
-          <Button as="a" href={post.link} target="_blank" rel="noopener noreferrer"
-            size="xs" variant="glow" alignSelf="flex-start" fontFamily="mono">
-            read post ↗
-          </Button>
-        ) : post.content ? (
-          <Button onClick={() => setExpanded((v) => !v)} size="xs" variant="link"
-            colorScheme="purple" alignSelf="flex-start" fontFamily="mono">
-            {expanded ? "↑ collapse" : "↓ read more · rate · comment"}
-          </Button>
-        ) : null}
+        {/* Subtle read indicator */}
+        {(post.content || post.link) && (
+          <HStack spacing={1.5} alignSelf="flex-start" color="gray.500"
+            _groupHover={{ color: "brand.400" }}
+            sx={{ transition: "color 0.2s" }}>
+            <Text fontSize="11px" fontFamily="mono">
+              {post.link ? "read post" : "read"}
+            </Text>
+            <Icon as={FaArrowRight as ElementType} boxSize={2.5} />
+          </HStack>
+        )}
       </Stack>
     </MotionBox>
   );
 };
 
+
+
 const Blog = ({ blogs }: { blogs: BlogPost[] }) => {
+  const [openPost, setOpenPost] = useState<BlogPost | null>(null);
+
   return (
     <Box>
       <Text fontSize="11px" fontFamily="mono" color="gray.500"
         letterSpacing="0.14em" mb={2} textTransform="uppercase">
         Writing
       </Text>
-      <Heading size="lg" mb={8}>Notes & Posts</Heading>
+      <Heading size="lg" mb={8}>Notes &amp; Posts</Heading>
 
       <Flex wrap="wrap" justify="center" gap={4} align="stretch">
         {blogs.map((post, index) => (
@@ -507,10 +724,26 @@ const Blog = ({ blogs }: { blogs: BlogPost[] }) => {
             flex={index === 0 ? "1 1 100%" : "1 1 320px"}
             maxW={index === 0 ? "100%" : { base: "100%", md: "calc(50% - 8px)" }}
           >
-            <BlogCard post={post} index={index} featured={index === 0} />
+            <BlogCard
+              post={post}
+              index={index}
+              featured={index === 0}
+              onOpen={() => setOpenPost(post)}
+            />
           </Box>
         ))}
       </Flex>
+
+      {/* Full-screen reader overlay */}
+      <AnimatePresence>
+        {openPost && openPost.content && (
+          <BlogReader
+            key={openPost.title}
+            post={openPost}
+            onClose={() => setOpenPost(null)}
+          />
+        )}
+      </AnimatePresence>
     </Box>
   );
 };

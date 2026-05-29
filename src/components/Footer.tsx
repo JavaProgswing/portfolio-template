@@ -17,13 +17,6 @@ interface Props {
   resumeUrl?: string;
 }
 
-/**
- * Minimal footer. Two distinct clickable bits:
- *   1. "press ⌘K for quick actions" -> fires `open-command-palette` event
- *   2. `❯_` blinking cursor -> navigates to /console
- *
- * Both are exposed as easter-egg entry points without crowding the footer.
- */
 const Footer = ({ name }: Props) => {
   const [time, setTime] = useState(() =>
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
@@ -68,7 +61,7 @@ const Footer = ({ name }: Props) => {
         mx="auto"
       >
         <Text fontSize="13px" color={textColor}>
-          © 2025 {name}
+          © 2026 {name}
         </Text>
 
         <HStack spacing={3} fontFamily="mono" fontSize="11px">
