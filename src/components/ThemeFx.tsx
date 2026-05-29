@@ -788,33 +788,39 @@ const setupPragmata: SetupFn = (getCtx) => {
 
 const setupCyberpunk: SetupFn = (getCtx) => {
   let glitchInterval: ReturnType<typeof setInterval> | null = null;
-  let dataRainInterval: ReturnType<typeof setInterval> | null = null;
+  const rainIntervals: ReturnType<typeof setInterval>[] = [];
   const clickTimes: number[] = [];
 
-  // Data rain column
-  const rainCol = createEl("div", {
-    position: "fixed", top: "0", right: "40px",
-    width: "14px",
-    overflow: "hidden",
-    pointerEvents: "none", zIndex: "0",
-    height: "100vh", opacity: "0.12",
-    fontFamily: "'JetBrains Mono', monospace",
-    fontSize: "10px", lineHeight: "1.2",
-    color: "#00f0ff",
-  });
-  document.body.appendChild(rainCol);
-
   const HEX_CHARS = "0123456789ABCDEF";
-  function addRainChar() {
-    const ch = document.createElement("div");
-    ch.textContent = HEX_CHARS[Math.floor(Math.random() * HEX_CHARS.length)];
-    ch.style.color = Math.random() > 0.7 ? "#fcee0a" : "#00f0ff";
-    ch.style.opacity = (0.3 + Math.random() * 0.7).toString();
-    rainCol.appendChild(ch);
-    // Keep only last 80 characters
-    while (rainCol.children.length > 80) rainCol.removeChild(rainCol.firstChild!);
-  }
-  dataRainInterval = setInterval(addRainChar, 120);
+
+  // Data rain - a few columns at varying depth for a live-terminal backdrop
+  const RAIN_COLS: { pos: Partial<CSSStyleDeclaration>; opacity: string; speed: number }[] = [
+    { pos: { right: "40px" }, opacity: "0.13", speed: 110 },
+    { pos: { right: "92px" }, opacity: "0.07", speed: 175 },
+    { pos: { left: "32px" }, opacity: "0.09", speed: 140 },
+  ];
+  RAIN_COLS.forEach(({ pos, opacity, speed }) => {
+    const col = createEl("div", {
+      position: "fixed", top: "0",
+      width: "14px", overflow: "hidden",
+      pointerEvents: "none", zIndex: "0",
+      height: "100vh", opacity,
+      fontFamily: "'JetBrains Mono', monospace",
+      fontSize: "10px", lineHeight: "1.2",
+      color: "#00f0ff",
+      ...pos,
+    });
+    document.body.appendChild(col);
+    const tick = () => {
+      const ch = document.createElement("div");
+      ch.textContent = HEX_CHARS[Math.floor(Math.random() * HEX_CHARS.length)];
+      ch.style.color = Math.random() > 0.7 ? "#fcee0a" : "#00f0ff";
+      ch.style.opacity = (0.3 + Math.random() * 0.7).toString();
+      col.appendChild(ch);
+      while (col.children.length > 80) col.removeChild(col.firstChild!);
+    };
+    rainIntervals.push(setInterval(tick, speed));
+  });
 
   function doGlitch() {
     const ctx = getCtx();
@@ -891,7 +897,7 @@ const setupCyberpunk: SetupFn = (getCtx) => {
   return () => {
     window.removeEventListener("click", onClick);
     if (glitchInterval) clearInterval(glitchInterval);
-    if (dataRainInterval) clearInterval(dataRainInterval);
+    rainIntervals.forEach((id) => clearInterval(id));
     removeAllFxElements();
   };
 };

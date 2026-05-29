@@ -18,17 +18,6 @@ A personal portfolio template built with React, TypeScript, and Vite. All conten
 - Console page, mini-games, guestbook, hidden achievements
 - Dark and light mode, responsive, mobile-friendly
 
-## Tech Stack
-
-| | |
-|---|---|
-| Framework | [React 18](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/) |
-| Build | [Vite](https://vitejs.dev/) |
-| UI | [Chakra UI v2](https://chakra-ui.com/) |
-| Animation | [Framer Motion](https://www.framer.com/motion/) |
-| Icons | [React Icons](https://react-icons.github.io/react-icons/) |
-| Fonts | Inter + JetBrains Mono |
-
 ## Quick Start
 
 ```bash
@@ -42,23 +31,6 @@ npm run dev
 Open [http://localhost:5173](http://localhost:5173).
 
 The FastAPI backend (guestbook, visitor count, Spotify proxy, AI chat) is optional. Without it, those features fall back gracefully. See [`backend/README.md`](backend/README.md) to deploy, and [`DEPLOY.md`](DEPLOY.md) for full production setup (nginx + systemd).
-
-## Customization
-
-Everything is in `src/data/me.ts`. Copy `me.example.ts` and fill in your details; the template is fully commented. Core fields:
-
-| Field | Description |
-|---|---|
-| `name`, `image`, `tags` | Identity and hero pills |
-| `desc_brief`, `desc` | Short bio and full bio |
-| `languages`, `frameworks` | Skills, auto-mapped to icons |
-| `contacts` | Social links; `id` maps to an icon |
-| `journey`, `experience` | Timeline and work entries |
-| `customProjects`, `pinnedProjects` | Manual projects on top of GitHub fetch |
-| `cp` | Codeforces and LeetCode handles for live stats |
-| `currentWork`, `blogs`, `planning` | Now-building, writing, roadmap |
-
-Leave any field empty to hide its section.
 
 ## AI Chat (optional)
 
