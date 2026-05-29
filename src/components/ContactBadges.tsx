@@ -14,6 +14,7 @@ import {
   Tag,
   Text,
   Tooltip,
+  useColorModeValue,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
@@ -122,9 +123,26 @@ const StandardBadge = ({ contact }: { contact: Contact }) => {
 // LinkedIn - mini business card popover
 
 const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profile }) => {
-  if (!profile) return <StandardBadge contact={contact} />;
-
   const brand = BRAND.linkedin;
+
+  const popBg = useColorModeValue("#ffffff", "#0f0f10");
+  const popBorder = useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)");
+  const popShadow = useColorModeValue(
+    "0 12px 36px rgba(0,0,0,0.18)",
+    "0 12px 36px rgba(0,0,0,0.6)"
+  );
+  const nameColor = useColorModeValue("gray.900", "gray.100");
+  const subColor = useColorModeValue("gray.700", "gray.200");
+  const dividerColor = useColorModeValue("rgba(0,0,0,0.08)", "rgba(255,255,255,0.08)");
+  const avatarBorder = useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)");
+  const skillColor = useColorModeValue("#0a66c2", "#5b9bd5");
+  const btnBorder = useColorModeValue("rgba(0,0,0,0.14)", "rgba(255,255,255,0.14)");
+  const btnColor = useColorModeValue("gray.700", "gray.300");
+  const btnHoverColor = useColorModeValue("gray.900", "gray.100");
+  const btnHoverBorder = useColorModeValue("rgba(0,0,0,0.3)", "rgba(255,255,255,0.3)");
+  const btnHoverBg = useColorModeValue("rgba(0,0,0,0.05)", "rgba(255,255,255,0.05)");
+
+  if (!profile) return <StandardBadge contact={contact} />;
 
   return (
     <Popover placement="bottom-end" trigger="click" gutter={8}>
@@ -141,13 +159,13 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
       </PopoverTrigger>
 
       <PopoverContent
-        bg="#0f0f10"
-        borderColor="rgba(255,255,255,0.1)"
-        boxShadow="0 12px 36px rgba(0,0,0,0.6)"
+        bg={popBg}
+        borderColor={popBorder}
+        boxShadow={popShadow}
         w="320px"
-        _focus={{ outline: "none", boxShadow: "0 12px 36px rgba(0,0,0,0.6)" }}
+        _focus={{ outline: "none", boxShadow: popShadow }}
       >
-        <PopoverArrow bg="#0f0f10" />
+        <PopoverArrow bg={popBg} />
         <PopoverBody p={4}>
           {/* Avatar + name */}
           <HStack spacing={3} mb={3}>
@@ -158,11 +176,12 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
               h="48px"
               borderRadius="full"
               objectFit="cover"
-              border="1px solid rgba(255,255,255,0.1)"
+              border="1px solid"
+              borderColor={avatarBorder}
               flexShrink={0}
             />
             <Box minW={0}>
-              <Text fontSize="sm" fontWeight="600" color="gray.100" noOfLines={1}>
+              <Text fontSize="sm" fontWeight="600" color={nameColor} noOfLines={1}>
                 {profile.name}
               </Text>
               <Text fontSize="11px" color="gray.500" noOfLines={2}>
@@ -171,7 +190,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
             </Box>
           </HStack>
 
-          <Divider borderColor="rgba(255,255,255,0.08)" mb={3} />
+          <Divider borderColor={dividerColor} mb={3} />
 
           {/* Current focus */}
           {profile.currentWork && (
@@ -186,7 +205,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
               >
                 Currently
               </Text>
-              <Text fontSize="xs" fontWeight="500" color="gray.200" lineHeight="1.4">
+              <Text fontSize="xs" fontWeight="500" color={subColor} lineHeight="1.4">
                 {profile.currentWork.title}
               </Text>
               <Text fontSize="11px" color="gray.500">
@@ -214,7 +233,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
                     size="sm"
                     variant="subtle"
                     bg="rgba(10,102,194,0.12)"
-                    color="#5b9bd5"
+                    color={skillColor}
                     fontSize="10px"
                   >
                     {lang}
@@ -237,14 +256,14 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
                 w="full"
                 size="sm"
                 variant="outline"
-                borderColor="rgba(255,255,255,0.14)"
-                color="gray.300"
+                borderColor={btnBorder}
+                color={btnColor}
                 fontFamily="mono"
                 fontSize="11px"
                 _hover={{
-                  color: "gray.100",
-                  borderColor: "rgba(255,255,255,0.3)",
-                  bg: "rgba(255,255,255,0.05)",
+                  color: btnHoverColor,
+                  borderColor: btnHoverBorder,
+                  bg: btnHoverBg,
                 }}
               >
                 ↓ download resume
@@ -300,6 +319,14 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
   const [data, setData] = useState<NowPlaying | null>(null);
   const brand = BRAND.spotify;
 
+  const popBg = useColorModeValue("#ffffff", "#0f0f10");
+  const popBorder = useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)");
+  const popShadow = useColorModeValue(
+    "0 12px 36px rgba(0,0,0,0.18)",
+    "0 12px 36px rgba(0,0,0,0.6)"
+  );
+  const titleColor = useColorModeValue("gray.900", "gray.100");
+
   useEffect(() => {
     if (!contact.nowPlayingApi) return;
     let cancelled = false;
@@ -354,13 +381,13 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
       </PopoverTrigger>
 
       <PopoverContent
-        bg="#0f0f10"
-        borderColor="rgba(255,255,255,0.1)"
-        boxShadow="0 12px 36px rgba(0,0,0,0.6)"
+        bg={popBg}
+        borderColor={popBorder}
+        boxShadow={popShadow}
         w="300px"
-        _focus={{ outline: "none", boxShadow: "0 12px 36px rgba(0,0,0,0.6)" }}
+        _focus={{ outline: "none", boxShadow: popShadow }}
       >
-        <PopoverArrow bg="#0f0f10" />
+        <PopoverArrow bg={popBg} />
         <PopoverBody p={3}>
           <HStack spacing={3} align="flex-start">
             {data.albumImageUrl && (
@@ -402,7 +429,7 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
                   </Text>
                 )}
               </HStack>
-              <Text fontSize="sm" fontWeight="600" color="gray.100" noOfLines={1} title={data.title}>
+              <Text fontSize="sm" fontWeight="600" color={titleColor} noOfLines={1} title={data.title}>
                 {data.title}
               </Text>
               <Text fontSize="xs" color="gray.500" noOfLines={1} title={data.artist}>

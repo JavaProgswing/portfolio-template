@@ -10,6 +10,7 @@ import {
   ModalOverlay,
   Stack,
   Text,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState, ElementType } from "react";
@@ -73,6 +74,16 @@ const SHORTCUTS: ShortcutGroup[] = [
 export const ShortcutsModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const modalBg = useColorModeValue("#ffffff", "#0f0f10");
+  const modalBorder = useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.08)");
+  const modalShadow = useColorModeValue(
+    "0 24px 64px rgba(0,0,0,0.18)",
+    "0 24px 64px rgba(0,0,0,0.6)"
+  );
+  const descColor = useColorModeValue("gray.700", "gray.300");
+  const kbdBg = useColorModeValue("rgba(0,0,0,0.05)", "rgba(255,255,255,0.05)");
+  const kbdBorder = useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)");
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
@@ -91,10 +102,11 @@ export const ShortcutsModal = () => {
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
       <ModalOverlay bg="rgba(0,0,0,0.6)" backdropFilter="blur(4px)" />
       <ModalContent
-        bg="#0f0f10"
-        border="1px solid rgba(255,255,255,0.08)"
+        bg={modalBg}
+        border="1px solid"
+        borderColor={modalBorder}
         borderRadius="xl"
-        boxShadow="0 24px 64px rgba(0,0,0,0.6)"
+        boxShadow={modalShadow}
       >
         <ModalBody p={5}>
           <HStack spacing={2} mb={4}>
@@ -123,7 +135,7 @@ export const ShortcutsModal = () => {
                 <Stack spacing={1.5}>
                   {group.items.map((s, i) => (
                     <HStack key={i} justify="space-between" py={1}>
-                      <Text fontSize="13px" color="gray.300">
+                      <Text fontSize="13px" color={descColor}>
                         {s.desc}
                       </Text>
                       <HStack spacing={1}>
@@ -131,9 +143,9 @@ export const ShortcutsModal = () => {
                           <Kbd
                             key={j}
                             fontSize="10px"
-                            bg="rgba(255,255,255,0.05)"
-                            borderColor="rgba(255,255,255,0.1)"
-                            color="gray.300"
+                            bg={kbdBg}
+                            borderColor={kbdBorder}
+                            color={descColor}
                           >
                             {k}
                           </Kbd>
@@ -219,6 +231,17 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const modalBg = useColorModeValue("#ffffff", "#0f0f10");
+  const modalBorder = useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.08)");
+  const modalShadow = useColorModeValue(
+    "0 24px 64px rgba(0,0,0,0.18)",
+    "0 24px 64px rgba(0,0,0,0.6)"
+  );
+  const rowBorder = useColorModeValue("rgba(0,0,0,0.08)", "rgba(255,255,255,0.06)");
+  const textColor = useColorModeValue("gray.900", "gray.100");
+  const kbdBg = useColorModeValue("rgba(0,0,0,0.05)", "rgba(255,255,255,0.05)");
+  const kbdBorder = useColorModeValue("rgba(0,0,0,0.1)", "rgba(255,255,255,0.1)");
 
   // Navigate to a section. If we're not on the home page, route there first.
   const scrollTo = (id: string) => {
@@ -400,17 +423,18 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
     <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
       <ModalOverlay bg="rgba(0,0,0,0.6)" backdropFilter="blur(4px)" />
       <ModalContent
-        bg="#0f0f10"
-        border="1px solid rgba(255,255,255,0.08)"
+        bg={modalBg}
+        border="1px solid"
+        borderColor={modalBorder}
         borderRadius="xl"
-        boxShadow="0 24px 64px rgba(0,0,0,0.6)"
+        boxShadow={modalShadow}
         maxH="78dvh"
         mx={4}
         maxW={{ base: "calc(100vw - 32px)", md: "xl" }}
         overflow="hidden"
       >
         <ModalBody p={0}>
-          <HStack px={4} py={3} borderBottom="1px solid rgba(255,255,255,0.06)">
+          <HStack px={4} py={3} borderBottom="1px solid" borderColor={rowBorder}>
             <Icon as={FaSearch as ElementType} color="gray.500" boxSize={3} />
             <Input
               ref={inputRef}
@@ -419,10 +443,10 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
               placeholder="Type a command or search…"
               variant="unstyled"
               fontSize={{ base: "16px", md: "sm" }}
-              color="gray.100"
-              _placeholder={{ color: "gray.600" }}
+              color={textColor}
+              _placeholder={{ color: "gray.500" }}
             />
-            <Kbd fontSize="9px" bg="rgba(255,255,255,0.05)" borderColor="rgba(255,255,255,0.1)" color="gray.500">
+            <Kbd fontSize="9px" bg={kbdBg} borderColor={kbdBorder} color="gray.500">
               Esc
             </Kbd>
           </HStack>
@@ -464,7 +488,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
                         cursor="pointer"
                       >
                         <Icon as={c.icon} boxSize={3} color={isSelected ? "brand.400" : "gray.500"} flexShrink={0} />
-                        <Text fontSize="13px" color="gray.100" isTruncated flex={1} minW={0}>
+                        <Text fontSize="13px" color={textColor} isTruncated flex={1} minW={0}>
                           {c.label}
                         </Text>
                         {c.hint && (
@@ -490,18 +514,19 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
 
           <HStack
             px={4} py={2}
-            borderTop="1px solid rgba(255,255,255,0.06)"
+            borderTop="1px solid"
+            borderColor={rowBorder}
             spacing={4}
             fontSize="10px"
-            color="gray.600"
+            color="gray.500"
             fontFamily="mono"
           >
             <HStack spacing={1}>
-              <Kbd fontSize="9px" bg="rgba(255,255,255,0.05)" borderColor="rgba(255,255,255,0.1)">↑↓</Kbd>
+              <Kbd fontSize="9px" bg={kbdBg} borderColor={kbdBorder}>↑↓</Kbd>
               <Text>navigate</Text>
             </HStack>
             <HStack spacing={1}>
-              <Kbd fontSize="9px" bg="rgba(255,255,255,0.05)" borderColor="rgba(255,255,255,0.1)">↵</Kbd>
+              <Kbd fontSize="9px" bg={kbdBg} borderColor={kbdBorder}>↵</Kbd>
               <Text>select</Text>
             </HStack>
             <Text ml="auto">{filtered.length} commands</Text>
