@@ -241,6 +241,29 @@ This is a good place to share what you learned, what you built, or a story about
     },
   ],
 
+  // Work experience — internships / jobs. Shown as its own "Experience" section
+  // on the homepage (between Journey and Projects). Leave [] to hide the section
+  // entirely (e.g. if you haven't done any internships yet).
+  experience: [
+    {
+      role: "Software Engineering Intern",
+      company: "Company Name",
+      companyUrl: "https://company.com",   // optional — links the company name
+      date: "Jun 2024 – Aug 2024",
+      location: "Remote",                  // optional
+      description:
+        "What you worked on and the impact you had, in one or two sentences. " +
+        "Lead with outcomes (shipped X, cut Y by Z%) over responsibilities.",
+      skills: ["TypeScript", "React", "AWS"],  // optional pills
+    },
+    {
+      role: "Open Source Contributor",
+      company: "Project / Org",
+      date: "2024",
+      description: "A shorter entry — location, url and skills are all optional.",
+    },
+  ],
+
   journey: [
     {
       title: "Your Role",

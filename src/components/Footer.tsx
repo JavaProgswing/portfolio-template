@@ -2,13 +2,15 @@ import {
   Box,
   Flex,
   HStack,
+  Icon,
   Link,
   Text,
   Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { ElementType, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { FaPenNib } from "react-icons/fa";
 
 interface Props {
   name: string;
@@ -103,6 +105,29 @@ const Footer = ({ name }: Props) => {
               </Text>
               <Text>for quick actions</Text>
             </HStack>
+          </Tooltip>
+
+          <Text color={borderColor}>·</Text>
+
+          {/* Guestbook — sign the wall */}
+          <Tooltip
+            label="sign the guestbook"
+            hasArrow
+            fontSize="10px"
+            placement="top"
+          >
+            <Link
+              as={RouterLink}
+              to="/guestbook"
+              display="inline-flex"
+              alignItems="center"
+              gap={1}
+              color={subtleColor}
+              _hover={{ color: "brand.400", textDecoration: "none" }}
+            >
+              <Icon as={FaPenNib as ElementType} boxSize={2.5} />
+              <Text as="span">guestbook</Text>
+            </Link>
           </Tooltip>
 
           <Text

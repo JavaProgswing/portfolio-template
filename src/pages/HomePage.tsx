@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Intro from "../components/Intro";
 import Projects from "../components/Projects";
 import Journey from "../components/Journey";
+import Experience from "../components/Experience";
 import SectionNavigator, { Section } from "../components/SectionNavigator";
 import Activity from "../components/Activity";
 import Blog from "../components/Blog";
@@ -12,11 +13,14 @@ interface Props {
 }
 
 const HomePage = ({ data }: Props) => {
-  const homeRef     = useRef<HTMLDivElement>(null);
-  const journeyRef  = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
-  const activityRef = useRef<HTMLDivElement>(null);
-  const writingRef  = useRef<HTMLDivElement>(null);
+  const hasExperience = Array.isArray(data.experience) && data.experience.length > 0;
+
+  const homeRef       = useRef<HTMLDivElement>(null);
+  const journeyRef    = useRef<HTMLDivElement>(null);
+  const experienceRef = useRef<HTMLDivElement>(null);
+  const projectsRef   = useRef<HTMLDivElement>(null);
+  const activityRef   = useRef<HTMLDivElement>(null);
+  const writingRef    = useRef<HTMLDivElement>(null);
 
   const [activeSection, setActiveSection] = useState<Section>("home");
 
@@ -24,6 +28,7 @@ const HomePage = ({ data }: Props) => {
     const refs: [React.RefObject<HTMLDivElement>, Section][] = [
       [homeRef, "home"],
       [journeyRef, "journey"],
+      ...(hasExperience ? [[experienceRef, "experience"] as [React.RefObject<HTMLDivElement>, Section]] : []),
       [projectsRef, "projects"],
       [activityRef, "activity"],
       [writingRef, "writing"],
@@ -45,7 +50,7 @@ const HomePage = ({ data }: Props) => {
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [hasExperience]);
 
   const scrollTo = (ref: React.RefObject<HTMLDivElement>) =>
     ref.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,11 +59,12 @@ const HomePage = ({ data }: Props) => {
     <>
       <Show above="md">
         <SectionNavigator
-          onHomeClick={()     => scrollTo(homeRef)}
-          onJourneyClick={()  => scrollTo(journeyRef)}
-          onProjectsClick={()  => scrollTo(projectsRef)}
-          onActivityClick={()  => scrollTo(activityRef)}
-          onWritingClick={()   => scrollTo(writingRef)}
+          onHomeClick={()       => scrollTo(homeRef)}
+          onJourneyClick={()    => scrollTo(journeyRef)}
+          onExperienceClick={hasExperience ? () => scrollTo(experienceRef) : undefined}
+          onProjectsClick={()   => scrollTo(projectsRef)}
+          onActivityClick={()   => scrollTo(activityRef)}
+          onWritingClick={()    => scrollTo(writingRef)}
           activeSection={activeSection}
         />
       </Show>
@@ -74,6 +80,11 @@ const HomePage = ({ data }: Props) => {
           <Box id="journey" ref={journeyRef} py={24}>
             <Journey data={data} />
           </Box>
+          {hasExperience && (
+            <Box id="experience" ref={experienceRef} py={24}>
+              <Experience experience={data.experience} />
+            </Box>
+          )}
           <Box id="projects" ref={projectsRef} py={24}>
             <Projects data={data} />
           </Box>

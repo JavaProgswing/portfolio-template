@@ -47,7 +47,7 @@ const COMMANDS: Record<
   echo <txt> - print text
   date       - current date
   pwd        - working directory
-  open <id>  - navigate (home, uses, now, colophon, console, /)
+  open <id>  - navigate (home, now, colophon, console, guestbook, play, /)
   clear      - clear screen
   exit       - back to portfolio
   sudo       - try it
@@ -136,11 +136,10 @@ press ↑/↓ for command history`,
 
   open: ({ navigate }, args) => {
     const target = args[0];
-    if (!target) return "usage: open <home|uses|now|colophon|console|/>";
+    if (!target) return "usage: open <home|now|colophon|console|guestbook|resume|play|/>";
     const routes: Record<string, string> = {
       home: "/",
       "/": "/",
-      uses: "/uses",
       now: "/now",
       colophon: "/colophon",
       console: "/console",

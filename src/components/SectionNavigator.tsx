@@ -1,10 +1,11 @@
 import { Box, Tooltip } from "@chakra-ui/react";
 
-export type Section = "home" | "journey" | "projects" | "activity" | "writing";
+export type Section = "home" | "journey" | "experience" | "projects" | "activity" | "writing";
 
 interface Props {
   onHomeClick: () => void;
   onJourneyClick: () => void;
+  onExperienceClick?: () => void;
   onProjectsClick: () => void;
   onActivityClick: () => void;
   onWritingClick: () => void;
@@ -12,20 +13,22 @@ interface Props {
 }
 
 const ITEMS: { id: Section; label: string }[] = [
-  { id: "home",     label: "Home" },
-  { id: "journey",  label: "Journey" },
-  { id: "projects", label: "Projects" },
-  { id: "activity", label: "Activity" },
-  { id: "writing",  label: "Writing" },
+  { id: "home",       label: "Home" },
+  { id: "journey",    label: "Journey" },
+  { id: "experience", label: "Experience" },
+  { id: "projects",   label: "Projects" },
+  { id: "activity",   label: "Activity" },
+  { id: "writing",    label: "Writing" },
 ];
 
 const SectionNavigator = ({
-  onHomeClick, onJourneyClick, onProjectsClick, onActivityClick, onWritingClick,
+  onHomeClick, onJourneyClick, onExperienceClick, onProjectsClick, onActivityClick, onWritingClick,
   activeSection,
 }: Props) => {
-  const handlers: Record<Section, () => void> = {
+  const handlers: Partial<Record<Section, () => void>> = {
     home: onHomeClick,
     journey: onJourneyClick,
+    experience: onExperienceClick,
     projects: onProjectsClick,
     activity: onActivityClick,
     writing: onWritingClick,
@@ -36,7 +39,7 @@ const SectionNavigator = ({
       position="fixed" right="28px" top="50%" transform="translateY(-50%)"
       display="flex" flexDirection="column" gap={5} zIndex={10}
     >
-      {ITEMS.map(item => {
+      {ITEMS.filter(item => handlers[item.id]).map(item => {
         const active = activeSection === item.id;
         return (
           <Tooltip key={item.id} label={item.label} placement="left" hasArrow

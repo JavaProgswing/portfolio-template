@@ -16,7 +16,6 @@ import {
   CommandPalette,
 } from "./components/Shortcuts";
 import HomePage from "./pages/HomePage";
-import UsesPage from "./pages/UsesPage";
 import NowPage from "./pages/NowPage";
 import ColophonPage from "./pages/ColophonPage";
 import ConsolePage from "./pages/ConsolePage";
@@ -48,7 +47,6 @@ function App() {
 
         <Routes>
           <Route path="/" element={<HomePage data={data} />} />
-          <Route path="/uses" element={<UsesPage data={data} />} />
           <Route path="/now" element={<NowPage data={data} />} />
           <Route path="/colophon" element={<ColophonPage data={data} />} />
           <Route path="/console" element={<ConsolePage data={data} />} />

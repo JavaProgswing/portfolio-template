@@ -24,7 +24,6 @@ import {
   FaQuestion,
   FaTerminal,
   FaBook,
-  FaTools,
   FaCalendarDay,
   FaInfoCircle,
   FaPenNib,
@@ -253,7 +252,6 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
     ];
 
     const pages: Command[] = [
-      { id: "page-uses",      group: "Pages", icon: FaTools as ElementType,       label: "Uses · what I use day-to-day", hint: "/uses",      action: () => goTo("/uses") },
       { id: "page-now",       group: "Pages", icon: FaCalendarDay as ElementType, label: "Now · what I'm doing",         hint: "/now",       action: () => goTo("/now") },
       { id: "page-colophon",  group: "Pages", icon: FaInfoCircle as ElementType,  label: "Colophon · how this site was built", hint: "/colophon", action: () => goTo("/colophon") },
       { id: "page-console",   group: "Pages", icon: FaTerminal as ElementType,    label: "Console · interactive terminal", hint: "/console",  action: () => goTo("/console") },
@@ -406,7 +404,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
         border="1px solid rgba(255,255,255,0.08)"
         borderRadius="xl"
         boxShadow="0 24px 64px rgba(0,0,0,0.6)"
-        maxH="70vh"
+        maxH="78vh"
         overflow="hidden"
       >
         <ModalBody p={0}>
@@ -427,16 +425,16 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
             </Kbd>
           </HStack>
 
-          <Box maxH="50vh" overflowY="auto" py={1}>
+          <Box maxH="62vh" overflowY="auto" py={1}>
             {filtered.length === 0 ? (
               <Text fontSize="sm" color="gray.500" textAlign="center" py={6} fontFamily="mono">
                 no results for "{query}"
               </Text>
             ) : (
               Object.entries(grouped).map(([group, items]) => (
-                <Box key={group} py={1}>
+                <Box key={group} py={0.5}>
                   <Text
-                    px={4} py={1.5}
+                    px={4} pt={1.5} pb={1}
                     fontSize="9px"
                     color="gray.600"
                     fontFamily="mono"
@@ -455,8 +453,8 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
                         onClick={() => c.action()}
                         onMouseEnter={() => setSelectedIdx(myIdx)}
                         w="full"
-                        px={4} py={2}
-                        spacing={3}
+                        px={4} py={1.5}
+                        spacing={2.5}
                         bg={isSelected ? "rgba(99,102,241,0.12)" : "transparent"}
                         borderLeft="2px solid"
                         borderColor={isSelected ? "brand.400" : "transparent"}
@@ -464,16 +462,22 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
                         cursor="pointer"
                       >
                         <Icon as={c.icon} boxSize={3} color={isSelected ? "brand.400" : "gray.500"} flexShrink={0} />
-                        <Box flex={1} minW={0}>
-                          <Text fontSize="13px" color="gray.100" isTruncated>
-                            {c.label}
+                        <Text fontSize="13px" color="gray.100" isTruncated flex={1} minW={0}>
+                          {c.label}
+                        </Text>
+                        {c.hint && (
+                          <Text
+                            fontSize="10px"
+                            color={isSelected ? "gray.400" : "gray.600"}
+                            fontFamily="mono"
+                            isTruncated
+                            flexShrink={0}
+                            maxW="42%"
+                            textAlign="right"
+                          >
+                            {c.hint}
                           </Text>
-                          {c.hint && (
-                            <Text fontSize="10px" color="gray.600" fontFamily="mono" isTruncated>
-                              {c.hint}
-                            </Text>
-                          )}
-                        </Box>
+                        )}
                       </HStack>
                     );
                   })}

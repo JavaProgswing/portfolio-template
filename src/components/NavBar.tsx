@@ -22,15 +22,19 @@ interface Props {
   };
 }
 
-const NAV = [
-  { label: "about",    href: "#home" },
-  { label: "journey",  href: "#journey" },
-  { label: "projects", href: "#projects" },
-  { label: "activity", href: "#activity" },
-  { label: "writing",  href: "#writing" },
-];
-
 const Navbar = ({ data }: Props) => {
+  const hasExperience =
+    Array.isArray((data as any).experience) && (data as any).experience.length > 0;
+
+  const NAV = [
+    { label: "about",    href: "#home" },
+    { label: "journey",  href: "#journey" },
+    ...(hasExperience ? [{ label: "experience", href: "#experience" }] : []),
+    { label: "projects", href: "#projects" },
+    { label: "activity", href: "#activity" },
+    { label: "writing",  href: "#writing" },
+  ];
+
   const bg = useColorModeValue("rgba(250,250,250,0.85)", "rgba(9,9,11,0.88)");
   const border = useColorModeValue("rgba(0,0,0,0.07)", "rgba(255,255,255,0.06)");
   const toast = useToast();
