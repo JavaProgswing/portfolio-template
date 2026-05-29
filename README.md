@@ -1,22 +1,60 @@
 # Portfolio
 
-A personal portfolio template built with React, TypeScript, and Vite. All content lives in one file, so there is no component code to touch.
+A personal portfolio template built with React, TypeScript, and Vite. All content lives in one file (`src/data/me.ts`), so you fill in your details and never touch component code.
 
-![Portfolio Screenshot](./screenshots/demo.png)
+![Hero](./screenshots/demo1.png)
+
+## The Front Page
+
+One scrolling page, six sections. A right-side dot navigator (desktop) and a sticky top nav both jump between them.
+
+### Hero
+
+![Hero](./screenshots/demo1.png)
+
+Avatar, an animated typing bio, and role tags. A live **Now** card highlights what you are currently working on. Below it, your stack: primary languages as pills (first one starred), then frameworks and tools grouped side by side into **Frontend**, **Backend**, **Data**, and **Tools**. Unrecognized tools show their name without a placeholder icon.
+
+### My Journey
+
+![Journey](./screenshots/demo2.png)
+
+A vertical timeline of roles and milestones. Each entry is dated and can carry "evidence" links that back up the claim (repos, demos, write-ups).
+
+### What I've Built
+
+![Projects](./screenshots/demo3.png)
+
+Pinned flagship work sits on top, marked with a star accent. Below it, a grid auto-ranked from your GitHub by stars, recency, and topics. Cards show language, stars/forks, and links to repo and live demo. You can also merge hand-written projects into the ranked grid.
+
+### Beyond Projects
+
+![Activity](./screenshots/demo4.png)
+
+Tabbed activity:
+
+- **competitive** - live Codeforces and LeetCode stats via public APIs, with graceful fallback if an API is slow or down
+- **open source** - recent contributions from the GitHub Events API
+- **what i follow** - accounts and projects you keep up with
+
+### Notes & Posts
+
+![Writing](./screenshots/demo5.png)
+
+An inline blog. Posts expand in place with tags, references, and a comment link, so there is no external CMS to run.
+
+![More posts](./screenshots/demo6.png)
+
+The footer carries a `⌘K` command-palette hint, a guestbook link, a console prompt, and a live clock.
 
 ## Features
 
-- Particle constellation background with mouse parallax
-- Animated hero: typing effect, tags, scroll cue
-- Currently Building: live indicator for what you are working on
-- Competitive programming stats: live Codeforces and LeetCode via public APIs
-- Projects grid auto-ranked from your GitHub, with manual pins
-- Experience and journey timeline sections
-- Inline blog with expandable posts (no external service)
-- AI chat widget: Gemini API, proxied server-side, primed on your portfolio
-- 10 color themes, several with audio-visual effects
-- Console page, mini-games, guestbook, hidden achievements
-- Dark and light mode, responsive, mobile-friendly
+- Particle constellation background with mouse parallax, plus a cursor spotlight
+- 10 color themes; several add audio-visual effects, the four minimal ones also support light mode
+- Command palette (`⌘K`), keyboard navigation (`g` then a section key), and a `?` shortcuts modal
+- Console page, mini-games (`/play`), guestbook, and hidden achievements
+- Easter eggs: Konami code, matrix rain, rainbow mode, logo-click confetti
+- AI chat widget backed by the Gemini API, proxied server-side and primed on your `me.ts`
+- Responsive and mobile-friendly; respects `prefers-reduced-motion`
 
 ## Quick Start
 
@@ -29,6 +67,8 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
+
+`me.ts` is the single source of truth: name, bio, journey, projects, blog posts, contacts, and theme defaults. Project repos are auto-fetched and scored from GitHub with `npm run fetch-repos`.
 
 The FastAPI backend (guestbook, visitor count, Spotify proxy, AI chat) is optional. Without it, those features fall back gracefully. See [`backend/README.md`](backend/README.md) to deploy, and [`DEPLOY.md`](DEPLOY.md) for full production setup (nginx + systemd).
 
