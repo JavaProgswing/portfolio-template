@@ -11,7 +11,6 @@ import {
   FaLaravel,
   FaJsSquare,
   FaGitAlt,
-  FaQuestion,
   FaSwift,
   FaDocker,
   FaLinux,
@@ -47,7 +46,11 @@ import {
 } from "react-icons/si";
 import { IconType } from "react-icons";
 
-export const getTechIcon = (id: string): { icon: IconType; label: string } => {
+// Unrecognized ids return icon: null so callers can render the label alone
+// instead of a generic question-mark glyph.
+export const getTechIcon = (
+  id: string
+): { icon: IconType | null; label: string } => {
   switch (id.toLowerCase()) {
     // Core Languages
     case "c":
@@ -165,6 +168,6 @@ export const getTechIcon = (id: string): { icon: IconType; label: string } => {
       return { icon: FaLinux, label: "Linux" };
 
     default:
-      return { icon: FaQuestion, label: id };
+      return { icon: null, label: id };
   }
 };

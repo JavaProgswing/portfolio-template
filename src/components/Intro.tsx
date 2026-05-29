@@ -6,6 +6,7 @@ import {
   HStack,
   Icon,
   Image,
+  SimpleGrid,
   Stack,
   Tag,
   Text,
@@ -74,6 +75,13 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
   const skillCardBg    = useColorModeValue("gray.100", "rgba(255,255,255,0.04)");
   const skillCardBorder = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
   const cursorColor    = useColorModeValue("gray.500", "gray.500");
+  // Gradient-clipped name is invisible on a near-white bg; flip to dark stops.
+  const nameGradient   = useColorModeValue(
+    "linear(to-br, gray.800, gray.500)",
+    "linear(to-br, gray.100, gray.400)"
+  );
+  const btnColor       = useColorModeValue("gray.600", "gray.400");
+  const btnHoverColor  = useColorModeValue("gray.900", "gray.100");
 
   useEffect(() => {
     if (!isOpen) { setDisplayedText(data.desc_brief); return; }
@@ -116,7 +124,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
             src={data.image} alt={data.name}
             borderRadius="full" boxSize="120px" objectFit="cover"
             shadow="xl" position="relative" zIndex={1}
-            border="1px solid rgba(255,255,255,0.1)"
+            border="1px solid" borderColor="var(--border-strong)"
             initial={{ opacity: 0, scale: 0.6 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.45 }}
@@ -139,7 +147,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
             </Text>
             <Heading
               fontSize={{ base: "3xl", md: "4xl" }}
-              bgGradient="linear(to-br, gray.100, gray.400)"
+              bgGradient={nameGradient}
               bgClip="text"
               lineHeight="1.15"
             >
@@ -172,16 +180,16 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
                 href={resumeUrl}
                 size="xs"
                 variant="outline"
-                borderColor="rgba(255,255,255,0.14)"
-                color="gray.400"
+                borderColor="var(--border)"
+                color={btnColor}
                 fontFamily="mono"
                 fontSize="11px"
                 px={2.5}
                 h="22px"
                 _hover={{
-                  color: "gray.100",
-                  borderColor: "rgba(255,255,255,0.3)",
-                  bg: "rgba(255,255,255,0.05)",
+                  color: btnHoverColor,
+                  borderColor: "var(--border-strong)",
+                  bg: "var(--surface)",
                 }}
               >
                 resume ↗
@@ -200,8 +208,8 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
               gap={3}
               p={3}
               borderRadius="10px"
-              bg="rgba(255,255,255,0.03)"
-              border="1px solid rgba(255,255,255,0.07)"
+              bg="var(--surface)"
+              border="1px solid" borderColor="var(--border)"
               maxW="fit-content"
               _hover={{ borderColor: "rgba(99,102,241,0.3)" }}
               sx={{ transition: "border-color 0.2s" }}
@@ -288,7 +296,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
           letterSpacing="0.16em" mb={5} textTransform="uppercase">
           Frameworks & Tools
         </Text>
-        <Stack spacing={3.5}>
+        <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={{ base: 5, md: 6 }}>
           {[
             { key: "frontend", label: "Frontend", items: data.frameworks.frontend },
             { key: "backend",  label: "Backend",  items: data.frameworks.backend },
@@ -297,22 +305,14 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
           ]
             .filter((g) => g.items.length > 0)
             .map((g, gi) => (
-              <Flex
-                key={g.key}
-                gap={{ base: 2, md: 4 }}
-                align={{ base: "flex-start", md: "center" }}
-                wrap={{ base: "wrap", md: "nowrap" }}
-              >
+              <Box key={g.key}>
                 <Text
-                  fontSize="9px" fontFamily="mono" color="gray.600"
-                  letterSpacing="0.16em" textTransform="uppercase"
-                  w={{ base: "auto", md: "70px" }}
-                  flexShrink={0}
-                  pt={{ base: 0, md: 0 }}
+                  fontSize="9px" fontFamily="mono" color="brand.400"
+                  letterSpacing="0.18em" textTransform="uppercase" mb={2.5}
                 >
                   {g.label}
                 </Text>
-                <Wrap spacing={1.5} flex={1}>
+                <Wrap spacing={1.5}>
                   {g.items.map((fw, i) => {
                     const { icon: IC } = getTechIcon(fw.id);
                     return (
@@ -336,9 +336,9 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
                     );
                   })}
                 </Wrap>
-              </Flex>
+              </Box>
             ))}
-        </Stack>
+        </SimpleGrid>
       </MotionBox>
 
       {/* Scroll cue */}

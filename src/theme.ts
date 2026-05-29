@@ -77,20 +77,22 @@ const theme = extendTheme({
     }),
   },
   layerStyles: {
+    // Surfaces read from CSS vars so they can flip for light mode
+    // (see index.css: body defaults + body[data-mode="light"] overrides).
     card: {
-      bg: "rgba(255,255,255,0.03)",
-      border: "1px solid rgba(255,255,255,0.07)",
+      bg: "var(--surface)",
+      border: "1px solid var(--border)",
       borderRadius: "12px",
     },
     glass: {
-      bg: "rgba(255,255,255,0.03)",
+      bg: "var(--surface)",
       backdropFilter: "blur(12px)",
-      border: "1px solid rgba(255,255,255,0.07)",
+      border: "1px solid var(--border)",
     },
     glassStrong: {
-      bg: "rgba(255,255,255,0.06)",
+      bg: "var(--surface-strong)",
       backdropFilter: "blur(16px)",
-      border: "1px solid rgba(255,255,255,0.1)",
+      border: "1px solid var(--border-strong)",
     },
   },
   components: {

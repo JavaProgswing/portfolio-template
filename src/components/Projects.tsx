@@ -239,42 +239,38 @@ const PinnedCard = ({ project, index, border }: PinnedCardProps) => {
       p={5}
       borderRadius="12px"
       layerStyle="card"
-      border="1px solid"
-      borderColor="brand.500"
-      boxShadow="0 0 24px rgba(99,102,241,0.18)"
+      borderLeft="2px solid"
+      borderLeftColor="brand.500"
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.35, delay: index * 0.06 }}
-      sx={{ transition: "border-color 0.2s, box-shadow 0.2s" }}
-      _hover={{
-        borderColor: "brand.400",
-        boxShadow: "0 0 32px rgba(99,102,241,0.28)",
-      }}
+      sx={{ transition: "border-color 0.2s" }}
+      _hover={{ borderColor: "brand.400" }}
       display="flex"
       flexDirection="column"
       position="relative"
       overflow="hidden"
     >
-      {/* Subtle radial glow */}
-      <Box
-        position="absolute" top="-30px" right="-30px"
-        w="120px" h="120px"
-        borderRadius="full" bg="brand.500"
-        opacity={0.08} filter="blur(40px)" pointerEvents="none"
-      />
-
       <Stack spacing={3} flex={1}>
         <HStack justify="space-between" align="flex-start">
           <HStack spacing={2}>
             {project.badge && (
-              <Badge
-                bgGradient="linear(to-r, brand.500, purple.500)"
-                color="white" fontSize="10px"
-                px={2} py={0.5} borderRadius="full"
+              <HStack
+                spacing={1.5}
+                px={2} py={0.5}
+                bg="rgba(99,102,241,0.08)"
+                border="1px solid" borderColor="rgba(99,102,241,0.35)"
+                borderRadius="full"
               >
-                {project.badge}
-              </Badge>
+                <Icon as={FaStar as ElementType} boxSize={2} color="brand.400" />
+                <Text
+                  fontSize="9px" fontFamily="mono" fontWeight="600"
+                  letterSpacing="0.1em" textTransform="uppercase" color="brand.300"
+                >
+                  {project.badge}
+                </Text>
+              </HStack>
             )}
           </HStack>
           <HStack spacing={3}>

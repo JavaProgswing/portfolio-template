@@ -23,6 +23,7 @@ const MotionBox = motion(Box);
 const Journey = ({ data }: Props) => {
   const dotBorder = useColorModeValue("brand.500", "brand.400");
   const lineColor = useColorModeValue("gray.200", "rgba(255,255,255,0.08)");
+  const dotInner = useColorModeValue("#fafafa", "#09090b");
 
   return (
     <Box>
@@ -66,7 +67,7 @@ const Journey = ({ data }: Props) => {
                 borderRadius="full"
                 border="2px solid"
                 borderColor={dotBorder}
-                bg={index === 0 ? "brand.500" : "#09090b"}
+                bg={index === 0 ? "brand.500" : dotInner}
                 zIndex={1}
               />
 

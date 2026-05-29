@@ -43,7 +43,10 @@ const CurrentlyBuilding = ({ currentWork }: Props) => {
         size="xl"
         mb={10}
         textAlign="center"
-        bgGradient="linear(to-r, green.400, cyan.400)"
+        bgGradient={useColorModeValue(
+          "linear(to-r, green.600, teal.600)",
+          "linear(to-r, green.400, cyan.400)"
+        )}
         bgClip="text"
       >
         Currently Building

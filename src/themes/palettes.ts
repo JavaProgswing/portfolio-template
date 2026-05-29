@@ -54,18 +54,18 @@ export const THEMES: ThemePalette[] = [
     desc: "Retro terminal nostalgia",
     swatch: ["#0a0700", "#ffb000", "#ffd060"],
   },
+  {
+    key: "tokyonight",
+    name: "Tokyo Night",
+    desc: "Midnight city, lights still on",
+    swatch: ["#1a1b26", "#7aa2f7", "#bb9af7"],
+  },
   // Pop-culture themes
   {
     key: "valorant",
     name: "Valorant",
     desc: "Tactical shooter on a knife's edge",
     swatch: ["#0f1923", "#ff4655", "#ece8e1"],
-  },
-  {
-    key: "arcane",
-    name: "Arcane",
-    desc: "Hextech fantasy out of Piltover",
-    swatch: ["#0a0e1a", "#1e90ff", "#c8aa6e"],
   },
   {
     key: "pragmata",
@@ -77,6 +77,14 @@ export const THEMES: ThemePalette[] = [
 
 export const DEFAULT_THEME = "indigo";
 const STORAGE_KEY = "portfolio-theme";
+
+// Themes that ship a polished light variant. Immersive and pop-culture
+// themes are dark-only by design, so light mode is gated to these keys.
+export const MINIMAL_THEMES = ["indigo", "rosepine", "gruvbox", "evergreen"];
+
+export function isMinimalTheme(key: string): boolean {
+  return MINIMAL_THEMES.includes(key);
+}
 
 // Resolve theme on first load: URL param, then localStorage, then default.
 export function resolveInitialTheme(): string {

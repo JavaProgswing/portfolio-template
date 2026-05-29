@@ -41,7 +41,7 @@ const SECTIONS = [
     label: "Design",
     items: [
       "Inter (body) + JetBrains Mono (code/mono labels)",
-      "Zinc/Indigo default · 9 alt themes (Ros\u00e9 Pine, Gruvbox, Evergreen, Cyberpunk, Aurora, Amber CRT, Valorant, Arcane, Pragmata)",
+      "Zinc/Indigo default · 9 alt themes (Ros\u00e9 Pine, Gruvbox, Evergreen, Cyberpunk, Aurora, Amber CRT, Tokyo Night, Valorant, Pragmata)",
       "780px max content width — single-column document feel",
       "Dark-first · respects prefers-color-scheme",
     ],

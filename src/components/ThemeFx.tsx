@@ -117,37 +117,6 @@ function spikeBeep(ctx: AudioContext) {
   osc.start(now); osc.stop(now + 0.18);
 }
 
-/** Arcane: crystalline hextech chime - 3 harmonics */
-function hexChime(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  [1200, 2400, 3600].forEach((freq, i) => {
-    const osc = ctx.createOscillator(); osc.type = "sine";
-    osc.frequency.setValueAtTime(freq, now);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime([0.06, 0.03, 0.015][i], now);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + [0.3, 0.2, 0.15][i]);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(now + i * 0.02);
-    osc.stop(now + [0.3, 0.2, 0.15][i] + 0.02);
-  });
-}
-
-/** Arcane: deep shimmer resonance */
-function shimmerResonance(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  [200, 400, 600, 800].forEach((freq, i) => {
-    const osc = ctx.createOscillator(); osc.type = "sine";
-    osc.frequency.setValueAtTime(freq, now + i * 0.05);
-    osc.frequency.exponentialRampToValueAtTime(freq * 1.5, now + i * 0.05 + 0.4);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.04, now + i * 0.05);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 0.5);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(now + i * 0.05);
-    osc.stop(now + i * 0.05 + 0.55);
-  });
-}
-
 /** Pragmata: clean digital blip with harmonic */
 function digitalBlip(ctx: AudioContext) {
   const now = ctx.currentTime;
@@ -489,101 +458,49 @@ const setupValorant: SetupFn = (getCtx) => {
   };
 };
 
-// ARCANE - hextech crystalline experience
-// chimes, floating particles, hex ripple, POW POW
+// TOKYO NIGHT - midnight city ambience
+// soft chime clicks, drifting city-light twinkles
 
-const setupArcane: SetupFn = (getCtx) => {
-  const clickTimes: number[] = [];
+const setupTokyonight: SetupFn = (getCtx) => {
+  let twinkleInterval: ReturnType<typeof setInterval> | null = null;
 
-  // Particle container
-  const particles = createEl("div", {
-    position: "fixed", top: "0", left: "0", right: "0", bottom: "0",
-    pointerEvents: "none", zIndex: "0", overflow: "hidden",
-  });
-  document.body.appendChild(particles);
-
-  function spawnParticle() {
-    const isGold = Math.random() > 0.45;
-    const x = Math.random() * 100;
-    const drift = (Math.random() - 0.5) * 60;
-    const size = 2 + Math.random() * 4;
-    const duration = 7 + Math.random() * 7;
-    const p = document.createElement("div");
-    p.dataset.themefx = "1";
-    Object.assign(p.style, {
-      position: "absolute", bottom: "-10px", left: `${x}%`,
-      width: `${size}px`, height: `${size}px`, borderRadius: "50%",
-      background: isGold
-        ? "radial-gradient(circle, #ddc07a, #c8aa6e)"
-        : "radial-gradient(circle, #6fcfff, #1e90ff)",
-      boxShadow: isGold
-        ? "0 0 8px rgba(200, 170, 110, 0.6)"
-        : "0 0 8px rgba(30, 144, 255, 0.6)",
-      animation: `fx-float-up ${duration}s linear forwards`,
-      pointerEvents: "none",
+  function twinkle() {
+    const magenta = Math.random() > 0.6;
+    const size = 2 + Math.random() * 2;
+    const dot = createEl("div", {
+      position: "fixed",
+      left: `${5 + Math.random() * 90}%`,
+      top: `${45 + Math.random() * 47}%`,
+      width: `${size}px`, height: `${size}px`,
+      borderRadius: "50%",
+      background: magenta ? "#bb9af7" : "#7aa2f7",
+      boxShadow: magenta
+        ? "0 0 8px rgba(187, 154, 247, 0.7)"
+        : "0 0 8px rgba(122, 162, 247, 0.7)",
+      pointerEvents: "none", zIndex: "1",
+      animation: "fx-twinkle 2.2s ease-out forwards",
     });
-    p.style.setProperty("--fx-drift", `${drift}px`);
-    particles.appendChild(p);
-    setTimeout(() => p.remove(), duration * 1000 + 100);
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 2300);
   }
-
-  for (let i = 0; i < 10; i++) setTimeout(() => spawnParticle(), i * 400);
-  const particleInterval = setInterval(spawnParticle, 2000);
 
   const onClick = (e: MouseEvent) => {
     const t = e.target as HTMLElement;
     if (!isInteractive(t)) return;
     const ctx = getCtx();
-    if (ctx) hexChime(ctx);
-
-    // Hexagonal ripple at click
-    const hex = createEl("div", {
-      position: "fixed",
-      left: `${e.clientX - 24}px`, top: `${e.clientY - 24}px`,
-      width: "48px", height: "48px",
-      pointerEvents: "none", zIndex: "10000",
-      animation: "fx-hex-ripple 0.6s ease-out forwards",
-    });
-    hex.innerHTML = `<svg width="48" height="48" viewBox="0 0 48 48">
-      <polygon points="24,2 44,14 44,34 24,46 4,34 4,14" fill="none"
-        stroke="rgba(30,144,255,0.5)" stroke-width="1.5"/>
-      <polygon points="24,8 38,17 38,31 24,40 10,31 10,17" fill="none"
-        stroke="rgba(200,170,110,0.3)" stroke-width="1"/>
-    </svg>`;
-    document.body.appendChild(hex);
-    setTimeout(() => hex.remove(), 650);
-
-    // Track for POW POW (3 rapid in 1.5s)
-    const now = Date.now();
-    clickTimes.push(now);
-    while (clickTimes.length > 3) clickTimes.shift();
-    if (clickTimes.length === 3 && now - clickTimes[0] < 1500) {
-      clickTimes.length = 0;
-      if (ctx) shimmerResonance(ctx);
-      const pow = createEl("div", {
-        position: "fixed", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontSize: "36px", fontWeight: "800",
-        fontFamily: "'Inter', system-ui, sans-serif",
-        color: "#c8aa6e",
-        textShadow: "0 0 24px rgba(200, 170, 110, 0.5), 0 0 50px rgba(30, 144, 255, 0.3)",
-        pointerEvents: "none", zIndex: "10001",
-        animation: "fx-ace-flash 1s ease-out forwards",
-        userSelect: "none", letterSpacing: "0.15em",
-      });
-      pow.textContent = "POW POW!";
-      document.body.appendChild(pow);
-      setTimeout(() => pow.remove(), 1100);
-    }
+    if (ctx) softChime(ctx);
   };
 
   const ctx = getCtx();
-  if (ctx) swoosh(ctx, 560, "sine");
+  if (ctx) swoosh(ctx, 540, "sine");
+
+  for (let i = 0; i < 5; i++) setTimeout(twinkle, i * 500);
+  twinkleInterval = setInterval(twinkle, 2600 + Math.random() * 1600);
 
   window.addEventListener("click", onClick);
   return () => {
     window.removeEventListener("click", onClick);
-    clearInterval(particleInterval);
+    if (twinkleInterval) clearInterval(twinkleInterval);
     removeAllFxElements();
   };
 };
@@ -1118,7 +1035,7 @@ const THEME_FX: Record<string, SetupFn> = {
   aurora: setupAurora,
   amber: setupAmber,
   valorant: setupValorant,
-  arcane: setupArcane,
+  tokyonight: setupTokyonight,
   pragmata: setupPragmata,
 };
 

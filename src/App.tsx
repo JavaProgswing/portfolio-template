@@ -9,6 +9,7 @@ import AiChat from "./components/AiChat";
 import EasterEggs from "./components/EasterEggs";
 import AchievementToast from "./components/AchievementToast";
 import ThemeFx from "./components/ThemeFx";
+import ColorModeSync from "./components/ColorModeSync";
 import CursorSpotlight from "./components/CursorSpotlight";
 import MatrixRain from "./components/MatrixRain";
 import {
@@ -70,6 +71,7 @@ function App() {
       <EasterEggs />
       <AchievementToast />
       <ThemeFx />
+      <ColorModeSync />
       <CursorSpotlight />
       <MatrixRain />
       <ShortcutsModal />

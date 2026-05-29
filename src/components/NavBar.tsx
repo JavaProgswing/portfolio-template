@@ -7,13 +7,14 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Info } from "./Intro";
 import ContactBadges from "./ContactBadges";
 import ColorModeToggle from "./ColorModeToggle";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Confetti from "./Confetti";
 import { unlock } from "../lib/achievements";
+import { resolveInitialTheme, isMinimalTheme } from "../themes/palettes";
 
 interface Props {
   data: Info & {
@@ -41,6 +42,15 @@ const Navbar = ({ data }: Props) => {
 
   const clicksRef = useRef<number[]>([]);
   const [confettiKey, setConfettiKey] = useState(0);
+
+  // Light toggle only applies to minimal themes; hide it on dark-only themes.
+  const [theme, setTheme] = useState(resolveInitialTheme);
+  useEffect(() => {
+    const onThemeChange = (e: Event) =>
+      setTheme((e as CustomEvent<string>).detail);
+    window.addEventListener("themechange", onThemeChange);
+    return () => window.removeEventListener("themechange", onThemeChange);
+  }, []);
 
   const handleLogoClick = () => {
     const now = Date.now();
@@ -113,7 +123,7 @@ const Navbar = ({ data }: Props) => {
           />
           <Box w="1px" h="14px" bg={border} mx={1} />
           <ThemeSwitcher />
-          <ColorModeToggle />
+          {isMinimalTheme(theme) && <ColorModeToggle />}
         </HStack>
       </HStack>
 

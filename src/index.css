@@ -150,18 +150,15 @@ body[data-theme="valorant"] * {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="4" x2="12" y2="9" stroke="%23ff4655" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="20" stroke="%23ff4655" stroke-width="2"/><line x1="4" y1="12" x2="9" y2="12" stroke="%23ff4655" stroke-width="2"/><line x1="15" y1="12" x2="20" y2="12" stroke="%23ff4655" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="%23ff4655"/></svg>') 12 12, crosshair;
 }
 
-/* Arcane - hextech blue + shimmer gold on deep Piltover navy */
-body[data-theme="arcane"] {
-  background-color: #0a0e1a !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #141c30 0%, #060810 70%) !important;
-  --chakra-colors-brand-300: #4fc3f7;
-  --chakra-colors-brand-400: #1e90ff;
-  --chakra-colors-brand-500: #c8aa6e;
-  --chakra-colors-brand-600: #a68b50;
-  --cursor-glow: rgba(30, 144, 255, 0.14);
-}
-body[data-theme="arcane"] * {
-  text-shadow: 0 0 1px rgba(30, 144, 255, 0.08);
+/* Tokyo Night - midnight navy, electric blue + magenta accents */
+body[data-theme="tokyonight"] {
+  background-color: #1a1b26 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #24283b 0%, #16161e 70%) !important;
+  --chakra-colors-brand-300: #a9b8ff;
+  --chakra-colors-brand-400: #7aa2f7;
+  --chakra-colors-brand-500: #bb9af7;
+  --chakra-colors-brand-600: #9d7cd8;
+  --cursor-glow: rgba(122, 162, 247, 0.13);
 }
 
 /* Pragmata - lunar void, near-black + cold cyan signal */
@@ -182,9 +179,68 @@ body[data-theme="pragmata"] * {
 
 
 
-/* Smooth bg transition when switching themes */
+/* Smooth bg transition when switching themes.
+   Surface vars feed Chakra layerStyles (card/glass/glassStrong) in theme.ts.
+   Defaults here are dark; body[data-mode="light"] below flips them. */
 body {
   transition: background-color 0.3s ease;
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-strong: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.1);
+}
+
+/* Light mode (minimal themes only). ColorModeSync sets data-mode="light"
+   solely for indigo/rosepine/gruvbox/evergreen, so these dark-on-light
+   surfaces never reach an immersive theme. */
+body[data-mode="light"] {
+  --surface: rgba(0, 0, 0, 0.025);
+  --surface-strong: rgba(0, 0, 0, 0.05);
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.14);
+}
+
+/* Indigo light - darker accents for contrast on near-white bg.
+   Background itself comes from Chakra (no data-theme bg block for indigo). */
+body[data-theme="indigo"][data-mode="light"] {
+  --chakra-colors-brand-300: #6366f1;
+  --chakra-colors-brand-400: #4f46e5;
+  --chakra-colors-brand-500: #4338ca;
+  --chakra-colors-brand-600: #3730a3;
+  --cursor-glow: rgba(79, 70, 229, 0.1);
+}
+
+/* Rosé Pine Dawn - warm parchment + muted rose/iris/pine */
+body[data-theme="rosepine"][data-mode="light"] {
+  background-color: #faf4ed !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #fffaf3 0%, #f2e9e1 70%) !important;
+  --chakra-colors-brand-300: #d7827e;
+  --chakra-colors-brand-400: #b4637a;
+  --chakra-colors-brand-500: #907aa9;
+  --chakra-colors-brand-600: #286983;
+  --cursor-glow: rgba(180, 99, 122, 0.12);
+}
+
+/* Gruvbox light - cream paper + faded dark accents */
+body[data-theme="gruvbox"][data-mode="light"] {
+  background-color: #fbf1c7 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #f9f5d7 0%, #ebdbb2 70%) !important;
+  --chakra-colors-brand-300: #d65d0e;
+  --chakra-colors-brand-400: #af3a03;
+  --chakra-colors-brand-500: #b57614;
+  --chakra-colors-brand-600: #79740e;
+  --cursor-glow: rgba(175, 58, 3, 0.12);
+}
+
+/* Evergreen light - pale sage + deep forest greens */
+body[data-theme="evergreen"][data-mode="light"] {
+  background-color: #eef4e8 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #f4f8ef 0%, #dde7d2 70%) !important;
+  --chakra-colors-brand-300: #16a34a;
+  --chakra-colors-brand-400: #15803d;
+  --chakra-colors-brand-500: #166534;
+  --chakra-colors-brand-600: #14532d;
+  --cursor-glow: rgba(21, 128, 61, 0.12);
 }
 
 /* Theme FX: persistent visual overlays */
@@ -263,6 +319,23 @@ body[data-theme="aurora"]::before {
   filter: blur(14px);
 }
 
+/* Tokyo Night - distant city-light glow on the horizon */
+body[data-theme="tokyonight"]::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 160px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(122, 162, 247, 0.07) 0%,
+    rgba(187, 154, 247, 0.03) 45%,
+    transparent 100%
+  );
+  filter: blur(8px);
+}
+
 /* Cyberpunk - subtle neon text flicker on interactive elements */
 body[data-theme="cyberpunk"] a:hover,
 body[data-theme="cyberpunk"] button:hover {
@@ -311,12 +384,11 @@ body[data-theme="cyberpunk"] button:hover {
   100% { top: 100vh; opacity: 0; }
 }
 
-/* Arcane floating particles */
-@keyframes fx-float-up {
-  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-  10%  { opacity: 0.7; }
-  90%  { opacity: 0.3; }
-  100% { transform: translateY(-100vh) translateX(var(--fx-drift, 20px)) scale(0.3); opacity: 0; }
+/* Tokyo Night: city-light twinkle */
+@keyframes fx-twinkle {
+  0%   { opacity: 0; transform: scale(0.6); }
+  30%  { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
 }
 
 /* CRT screen flicker (used by JS) */
@@ -377,12 +449,6 @@ body[data-theme="cyberpunk"] button:hover {
 @keyframes fx-hud-fadein {
   0%   { opacity: 0; }
   100% { opacity: 1; }
-}
-
-/* Arcane: hexagonal ripple expand */
-@keyframes fx-hex-ripple {
-  0%   { transform: scale(0.5) rotate(0deg); opacity: 0.8; }
-  100% { transform: scale(2.5) rotate(30deg); opacity: 0; }
 }
 
 /* Aurora: enhanced shooting star (longer trail) */

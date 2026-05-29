@@ -118,7 +118,10 @@ const CPStats = ({ cfHandle, lcHandle }: Props) => {
         size="xl"
         mb={10}
         textAlign="center"
-        bgGradient="linear(to-r, yellow.400, orange.400)"
+        bgGradient={useColorModeValue(
+          "linear(to-r, yellow.600, orange.600)",
+          "linear(to-r, yellow.400, orange.400)"
+        )}
         bgClip="text"
       >
         Competitive Programming
