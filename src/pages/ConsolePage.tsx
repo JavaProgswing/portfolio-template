@@ -402,7 +402,7 @@ const ConsolePage = ({ data }: { data: any }) => {
       mx="auto"
       px={{ base: 4, md: 6 }}
       py={10}
-      minH="calc(100vh - 60px)"
+      minH="calc(100dvh - 60px)"
       onClick={focusInput}
       cursor="text"
       position="relative"

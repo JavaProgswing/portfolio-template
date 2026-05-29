@@ -71,7 +71,7 @@ const HomePage = ({ data }: Props) => {
 
       <Box mr={{ base: 0, md: "60px" }}>
         <Box maxW="780px" mx="auto" px={{ base: 5, md: 8 }}>
-          <Box id="home" ref={homeRef} minH="100vh"
+          <Box id="home" ref={homeRef} minH="100dvh"
             display="flex" alignItems="center" py={20}>
             <Intro data={data} currentWork={data.currentWork}
               resumeUrl={data.resumeUrl}

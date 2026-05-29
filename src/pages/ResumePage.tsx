@@ -104,7 +104,7 @@ const ResumePage = ({ data }: Props) => {
   }
 
   // ── Inline PDF viewer ─────────────────────────────────────────────────────
-  const viewerHeight = fullscreen ? "100vh" : "calc(100vh - 200px)";
+  const viewerHeight = fullscreen ? "100dvh" : "calc(100dvh - 200px)";
 
   return (
     <Box

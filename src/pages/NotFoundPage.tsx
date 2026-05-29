@@ -144,7 +144,7 @@ const NotFoundPage = () => {
       onMouseMove={onMouseMove}
       onClick={onClick}
       position="relative"
-      minH="calc(100vh - 60px)"
+      minH="calc(100dvh - 60px)"
       display="flex"
       alignItems="center"
       justifyContent="center"

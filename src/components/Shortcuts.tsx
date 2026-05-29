@@ -404,7 +404,9 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
         border="1px solid rgba(255,255,255,0.08)"
         borderRadius="xl"
         boxShadow="0 24px 64px rgba(0,0,0,0.6)"
-        maxH="78vh"
+        maxH="78dvh"
+        mx={4}
+        maxW={{ base: "calc(100vw - 32px)", md: "xl" }}
         overflow="hidden"
       >
         <ModalBody p={0}>
@@ -416,7 +418,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Type a command or search…"
               variant="unstyled"
-              fontSize="sm"
+              fontSize={{ base: "16px", md: "sm" }}
               color="gray.100"
               _placeholder={{ color: "gray.600" }}
             />
@@ -425,7 +427,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
             </Kbd>
           </HStack>
 
-          <Box maxH="62vh" overflowY="auto" py={1}>
+          <Box maxH="62dvh" overflowY="auto" py={1}>
             {filtered.length === 0 ? (
               <Text fontSize="sm" color="gray.500" textAlign="center" py={6} fontFamily="mono">
                 no results for "{query}"

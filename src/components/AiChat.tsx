@@ -202,6 +202,8 @@ const AiChat = ({ data }: Props) => {
   const [available, setAvailable] = useState<boolean | null>(null);
   const [model, setModel] = useState<string | null>(null);
   const [scrollHidden, setScrollHidden] = useState(false);
+  const [kbInset, setKbInset] = useState(0);   // on-screen keyboard height (px)
+  const [vvHeight, setVvHeight] = useState(0);  // visualViewport height (px)
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -246,9 +248,34 @@ const AiChat = ({ data }: Props) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // ── Track on-screen keyboard via visualViewport so the panel rides above it ──
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => {
+      const inset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      setKbInset(inset);
+      setVvHeight(vv.height);
+    };
+    onResize();
+    vv.addEventListener("resize", onResize);
+    vv.addEventListener("scroll", onResize);
+    return () => {
+      vv.removeEventListener("resize", onResize);
+      vv.removeEventListener("scroll", onResize);
+    };
+  }, []);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Keep latest message visible when the keyboard opens/closes
+  useEffect(() => {
+    if (isOpen && kbInset > 0) {
+      messagesEndRef.current?.scrollIntoView({ block: "end" });
+    }
+  }, [kbInset, isOpen]);
 
   useEffect(() => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 200);
@@ -442,10 +469,11 @@ const AiChat = ({ data }: Props) => {
           <MotionBox
             key="panel"
             position="fixed"
-            bottom="76px"
+            bottom={kbInset > 0 ? `${kbInset + 12}px` : "76px"}
             right={{ base: 4, md: 6 }}
             w={{ base: "calc(100vw - 32px)", sm: "380px" }}
-            h="480px"
+            h={{ base: "min(72dvh, 480px)", sm: "480px" }}
+            maxH={kbInset > 0 ? `${Math.max(240, vvHeight - 24)}px` : "calc(100dvh - 96px)"}
             bg={panelBg}
             border="1px solid"
             borderColor={borderCol}
@@ -562,7 +590,7 @@ const AiChat = ({ data }: Props) => {
                     size="sm"
                     borderRadius="full"
                     isDisabled={loading}
-                    fontSize="sm"
+                    fontSize={{ base: "16px", md: "sm" }}
                     _focus={{
                       borderColor: "brand.400",
                       boxShadow: "0 0 0 1px rgba(99,102,241,0.4)",

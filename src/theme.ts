@@ -66,6 +66,9 @@ const theme = extendTheme({
         bg:    props.colorMode === "dark" ? "#09090b" : "#fafafa",
         color: props.colorMode === "dark" ? "#e4e4e7" : "#18181b",
         lineHeight: "1.6",
+        // Long unbreakable strings (URLs, mono code) shouldn't force horizontal
+        // scroll on narrow phones. Safe — doesn't create a scroll container.
+        overflowWrap: "break-word",
       },
       // Typography defaults
       "h1, h2, h3, h4, h5, h6": {
