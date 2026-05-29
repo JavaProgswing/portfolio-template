@@ -112,6 +112,84 @@ npm run build   # outputs to dist/
 
 Deploy `dist/` to any static host (Vercel, Netlify, GitHub Pages, Cloudflare Pages). The optional backend deploys separately.
 
+## Themes
+
+Ten palettes ship by default. Switch from the nav, deep-link with `?theme=<key>`, or pick one from the command palette. The choice is saved to `localStorage`.
+
+### Requesting a theme
+
+Open a GitHub issue with:
+
+- a name and a one-line vibe (and any inspiration: an editor theme, a game, a site)
+- three hex colors: a background and two accents
+- optional: whether it should support light mode or audio-visual effects
+
+That is enough for a maintainer to build it.
+
+### Adding a theme
+
+The minimum is two files, both keyed by the same lowercase `key`.
+
+1. `src/themes/palettes.ts` - add an entry to `THEMES`:
+
+```ts
+{
+  key: "mytheme",            // unique slug, referenced everywhere
+  name: "My Theme",
+  desc: "Short one-line vibe",
+  swatch: ["#0b0b0f", "#ff7a59", "#ffd36e"], // [bg, accent1, accent2] for the switcher preview
+}
+```
+
+2. `src/index.css` - add a matching block with the same slug:
+
+```css
+body[data-theme="mytheme"] {
+  background-color: #0b0b0f !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #15151f 0%, #060608 70%) !important;
+  --chakra-colors-brand-300: #ffd36e;
+  --chakra-colors-brand-400: #ff7a59;   /* primary accent, used the most */
+  --chakra-colors-brand-500: #e0563b;
+  --chakra-colors-brand-600: #c0432c;
+  --cursor-glow: rgba(255, 122, 89, 0.12);
+}
+```
+
+The `brand-300..600` vars retint every accent across the site; `--cursor-glow` colors the cursor spotlight. That is all a theme needs - the switcher and command palette read `THEMES` directly, so it appears automatically.
+
+#### Optional: light mode
+
+Add the key to `MINIMAL_THEMES` in `palettes.ts`, then add a light override in `index.css` (higher specificity wins over the dark block):
+
+```css
+body[data-theme="mytheme"][data-mode="light"] {
+  background-color: #faf7f0 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #fffdf8 0%, #efe9dd 70%) !important;
+  --chakra-colors-brand-400: #c0432c;   /* darker accents for contrast on a light bg */
+  /* ...brand-300/500/600, --cursor-glow */
+}
+```
+
+Only themes listed in `MINIMAL_THEMES` show the light/dark toggle; the rest are dark-only.
+
+#### Optional: audio-visual effects
+
+Write a `SetupFn` and register it under the same key in `THEME_FX` (`src/components/ThemeFx.tsx`). A `SetupFn` receives an audio-context getter and returns a cleanup function. Tag any DOM you inject with `data-themefx="1"` so it is removed on theme change. Skip this for a plain theme.
+
+### Where themes are referenced
+
+| File | Role |
+|------|------|
+| `src/themes/palettes.ts` | Source of truth: `THEMES`, `DEFAULT_THEME`, `MINIMAL_THEMES`, `isMinimalTheme`, `applyTheme`, `resolveInitialTheme` |
+| `src/index.css` | `body[data-theme="<key>"]` colors, optional `[data-mode="light"]` overrides, and `fx-*` keyframes |
+| `src/components/ThemeFx.tsx` | `THEME_FX` registry of optional per-theme effects |
+| `src/components/ThemeSwitcher.tsx` | Renders the palette grid from `THEMES` (no edits needed) |
+| `src/components/Shortcuts.tsx` | Adds one command-palette entry per theme (no edits needed) |
+| `src/components/NavBar.tsx`, `src/components/ColorModeSync.tsx` | Gate light mode via `isMinimalTheme` |
+| `src/pages/ColophonPage.tsx` | Prose list of themes - update by hand |
+
+`applyTheme(key)` sets `document.body.dataset.theme`, persists to `localStorage`, and dispatches a `themechange` event that `ThemeFx`, the nav, and `ColorModeSync` listen for.
+
 ## License
 
 [MIT](LICENSE)
