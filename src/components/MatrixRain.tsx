@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Canvas matrix rain — only renders when `body.konami-active` is set.
+ * Canvas matrix rain - only renders when `body.konami-active` is set.
  * Stops animation when class is removed (saves CPU).
  */
 const MatrixRain = () => {

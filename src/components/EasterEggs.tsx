@@ -14,15 +14,15 @@ const KONAMI = [
  * Mounts global keyboard + visibility listeners for easter eggs.
  *
  * Behaviors:
- *  - Konami code (↑↑↓↓←→←→ba) → matrix mode (8s neon green)
+ *  - Konami code (up up down down left right left right b a) -> matrix mode (8s neon green)
  *  - Typed words: "matrix" / "rainbow" / "coffee" / "pizza" / "vim" / "bug" / "sudo"
- *  - Vim nav: "gg" → top, "G" → bottom
- *  - Triple Escape → close all (chat, popovers, modal)
- *  - "/" → focus the AI chat input
- *  - Tab blur → title plays peek-a-boo after 5s
- *  - Night owl: shows toast if visit is 3–6 AM local
- *  - Visit /console, /404, sign guestbook, etc. → unlock achievements
- *  - Achievement unlock → subtle toast
+ *  - Vim nav: "gg" -> top, "G" -> bottom
+ *  - Triple Escape -> close all (chat, popovers, modal)
+ *  - "/" -> focus the AI chat input
+ *  - Tab blur -> title plays peek-a-boo after 5s
+ *  - Night owl: shows toast if visit is 3-6 AM local
+ *  - Visit /console, /404, sign guestbook, etc. -> unlock achievements
+ *  - Achievement unlock -> subtle toast
  *
  * State stored in localStorage via src/lib/achievements.ts.
  */
@@ -30,9 +30,9 @@ const EasterEggs = () => {
   const toast = useToast();
 
   // Achievement notifications are handled by AchievementToast component.
-  // EasterEggs only fires `unlock()` — listening + rendering lives elsewhere.
+  // EasterEggs only fires `unlock()` - listening + rendering lives elsewhere.
 
-  // ── Effect triggers ────────────────────────────────────────────────────────
+  // Effect triggers
   useEffect(() => {
     let keyBuf: string[] = [];
     let typeBuf = "";
@@ -120,7 +120,7 @@ const EasterEggs = () => {
       const t = e.target as HTMLElement | null;
       const inField = !!t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
 
-      // Konami arrow sequence (works even from form fields — uses only arrow keys + b/a)
+      // Konami arrow sequence (works even from form fields - uses only arrow keys + b/a)
       keyBuf.push(e.key);
       if (keyBuf.length > KONAMI.length) keyBuf.shift();
       if (
@@ -136,7 +136,7 @@ const EasterEggs = () => {
       // The rest only fire outside input fields
       if (inField) return;
 
-      // ── Triple Escape: close everything ─────────────────────────────────
+      // Triple Escape: close everything
       if (e.key === "Escape") {
         const now = Date.now();
         escTimes = escTimes.filter((t) => now - t < 800);
@@ -151,14 +151,14 @@ const EasterEggs = () => {
         }
       }
 
-      // ── `/` → focus AI chat ─────────────────────────────────────────────
+      // `/` -> focus AI chat
       if (e.key === "/") {
         e.preventDefault();
         window.dispatchEvent(new Event("focus-ai-chat"));
       }
 
-      // ── Vim nav ─────────────────────────────────────────────────────────
-      // `G` (shift+g) → scroll bottom
+      // Vim nav
+      // `G` (shift+g) -> scroll bottom
       if (e.key === "G" && e.shiftKey) {
         e.preventDefault();
         window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
@@ -166,10 +166,10 @@ const EasterEggs = () => {
         gWaiting = false;
         return;
       }
-      // `g` → wait for second `g`
+      // `g` -> wait for second `g`
       if (e.key === "g" && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
         if (gWaiting) {
-          // second g — scroll to top
+          // second g - scroll to top
           e.preventDefault();
           window.scrollTo({ top: 0, behavior: "smooth" });
           unlock("vim-nav");
@@ -183,7 +183,7 @@ const EasterEggs = () => {
         return;
       }
 
-      // ── Typed-word triggers ─────────────────────────────────────────────
+      // Typed-word triggers
       if (/^[a-zA-Z]$/.test(e.key)) {
         typeBuf = (typeBuf + e.key.toLowerCase()).slice(-16);
         for (const word of Object.keys(typedEffects)) {
@@ -206,7 +206,7 @@ const EasterEggs = () => {
     };
   }, [toast]);
 
-  // ── Tab blur peek-a-boo ────────────────────────────────────────────────────
+  // Tab blur peek-a-boo
   useEffect(() => {
     const originalTitle = document.title;
     let timer: number | null = null;
@@ -232,7 +232,7 @@ const EasterEggs = () => {
     };
   }, []);
 
-  // ── Night owl (00:00–06:00 local — relaxed window) ────────────────────────
+  // Night owl (00:00-06:00 local - relaxed window)
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour >= 0 && hour < 6) {

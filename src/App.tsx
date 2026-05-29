@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 import { Box } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";

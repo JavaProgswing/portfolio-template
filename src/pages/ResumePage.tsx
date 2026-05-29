@@ -45,7 +45,7 @@ const ResumePage = ({ data }: Props) => {
     return () => window.removeEventListener("keydown", onKey);
   }, [fullscreen]);
 
-  // ── No resume configured ──────────────────────────────────────────────────
+  // No resume configured
   if (!url) {
     return (
       <Box maxW="900px" mx="auto" px={6} py={20}>
@@ -66,7 +66,7 @@ const ResumePage = ({ data }: Props) => {
     );
   }
 
-  // ── External URL that blocks embedding ────────────────────────────────────
+  // External URL that blocks embedding
   if (embedFailed) {
     return (
       <Box maxW="600px" mx="auto" px={6} py={20}>
@@ -103,7 +103,7 @@ const ResumePage = ({ data }: Props) => {
     );
   }
 
-  // ── Inline PDF viewer ─────────────────────────────────────────────────────
+  // Inline PDF viewer
   const viewerHeight = fullscreen ? "100dvh" : "calc(100dvh - 200px)";
 
   return (

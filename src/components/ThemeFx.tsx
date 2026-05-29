@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Immersive theme FX engine v2 — enhanced.
+ * Immersive theme FX engine v2 - enhanced.
  *
  * Each theme is a complete experience with layered audio, visual effects,
  * interactive behaviors, and hidden easter eggs.
@@ -9,10 +9,10 @@ import { useEffect, useRef } from "react";
  * Audio: Web Audio API synthesized (zero asset files)
  * Visuals: DOM elements + CSS animations, created/destroyed on theme switch
  *
- * Architecture: theme switch → cleanup old → setup new (each returns cleanup fn)
+ * Architecture: theme switch -> cleanup old -> setup new (each returns cleanup fn)
  */
 
-// ── Audio infrastructure ───────────────────────────────────────────────────
+// Audio infrastructure
 
 type GetCtx = () => AudioContext | null;
 
@@ -34,7 +34,7 @@ function createGetCtx(): { getCtx: GetCtx; cleanup: () => void } {
   };
 }
 
-// ── Sound library ──────────────────────────────────────────────────────────
+// Sound library
 
 function swoosh(ctx: AudioContext, freq: number, type: OscillatorType) {
   const now = ctx.currentTime;
@@ -52,7 +52,7 @@ function swoosh(ctx: AudioContext, freq: number, type: OscillatorType) {
   osc.stop(now + 0.32);
 }
 
-/** Valorant: punchy gunshot — layered noise burst + sub bass + transient crack */
+/** Valorant: punchy gunshot - layered noise burst + sub bass + transient crack */
 function gunshot(ctx: AudioContext) {
   const now = ctx.currentTime;
   // Noise burst (the snap)
@@ -89,7 +89,7 @@ function gunshot(ctx: AudioContext) {
   crack.start(now); crack.stop(now + 0.025);
 }
 
-/** Valorant: ACE fanfare — ascending notes with reverb-like tail */
+/** Valorant: ACE fanfare - ascending notes with reverb-like tail */
 function aceFanfare(ctx: AudioContext) {
   const now = ctx.currentTime;
   [523, 659, 784, 1047, 1318].forEach((freq, i) => {
@@ -117,7 +117,7 @@ function spikeBeep(ctx: AudioContext) {
   osc.start(now); osc.stop(now + 0.18);
 }
 
-/** Arcane: crystalline hextech chime — 3 harmonics */
+/** Arcane: crystalline hextech chime - 3 harmonics */
 function hexChime(ctx: AudioContext) {
   const now = ctx.currentTime;
   [1200, 2400, 3600].forEach((freq, i) => {
@@ -277,7 +277,7 @@ function bootBeeps(ctx: AudioContext) {
   });
 }
 
-// ── DOM helpers ────────────────────────────────────────────────────────────
+// DOM helpers
 
 function createEl(tag: string, styles: Partial<CSSStyleDeclaration>): HTMLElement {
   const el = document.createElement(tag);
@@ -296,10 +296,8 @@ function isInteractive(el: HTMLElement): boolean {
 
 type SetupFn = (getCtx: GetCtx) => () => void;
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  VALORANT — tactical shooter experience                                ║
-// ║  gunshot · hit markers · kill feed · spike plant · ACE                  ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// VALORANT - tactical shooter experience
+// gunshot, hit markers, kill feed, spike plant, ACE
 
 const setupValorant: SetupFn = (getCtx) => {
   const clickTimes: number[] = [];
@@ -491,10 +489,8 @@ const setupValorant: SetupFn = (getCtx) => {
   };
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  ARCANE — hextech crystalline experience                               ║
-// ║  chimes · floating particles · hex ripple · POW POW                    ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// ARCANE - hextech crystalline experience
+// chimes, floating particles, hex ripple, POW POW
 
 const setupArcane: SetupFn = (getCtx) => {
   const clickTimes: number[] = [];
@@ -592,10 +588,8 @@ const setupArcane: SetupFn = (getCtx) => {
   };
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  PRAGMATA — deep space mission control                                 ║
-// ║  companion hologram · HUD brackets · scan sweep · comms · transmission ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// PRAGMATA - deep space mission control
+// companion hologram, HUD brackets, scan sweep, comms, transmission
 
 const setupPragmata: SetupFn = (getCtx) => {
   let idleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -604,7 +598,7 @@ const setupPragmata: SetupFn = (getCtx) => {
   let companionRAF: number | null = null;
   let transmissionShown = false;
 
-  // ── HUD corner brackets ──
+  // HUD corner brackets
   const corners = [
     { top: "12px", left: "12px", borderTop: "2px solid", borderLeft: "2px solid" },
     { top: "12px", right: "12px", borderTop: "2px solid", borderRight: "2px solid" },
@@ -623,7 +617,7 @@ const setupPragmata: SetupFn = (getCtx) => {
     document.body.appendChild(bracket);
   });
 
-  // ── Floating companion hologram ──
+  // Floating companion hologram
   const companion = createEl("div", {
     position: "fixed",
     width: "20px", height: "20px",
@@ -660,7 +654,7 @@ const setupPragmata: SetupFn = (getCtx) => {
     resetIdle();
   };
 
-  // ── Coordinate readout near cursor ──
+  // Coordinate readout near cursor
   const coordLabel = createEl("div", {
     position: "fixed",
     pointerEvents: "none", zIndex: "9998",
@@ -682,7 +676,7 @@ const setupPragmata: SetupFn = (getCtx) => {
     coordLabel.textContent = `${e.clientX.toString().padStart(4, "0")} : ${e.clientY.toString().padStart(4, "0")}`;
   };
 
-  // ── Scan sweep ──
+  // Scan sweep
   function doScanSweep() {
     const line = createEl("div", {
       position: "fixed", left: "0", right: "0", height: "2px",
@@ -697,7 +691,7 @@ const setupPragmata: SetupFn = (getCtx) => {
     setTimeout(() => line.remove(), 3200);
   }
 
-  // ── Signal interference ──
+  // Signal interference
   function doInterference() {
     const band = createEl("div", {
       position: "fixed", left: "0", right: "0", height: "4px",
@@ -712,7 +706,7 @@ const setupPragmata: SetupFn = (getCtx) => {
     setTimeout(() => band.remove(), 1600);
   }
 
-  // ── Transmission notification ──
+  // Transmission notification
   function resetIdle() {
     if (idleTimer) clearTimeout(idleTimer);
     idleTimer = setTimeout(showTransmission, 30000);
@@ -789,17 +783,15 @@ const setupPragmata: SetupFn = (getCtx) => {
   };
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  CYBERPUNK — neon dystopia                                             ║
-// ║  zap clicks · glitch bursts · data rain · BREACH DETECTED              ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// CYBERPUNK - neon dystopia
+// zap clicks, glitch bursts, data rain, BREACH DETECTED
 
 const setupCyberpunk: SetupFn = (getCtx) => {
   let glitchInterval: ReturnType<typeof setInterval> | null = null;
   let dataRainInterval: ReturnType<typeof setInterval> | null = null;
   const clickTimes: number[] = [];
 
-  // ── Data rain column ──
+  // Data rain column
   const rainCol = createEl("div", {
     position: "fixed", top: "0", right: "40px",
     width: "14px",
@@ -904,9 +896,7 @@ const setupCyberpunk: SetupFn = (getCtx) => {
   };
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  EVERGREEN — deep forest + sage green (clean, no FX)                    ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// EVERGREEN - deep forest + sage green (clean, no FX)
 
 const setupEvergreen: SetupFn = (getCtx) => {
   const ctx = getCtx();
@@ -914,9 +904,7 @@ const setupEvergreen: SetupFn = (getCtx) => {
   return () => {};
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  ROSÉ PINE — soft rose aesthetic (clean, no FX)                        ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// ROSÉ PINE - soft rose aesthetic (clean, no FX)
 
 const setupRosepine: SetupFn = (getCtx) => {
   const ctx = getCtx();
@@ -924,9 +912,7 @@ const setupRosepine: SetupFn = (getCtx) => {
   return () => {};
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  GRUVBOX — warm yellow retro (clean, no FX)                            ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// GRUVBOX - warm yellow retro (clean, no FX)
 
 const setupGruvbox: SetupFn = (getCtx) => {
   const ctx = getCtx();
@@ -934,10 +920,8 @@ const setupGruvbox: SetupFn = (getCtx) => {
   return () => {};
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  AURORA — northern lights serenity                                     ║
-// ║  bell chimes · shooting stars · cursor sparkles                        ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// AURORA - northern lights serenity
+// bell chimes, shooting stars, cursor sparkles
 
 const setupAurora: SetupFn = (getCtx) => {
   let starInterval: ReturnType<typeof setInterval> | null = null;
@@ -1006,10 +990,8 @@ const setupAurora: SetupFn = (getCtx) => {
   };
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  AMBER CRT — retro terminal nostalgia                                  ║
-// ║  beeps · boot sequence · scanlines · CRT flicker · phosphor afterglow  ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// AMBER CRT - retro terminal nostalgia
+// beeps, boot sequence, scanlines, CRT flicker, phosphor afterglow
 
 const setupAmber: SetupFn = (getCtx) => {
   let flickerInterval: ReturnType<typeof setInterval> | null = null;
@@ -1111,9 +1093,7 @@ const setupAmber: SetupFn = (getCtx) => {
   };
 };
 
-// ╔══════════════════════════════════════════════════════════════════════════╗
-// ║  INDIGO — clean default, minimal                                       ║
-// ╚══════════════════════════════════════════════════════════════════════════╝
+// INDIGO - clean default, minimal
 
 const setupIndigo: SetupFn = (getCtx) => {
   const ctx = getCtx();
@@ -1121,7 +1101,7 @@ const setupIndigo: SetupFn = (getCtx) => {
   return () => {};
 };
 
-// ── Registry + main component ──────────────────────────────────────────────
+// Registry + main component
 
 const THEME_FX: Record<string, SetupFn> = {
   indigo: setupIndigo,

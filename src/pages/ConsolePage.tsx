@@ -239,7 +239,7 @@ press ↑/↓ for command history`,
   },
 
   wander: ({ navigate }) => {
-    // Intentional 404 navigation — unlocks Wanderer
+    // Intentional 404 navigation - unlocks Wanderer
     const paths = ["/void", "/lost", "/elsewhere", "/the-edge", "/here-be-dragons"];
     const path = paths[Math.floor(Math.random() * paths.length)];
     setTimeout(() => navigate(path), 200);

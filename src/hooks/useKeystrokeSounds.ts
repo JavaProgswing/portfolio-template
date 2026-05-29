@@ -155,7 +155,7 @@ export function useKeystrokeSounds(opts: UseKeystrokeSoundsOptions = {}) {
         const variant = classify(key);
         synthesize(ctx, variant, volume);
       } catch {
-        // Silently ignore — audio is non-critical
+        // Silently ignore - audio is non-critical
       }
     },
     [muted, volume, ensureCtx]

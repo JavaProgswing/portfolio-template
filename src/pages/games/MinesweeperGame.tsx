@@ -139,7 +139,7 @@ const MinesweeperGame = () => {
     }
 
     if (g[r][c].mine) {
-      // lose — reveal all mines
+      // lose - reveal all mines
       g.forEach((row) => row.forEach((x) => { if (x.mine) x.revealed = true; }));
       setGrid(g);
       setOver("lose");

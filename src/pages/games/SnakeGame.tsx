@@ -189,7 +189,7 @@ const SnakeGame = () => {
     else st.snake.pop();
   };
 
-  // ── Single stable render+tick loop (reads refs, never re-subscribes) ────────
+  // Single stable render+tick loop (reads refs, never re-subscribes)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -254,7 +254,7 @@ const SnakeGame = () => {
       ctx.fill();
       ctx.restore();
 
-      // Snake — gradient head→tail
+      // Snake - gradient head to tail
       const len = st.snake.length;
       st.snake.forEach((p, i) => {
         const t = len > 1 ? i / (len - 1) : 0;

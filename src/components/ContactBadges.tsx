@@ -73,7 +73,7 @@ const BRAND: Record<string, { color: string; glow: string }> = {
 
 const MotionBox = motion(Box);
 
-// ── Shared button style props ─────────────────────────────────────────────────
+// Shared button style props
 
 const baseButtonProps = (brand: { color: string; glow: string }) => ({
   display: "inline-flex" as const,
@@ -92,7 +92,7 @@ const baseButtonProps = (brand: { color: string; glow: string }) => ({
   sx: { transition: "color 0.2s, background 0.2s, box-shadow 0.2s" },
 });
 
-// ── Standard badge (no popover) ───────────────────────────────────────────────
+// Standard badge (no popover)
 
 const StandardBadge = ({ contact }: { contact: Contact }) => {
   const brand = BRAND[contact.id] ?? { color: "#a1a1aa", glow: "rgba(255,255,255,0.15)" };
@@ -119,7 +119,7 @@ const StandardBadge = ({ contact }: { contact: Contact }) => {
   );
 };
 
-// ── LinkedIn — mini business card popover ─────────────────────────────────────
+// LinkedIn - mini business card popover
 
 const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profile }) => {
   if (!profile) return <StandardBadge contact={contact} />;
@@ -277,7 +277,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
   );
 };
 
-// ── Spotify — now-playing popover ─────────────────────────────────────────────
+// Spotify - now-playing popover
 
 const EqualizerBars = () => (
   <HStack spacing="2px" h="10px" alignItems="flex-end">
@@ -466,7 +466,7 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
   );
 };
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// Main
 
 const ContactBadges = ({ contacts, profile }: Props) => {
   return (

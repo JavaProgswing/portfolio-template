@@ -33,7 +33,7 @@ export interface BlogPost {
 
 const MotionBox = motion(Box);
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// Helpers
 
 const slugify = (title: string): string =>
   title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -63,7 +63,7 @@ const formatDate = (iso: string) => {
   }
 };
 
-// ── Content renderer ────────────────────────────────────────────────────────
+// Content renderer
 
 const ContentRenderer = ({ text }: { text: string }) => {
   const border = useColorModeValue("purple.300", "purple.700");
@@ -89,7 +89,7 @@ const ContentRenderer = ({ text }: { text: string }) => {
   );
 };
 
-// ── Rating widget ───────────────────────────────────────────────────────────
+// Rating widget
 
 interface Stats { count: number; average: number | null; comments: number }
 
@@ -184,7 +184,7 @@ const RatingBar = ({ slug }: { slug: string }) => {
   );
 };
 
-// ── Comments section ────────────────────────────────────────────────────────
+// Comments section
 
 interface Comment {
   id: number;
@@ -417,7 +417,7 @@ const CommentBubble = ({
   );
 };
 
-// ── Blog card ───────────────────────────────────────────────────────────────
+// Blog card
 
 const BlogCard = ({
   post, index, featured,

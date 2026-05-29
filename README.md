@@ -1,22 +1,22 @@
 # Portfolio
 
-A personal portfolio template built with React, TypeScript, and Vite. All content lives in a single file — no component code to touch.
+A personal portfolio template built with React, TypeScript, and Vite. All content lives in one file, so there is no component code to touch.
 
 ![Portfolio Screenshot](./screenshots/demo.png)
 
 ## Features
 
-- Particle constellation background
-- Animated hero with typing effect, tags, and scroll cue
-- **Currently Building** — live indicator for what you're working on now
-- **Competitive Programming** — live Codeforces + LeetCode stats via public APIs
-- **Blog** — inline expandable posts, no external service needed
-- **AI Chat** — floating widget powered by Gemma 3 (Gemini API, proxied server-side) that knows your portfolio
-- Timeline journey section
-- Projects grid with tech badges
-- Section navigator dots
-- Dark / light mode toggle
-- Responsive, mobile-friendly
+- Particle constellation background with mouse parallax
+- Animated hero: typing effect, tags, scroll cue
+- Currently Building: live indicator for what you are working on
+- Competitive programming stats: live Codeforces and LeetCode via public APIs
+- Projects grid auto-ranked from your GitHub, with manual pins
+- Experience and journey timeline sections
+- Inline blog with expandable posts (no external service)
+- AI chat widget: Gemini API, proxied server-side, primed on your portfolio
+- 10 color themes, several with audio-visual effects
+- Console page, mini-games, guestbook, hidden achievements
+- Dark and light mode, responsive, mobile-friendly
 
 ## Tech Stack
 
@@ -27,7 +27,7 @@ A personal portfolio template built with React, TypeScript, and Vite. All conten
 | UI | [Chakra UI v2](https://chakra-ui.com/) |
 | Animation | [Framer Motion](https://www.framer.com/motion/) |
 | Icons | [React Icons](https://react-icons.github.io/react-icons/) |
-| Fonts | Inter + JetBrains Mono (Google Fonts) |
+| Fonts | Inter + JetBrains Mono |
 
 ## Quick Start
 
@@ -35,187 +35,65 @@ A personal portfolio template built with React, TypeScript, and Vite. All conten
 git clone https://github.com/yourusername/my-portfolio.git
 cd my-portfolio
 npm install
-cp src/data/me.example.ts src/data/me.ts
-# Edit src/data/me.ts with your details
+cp src/data/me.example.ts src/data/me.ts   # then edit me.ts
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
 
-The backend (FastAPI · guestbook + visitor count + Spotify proxy) is optional. Without it, the guestbook page shows an offline message and the Spotify badge falls back to a plain link. See [`backend/README.md`](backend/README.md) to deploy.
-
-For full production deployment (nginx + systemd + frontend + backend), see [`DEPLOY.md`](DEPLOY.md).
-
-## Easter Eggs
-
-The site has hidden interactions for visitors who poke around. The full list is intentionally undocumented — start with `?` and `⌘K`, then go from there. Track your finds:
-
-```bash
-# In the /console page, type:
-achievements
-```
-
-Or visit `/console` directly and explore.
+The FastAPI backend (guestbook, visitor count, Spotify proxy, AI chat) is optional. Without it, those features fall back gracefully. See [`backend/README.md`](backend/README.md) to deploy, and [`DEPLOY.md`](DEPLOY.md) for full production setup (nginx + systemd).
 
 ## Customization
 
-Everything is in `src/data/me.ts`. The file is well-commented — copy from `me.example.ts` and fill in your details.
-
-### Core fields
+Everything is in `src/data/me.ts`. Copy `me.example.ts` and fill in your details; the template is fully commented. Core fields:
 
 | Field | Description |
 |---|---|
-| `name` | Full name — used in title, footer, navbar, and AI chat |
-| `image` | Direct URL to your profile photo |
-| `tags` | Short descriptors shown as pills in the hero |
-| `languages` | Programming languages — auto-mapped to icons |
-| `frameworks` | Categorized tools: `frontend`, `backend`, `databases`, `misc` |
-| `desc_brief` | One-sentence bio (shown by default) |
-| `desc` | Full bio (revealed on "show more") |
-| `contacts` | Social links — `id` maps to icon (`github`, `linkedin`, `twitter`, `spotify`, etc.) |
-| `journey` | Timeline entries: `title`, `company`, `date`, `description` |
-| `projects` | Projects: `name`, `description`, `links[]`, `skills[]` |
+| `name`, `image`, `tags` | Identity and hero pills |
+| `desc_brief`, `desc` | Short bio and full bio |
+| `languages`, `frameworks` | Skills, auto-mapped to icons |
+| `contacts` | Social links; `id` maps to an icon |
+| `journey`, `experience` | Timeline and work entries |
+| `customProjects`, `pinnedProjects` | Manual projects on top of GitHub fetch |
+| `cp` | Codeforces and LeetCode handles for live stats |
+| `currentWork`, `blogs`, `planning` | Now-building, writing, roadmap |
 
-### New fields
+Leave any field empty to hide its section.
 
-#### `cp` — Competitive Programming
+## AI Chat (optional)
 
-```ts
-cp: {
-  codeforces: "your_handle",  // fetches live from codeforces.com/api
-  leetcode: "your_handle",    // fetches live from leetcode-stats-api.herokuapp.com
-},
-```
+A floating widget calls the backend at `/api/portfolio/chat`, which proxies the Gemini API. The key stays server-side. The system prompt is built from `me.ts`.
 
-Leave as empty string `""` to show a graceful fallback link instead of stats.
-
-#### `currentWork` — Currently Building
-
-```ts
-currentWork: {
-  title: "Project Name",
-  org: "Organization",
-  orgUrl: "https://github.com/org/project",
-  description: "What you're building and why.",
-  links: [{ name: "Repository", link: "https://..." }],
-  tags: ["C#", "WPF"],
-  startDate: "May 2025",
-},
-```
-
-#### `blogs` — Writing
-
-```ts
-blogs: [
-  {
-    title: "Post Title",
-    date: "Month Year",
-    readTime: "5 min read",
-    excerpt: "Hook sentence shown on the card.",
-    tags: ["Tag1", "Tag2"],
-    // For inline content (expands in page):
-    content: `Full post text here.`,
-    // OR for external link (opens in new tab):
-    link: "https://dev.to/you/post",
-  },
-],
-```
-
-### AI Chat (Gemini API)
-
-Floating robot button hits FastAPI backend at `/api/portfolio/chat`, which proxies Google's Gemini API. API key stays server-side — never exposed to the browser. System prompt is auto-built from `me.ts` data.
-
-**Setup:**
-
-1. Get a free Gemini API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+1. Get a free key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
 2. Add to `backend/.env`:
 
 ```bash
 GEMINI_API_KEY=AIza...
-GEMINI_MODEL=gemini-2.0-flash   # default — works on all free-tier keys
+GEMINI_MODEL=gemini-2.0-flash   # default, works on all free-tier keys
 ```
 
-3. Restart backend:
+3. Restart: `sudo systemctl restart portfolio-api`
 
-```bash
-sudo systemctl restart portfolio-api
-```
+If the key is missing, the chat button shows offline and the rest of the site works normally. Model options and rate limits live in [`backend/README.md`](backend/README.md).
 
-**Model options** (set via `GEMINI_MODEL`):
+## Spotify Now Playing (optional)
 
-| Model | Notes |
-|---|---|
-| `gemini-2.0-flash` | **Default** — current free-tier, fast streaming |
-| `gemini-1.5-flash` | Older but rock-solid |
-| `gemini-2.5-flash` | Newer (requires API access) |
-| `gemma-2-9b-it` | Gemma 2 9B (requires Gemma access on key) |
-| `gemma-2-27b-it` | Larger Gemma (requires access) |
-| `gemma-3-1b-it` / `4b-it` | Smaller Gemma 3 (availability varies) |
-
-> **Note**: not all Gemma models are exposed via v1beta for every API key. If you hit a 404, fall back to `gemini-2.0-flash` — universally available.
-
-**Rate limiting**: 30 messages per visitor IP per hour (tweak in `backend/main.py`).
-
-**Verify:**
-```bash
-curl https://yourdomain.com/api/portfolio/chat/status
-# {"available": true, "model": "gemini-2.0-flash"}
-```
-
-If `available: false` → backend missing `GEMINI_API_KEY`. Chat FAB shows offline gracefully.
-
-### Spotify Now Playing (optional)
-
-The Spotify badge in the navbar can show a live now-playing popover with album art, track name, and animated equalizer bars.
-
-**Setup:**
-
-1. Fork [kittinan/spotify-github-profile](https://github.com/kittinan/spotify-github-profile)
-2. Deploy on Vercel (free), complete the Spotify OAuth flow once
-3. Paste the resulting API URL into `me.ts`:
-
-```ts
-{
-  id: "spotify",
-  name: "Spotify",
-  site: "https://open.spotify.com/",
-  link: "https://your-spotify-link",
-  nowPlayingApi: "https://your-vercel-app.vercel.app/api/spotify",
-},
-```
-
-Without `nowPlayingApi`, the badge stays as a normal link. With it: a pulsing green dot appears when you're playing, and clicking opens a mini-player.
+Set `nowPlayingApi` on the Spotify contact in `me.ts` to a deployed [spotify-github-profile](https://github.com/kittinan/spotify-github-profile) endpoint. The badge then shows a live now-playing popover; without it, it stays a plain link.
 
 ## Project Structure
 
 ```
-my-portfolio/
-├── src/
-│   ├── components/
-│   │   ├── Intro.tsx              # Hero section
-│   │   ├── CurrentlyBuilding.tsx  # "Now" section
-│   │   ├── CPStats.tsx            # Codeforces + LeetCode
-│   │   ├── Journey.tsx            # Timeline
-│   │   ├── Projects.tsx           # Projects grid
-│   │   ├── Blog.tsx               # Inline blog posts
-│   │   ├── AiChat.tsx             # AI chat widget (Gemini proxy)
-│   │   ├── ParticleBackground.tsx # Canvas constellation
-│   │   ├── NavBar.tsx             # Sticky nav with section links
-│   │   ├── SectionNavigator.tsx   # Dot nav (desktop)
-│   │   ├── Footer.tsx
-│   │   ├── ContactBadges.tsx
-│   │   └── ColorModeToggle.tsx
-│   ├── data/
-│   │   ├── me.ts          # Your content (gitignored if you fork)
-│   │   └── me.example.ts  # Template
-│   ├── services/
-│   │   ├── getTechIcon.ts       # Tech name → React Icon
-│   │   └── favicon-site-url.ts  # Social id → React Icon
-│   ├── App.tsx    # Layout + section wiring
-│   ├── theme.ts   # Chakra UI theme (colors, fonts, animations)
-│   └── index.css  # Scrollbar, fonts, scroll-behavior
-├── index.html
-└── vite.config.ts
+src/
+  components/   UI sections and widgets
+  pages/        Routed pages (console, play, guestbook, ...) + games/
+  data/         me.ts (your content) and me.example.ts (template)
+  themes/       Theme palettes
+  services/     Tech and social icon mapping
+  lib/          Achievements and helpers
+  hooks/        Custom hooks
+  App.tsx       Routes and layout
+  theme.ts      Chakra theme
+  index.css     Global styles and per-theme variables
 ```
 
 ## Deployment
@@ -224,9 +102,7 @@ my-portfolio/
 npm run build   # outputs to dist/
 ```
 
-Deploy the `dist/` folder to any static host: Vercel, Netlify, GitHub Pages, Cloudflare Pages.
-
-> **Note:** AI chat requires `GEMINI_API_KEY` set in the backend `.env`. Without it, the chat FAB shows as offline but the rest of the site works normally.
+Deploy `dist/` to any static host (Vercel, Netlify, GitHub Pages, Cloudflare Pages). The optional backend deploys separately.
 
 ## License
 

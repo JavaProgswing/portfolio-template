@@ -37,7 +37,7 @@ import {
   FaGithub,
 } from "react-icons/fa";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// Types
 
 interface FollowItem {
   name: string;
@@ -63,11 +63,11 @@ type Status = "loading" | "ok" | "error";
 
 const MotionBox = motion(Box);
 
-// Fixed brand colors for CP platforms — distinct from the (theme-variable) accent.
+// Fixed brand colors for CP platforms - distinct from the (theme-variable) accent.
 // LeetCode keeps its gold; Codeforces gets its signature blue so the two cards read apart.
 const CF_COLOR = "#1f8acb";   // Codeforces blue
 
-// ── GitHub canonical language colors ──────────────────────────────────────────
+// GitHub canonical language colors
 
 const LANG_COLOR: Record<string, string> = {
   javascript: "#f1e05a",
@@ -93,7 +93,7 @@ const LANG_COLOR: Record<string, string> = {
   lua: "#000080",
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// Helpers
 
 const getRankColor = (rank: string) => {
   if (!rank) return "gray.400";
@@ -120,7 +120,7 @@ const timeAgo = (iso: string | null): string => {
   return `${Math.floor(days / 365)}y ago`;
 };
 
-/** Extract GitHub username robustly — fall back to project URLs if contacts use a redirect. */
+/** Extract GitHub username robustly - fall back to project URLs if contacts use a redirect. */
 function extractGitHubHandle(data: PortfolioData): string {
   const tryUrl = (url: string): string => {
     if (!url || !url.includes("github.com/")) return "";
@@ -150,7 +150,7 @@ const TYPE_COLOR: Record<string, string> = {
   podcast: "orange",
 };
 
-// ── Reusable sub-components ───────────────────────────────────────────────────
+// Reusable sub-components
 
 const Caption = ({ children }: { children: ReactNode }) => (
   <Text
@@ -292,7 +292,7 @@ const MiniRepoCard = ({ repo }: { repo: MiniRepo }) => {
   );
 };
 
-// ── Competitive Panel ─────────────────────────────────────────────────────────
+// Competitive Panel
 
 const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: string }) => {
   const [cfData, setCfData] = useState<Record<string, unknown> | null>(null);
@@ -303,7 +303,7 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
 
   useEffect(() => {
     if (!cfHandle) { setCfStatus("error"); return; }
-    // 5s timeout — Codeforces API can hang
+    // 5s timeout - Codeforces API can hang
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
     fetch(`https://codeforces.com/api/user.info?handles=${cfHandle}`, { signal: controller.signal })
@@ -478,7 +478,7 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
   );
 };
 
-// ── OSS Panel ─────────────────────────────────────────────────────────────────
+// OSS Panel
 
 interface OSSEvent {
   repo: string;
@@ -744,7 +744,7 @@ const OSSPanel = ({ handle }: { handle: string }) => {
         </Box>
       )}
 
-      {/* Empty state for PRs only — if everything else worked */}
+      {/* Empty state for PRs only - if everything else worked */}
       {data.externalPRs.length === 0 && data.topRepos.length > 0 && (
         <Text fontSize="xs" color="gray.600" fontFamily="mono" textAlign="center" pt={2}>
           no external PRs in last 90 days · <Link href={`https://github.com/${data.handle}`}
@@ -755,7 +755,7 @@ const OSSPanel = ({ handle }: { handle: string }) => {
   );
 };
 
-// ── Following Panel ───────────────────────────────────────────────────────────
+// Following Panel
 
 const FollowingPanel = ({ areas, following }: { areas: string[]; following: FollowItem[] }) => {
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
@@ -792,7 +792,7 @@ const FollowingPanel = ({ areas, following }: { areas: string[]; following: Foll
   );
 };
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// Main
 
 interface Props {
   data: PortfolioData;

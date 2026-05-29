@@ -19,8 +19,8 @@ interface Props {
 
 /**
  * Minimal footer. Two distinct clickable bits:
- *   1. "press ⌘K for quick actions" → fires `open-command-palette` event
- *   2. `❯_` blinking cursor → navigates to /console
+ *   1. "press ⌘K for quick actions" -> fires `open-command-palette` event
+ *   2. `❯_` blinking cursor -> navigates to /console
  *
  * Both are exposed as easter-egg entry points without crowding the footer.
  */
@@ -72,7 +72,7 @@ const Footer = ({ name }: Props) => {
         </Text>
 
         <HStack spacing={3} fontFamily="mono" fontSize="11px">
-          {/* ⌘K — opens command palette */}
+          {/* ⌘K - opens command palette */}
           <Tooltip
             label="open quick actions"
             hasArrow
@@ -109,7 +109,7 @@ const Footer = ({ name }: Props) => {
 
           <Text color={borderColor}>·</Text>
 
-          {/* Guestbook — sign the wall */}
+          {/* Guestbook - sign the wall */}
           <Tooltip
             label="sign the guestbook"
             hasArrow
@@ -137,7 +137,7 @@ const Footer = ({ name }: Props) => {
             ·
           </Text>
 
-          {/* Console cursor — opens /console */}
+          {/* Console cursor - opens /console */}
           <Tooltip
             label="open interactive console"
             hasArrow

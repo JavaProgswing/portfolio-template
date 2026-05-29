@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Box } from "@chakra-ui/react";
 
 /**
- * Radial gradient that follows the cursor — subtle ambient effect.
+ * Radial gradient that follows the cursor - subtle ambient effect.
  * Disabled on touch devices (no hover) and when prefers-reduced-motion is set.
  */
 const CursorSpotlight = () => {

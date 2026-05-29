@@ -17,7 +17,7 @@ import { unlock } from "../lib/achievements";
 
 const MotionBox = motion(Box);
 
-// API base — change to /api/portfolio when deployed behind nginx
+// API base - change to /api/portfolio when deployed behind nginx
 const API_BASE = "/api/portfolio";
 
 interface GuestEntry {
@@ -120,7 +120,7 @@ const GuestbookPage = ({ planning = [] }: Props) => {
         Leave a note. Be kind. Messages are public and stored on my server.
       </Text>
 
-      {/* Planning — what's next */}
+      {/* Planning - what's next */}
       {planning.length > 0 && (
         <Box
           mb={10} p={5}

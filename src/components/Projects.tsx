@@ -94,7 +94,7 @@ const LANG_COLOR: Record<string, string> = {
 
 const MotionBox = motion(Box);
 
-// ── Fetched repo card (with tilt) ─────────────────────────────────────────────
+// Fetched repo card (with tilt)
 
 const FetchedRepoCard = ({ repo, index, border }: { repo: FetchedRepo; index: number; border: string }) => {
   const tilt = useTilt(4);
@@ -163,7 +163,7 @@ const FetchedRepoCard = ({ repo, index, border }: { repo: FetchedRepo; index: nu
   );
 };
 
-// ── Legacy (me.ts) project card (with tilt) ───────────────────────────────────
+// Legacy (me.ts) project card (with tilt)
 
 const LegacyProjectCard = ({ project, index, border }: { project: LegacyProject; index: number; border: string }) => {
   const tilt = useTilt(4);
@@ -214,7 +214,7 @@ const LegacyProjectCard = ({ project, index, border }: { project: LegacyProject;
   );
 };
 
-// ── Pinned card ──────────────────────────────────────────────────────────────
+// Pinned card
 
 interface PinnedCardProps {
   project: PinnedProject;
@@ -351,12 +351,12 @@ const PinnedCard = ({ project, index, border }: PinnedCardProps) => {
 const Projects = ({ data }: Props) => {
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
   const allRepos = (reposData as { repos: FetchedRepo[] }).repos;
-  // Display-time exclude — hides repos instantly without re-running fetch-repos
+  // Display-time exclude - hides repos instantly without re-running fetch-repos
   const excluded = new Set((data.excludeRepos || []).map((s) => s.toLowerCase()));
   const autoRepos = allRepos.filter((r) => !excluded.has(r.name.toLowerCase()));
 
-  // Custom projects (me.ts → customProjects) merge INTO the ranked grid by `score`.
-  // Not pinned-on-top — they compete with auto-fetched scores.
+  // Custom projects (me.ts customProjects) merge INTO the ranked grid by `score`.
+  // Not pinned-on-top - they compete with auto-fetched scores.
   const custom: FetchedRepo[] = (data.customProjects || []).map((c) => ({
     name: c.name,
     description: c.description || "",
@@ -399,7 +399,7 @@ const Projects = ({ data }: Props) => {
         )}
       </HStack>
 
-      {/* Pinned projects (always on top, from me.ts → pinnedProjects) */}
+      {/* Pinned projects (always on top, from me.ts pinnedProjects) */}
       {pinned.length > 0 && (
         <Box mb={6}>
           <Text fontSize="10px" fontFamily="mono" color="brand.400"
@@ -416,7 +416,7 @@ const Projects = ({ data }: Props) => {
         </Box>
       )}
 
-      {/* Merged grid — centered so a lone last-row card doesn't sit left-aligned */}
+      {/* Merged grid - centered so a lone last-row card doesn't sit left-aligned */}
       <Flex wrap="wrap" justify="center" gap={4}>
         {useFetched
           ? shown.map((repo, i) => (

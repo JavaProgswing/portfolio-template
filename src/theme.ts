@@ -27,7 +27,7 @@ const theme = extendTheme({
       900: "#18181b",
       950: "#09090b",
     },
-    // Indigo accent — more distinctive than generic blue
+    // Indigo accent, more distinctive than a generic blue
     brand: {
       50:  "#eef2ff",
       100: "#e0e7ff",
@@ -67,7 +67,7 @@ const theme = extendTheme({
         color: props.colorMode === "dark" ? "#e4e4e7" : "#18181b",
         lineHeight: "1.6",
         // Long unbreakable strings (URLs, mono code) shouldn't force horizontal
-        // scroll on narrow phones. Safe — doesn't create a scroll container.
+        // scroll on narrow phones. Safe: this doesn't create a scroll container.
         overflowWrap: "break-word",
       },
       // Typography defaults

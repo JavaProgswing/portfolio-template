@@ -79,7 +79,7 @@ const DIFF_COLOR: Record<string, string> = {
   hard: "red.400",
 };
 
-// ── Selector ────────────────────────────────────────────────────────────────
+// Selector
 
 const PlayPage = () => {
   const navigate = useNavigate();
@@ -155,7 +155,7 @@ const PlayPage = () => {
   );
 };
 
-// ── Suggestion form ─────────────────────────────────────────────────────────
+// Suggestion form
 
 const SuggestionForm = () => {
   const [name, setName] = useState("");

@@ -2,7 +2,7 @@
 // cp src/data/me.example.ts src/data/me.ts
 
 export default {
-  // Your full name — used in title, footer, navbar logo, and AI chat.
+  // Your full name - used in title, footer, navbar logo, and AI chat.
   name: "Your Name",
 
   // Direct URL to your profile photo.
@@ -14,7 +14,7 @@ export default {
   //  Leave "" to hide the /resume page.
   resumeUrl: "/resume.pdf",
 
-  // Pinned projects — shown FIRST in "What I've Built" before auto-ranked repos.
+  // Pinned projects - shown FIRST in "What I've Built" before auto-ranked repos.
   // Great for active PRs, GSoC work, anything you want highlighted regardless of stars.
   // Leave [] to skip.
   pinnedProjects: [
@@ -50,21 +50,21 @@ export default {
   ],
 
   // Auto-ranking filters for "What I've Built" (used by scripts/fetch-repos.mjs).
-  //  excludeRepos: exact repo names to NEVER show — old/throwaway side projects.
+  // excludeRepos: exact repo names to NEVER show - old/throwaway side projects.
   //                Also applied at display time (hides instantly, no re-fetch needed).
   //  includeRepos: forks to force-include despite being forks (e.g. a GSoC fork
   //                where you opened PRs / fixed issues). Gets a score boost.
   excludeRepos: ["old-tutorial-project", "first-website"],
   includeRepos: [],
 
-  // Planning — shown at top of /guestbook so visitors know what's next.
+  // Planning - shown at top of /guestbook so visitors know what's next.
   planning: [
     "What you're shipping this month",
     "Bigger goal for the quarter",
     "Stretch goal",
   ],
 
-  // Homelab — "how this site runs". Rendered on /colophon. Omit/delete to hide.
+  // Homelab - "how this site runs". Rendered on /colophon. Omit/delete to hide.
   // Fill in your own hosting story (VPS, Raspberry Pi, old laptop, cloud, etc.).
   homelab: {
     headline: "Where this site lives",
@@ -84,13 +84,13 @@ export default {
   // Short descriptors shown as badges on your hero.
   tags: ["Software Engineer", "Open Source Contributor"],
 
-  // Programming languages you work in — mapped to icons automatically.
+  // Programming languages you work in - mapped to icons automatically.
   // Supported: Java, Python, TypeScript, Rust, JavaScript, Go, C++, C#, etc.
   languages: ["JavaScript", "TypeScript", "Python"],
 
   frameworks: {
     // Each entry: { name, id, desc, link }
-    // id is used for icon lookup — see src/services/getTechIcon.ts for supported ids.
+    // id is used for icon lookup - see src/services/getTechIcon.ts for supported ids.
     frontend: [
       {
         name: "React",
@@ -144,7 +144,7 @@ export default {
     leetcode: "your_lc_handle",
   },
 
-  // What you're actively building right now — shown with a live indicator.
+  // What you're actively building right now - shown with a live indicator.
   currentWork: {
     title: "Your Current Project",
     org: "Organization or Personal",
@@ -161,7 +161,7 @@ export default {
     startDate: "Month Year",
   },
 
-  // Blog posts — rendered inline with expand/collapse.
+  // Blog posts - rendered inline with expand/collapse.
   // Set link to an external URL (e.g. dev.to post) or leave null for inline content.
   blogs: [
     {
@@ -219,7 +219,7 @@ This is a good place to share what you learned, what you built, or a story about
     },
   ],
 
-  // Social links — id maps to icon (github, linkedin, twitter, instagram, spotify, etc.)
+  // Social links - id maps to icon (github, linkedin, twitter, instagram, spotify, etc.)
   contacts: [
     {
       id: "github",
@@ -241,14 +241,14 @@ This is a good place to share what you learned, what you built, or a story about
     },
   ],
 
-  // Work experience — internships / jobs. Shown as its own "Experience" section
+  // Work experience - internships / jobs. Shown as its own "Experience" section
   // on the homepage (between Journey and Projects). Leave [] to hide the section
   // entirely (e.g. if you haven't done any internships yet).
   experience: [
     {
       role: "Software Engineering Intern",
       company: "Company Name",
-      companyUrl: "https://company.com",   // optional — links the company name
+      companyUrl: "https://company.com",   // optional, links the company name
       date: "Jun 2024 – Aug 2024",
       location: "Remote",                  // optional
       description:
@@ -283,6 +283,6 @@ This is a good place to share what you learned, what you built, or a story about
   // Shown below your name with a typing animation.
   desc_brief: "One sentence about who you are and what you do.",
 
-  // Revealed when clicking Show More — can be longer.
+  // Revealed when clicking Show More - can be longer.
   desc: "Hi, I'm [name]. A longer description of your background, interests, and what drives you.\nFeel free to use multiple lines.",
 };

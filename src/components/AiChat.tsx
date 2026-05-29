@@ -20,7 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 type Role = "user" | "assistant" | "system";
 interface Message { role: Role; content: string }
 
-// ── Types — kept minimal for system-prompt construction ──────────────────────
+// Types - kept minimal for system-prompt construction
 
 interface Contact { id: string; name: string; site: string; link: string }
 interface Framework { name: string; id: string; desc: string; link: string }
@@ -63,7 +63,7 @@ interface PortfolioData {
   resumeUrl?: string;
 }
 
-// ── System prompt builder (unchanged content, just reused) ───────────────────
+// System prompt builder
 
 function buildSystemPrompt(data: PortfolioData): string {
   const firstName = data.name.split(" ")[0];
@@ -176,7 +176,7 @@ You: "GSoC 2025 with LenovoLegionToolkit — adding OS-level automation actions 
 `;
 }
 
-// ── Backend endpoints ────────────────────────────────────────────────────────
+// Backend endpoints
 
 const CHAT_ENDPOINT = "/api/portfolio/chat";
 const STATUS_ENDPOINT = "/api/portfolio/chat/status";
@@ -211,7 +211,7 @@ const AiChat = ({ data }: Props) => {
   const borderCol = useColorModeValue("gray.200", "rgba(255,255,255,0.1)");
   const aiBubbleBg = useColorModeValue("gray.100", "rgba(255,255,255,0.06)");
 
-  // ── Detect backend chat availability ───────────────────────────────────────
+  // Detect backend chat availability
   useEffect(() => {
     fetch(STATUS_ENDPOINT, { signal: AbortSignal.timeout(4000) })
       .then((r) => (r.ok ? r.json() : null))
@@ -226,7 +226,7 @@ const AiChat = ({ data }: Props) => {
       .catch(() => setAvailable(false));
   }, []);
 
-  // ── Scroll-hide FAB ────────────────────────────────────────────────────────
+  // Scroll-hide FAB
   useEffect(() => {
     let lastY = window.scrollY;
     let ticking = false;
@@ -248,7 +248,7 @@ const AiChat = ({ data }: Props) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ── Track on-screen keyboard via visualViewport so the panel rides above it ──
+  // Track on-screen keyboard via visualViewport so the panel rides above it
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
@@ -281,7 +281,7 @@ const AiChat = ({ data }: Props) => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 200);
   }, [isOpen]);
 
-  // ── External event triggers ────────────────────────────────────────────────
+  // External event triggers
   useEffect(() => {
     const onFocus = () => {
       if (!isOpen) onToggle();
@@ -296,7 +296,7 @@ const AiChat = ({ data }: Props) => {
     };
   }, [isOpen, onToggle, onClose]);
 
-  // ── Send + stream ──────────────────────────────────────────────────────────
+  // Send + stream
   const sendMessage = async () => {
     if (!input.trim() || loading || !available) return;
 
@@ -362,7 +362,7 @@ const AiChat = ({ data }: Props) => {
                 { role: "assistant", content: fullText },
               ]);
             }
-            // {"done": true} signals end — handled by stream close
+            // {"done": true} signals end - handled by stream close
           } catch (e) {
             if ((e as Error).message?.includes("gemini")) throw e;
             // Partial JSON, ignore

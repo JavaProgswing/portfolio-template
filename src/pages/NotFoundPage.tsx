@@ -15,7 +15,7 @@ import { unlock } from "../lib/achievements";
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
 
-// ── Random pool of "lost in the void" taglines ───────────────────────────────
+// Random pool of "lost in the void" taglines
 const TAGLINES = [
   "you wandered into the void",
   "off the map. and into the static.",
@@ -52,14 +52,14 @@ const NotFoundPage = () => {
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // ── Mouse parallax (subtle) ────────────────────────────────────────────────
+  // Mouse parallax (subtle)
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const sx = useSpring(mx, { stiffness: 150, damping: 25 });
   const sy = useSpring(my, { stiffness: 150, damping: 25 });
   const transX = useTransform(sx, [-1, 1], [-8, 8]);
   const transY = useTransform(sy, [-1, 1], [-8, 8]);
-  // Compass arrow rotates to "point home" — always rotates toward upper-left
+  // Compass arrow rotates to "point home" - always rotates toward upper-left
   const compassAngle = useTransform(
     [sx, sy],
     ([x, y]: number[]) => {
@@ -79,7 +79,7 @@ const NotFoundPage = () => {
     my.set(y);
   };
 
-  // ── Click ripple ───────────────────────────────────────────────────────────
+  // Click ripple
   const onClick = (e: ReactMouseEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -90,7 +90,7 @@ const NotFoundPage = () => {
     setTimeout(() => setRipples((r) => r.filter((rp) => rp.id !== id)), 800);
   };
 
-  // ── Glitch settle: digits cycle randomly for 800ms, then settle on 404 ─────
+  // Glitch settle: digits cycle randomly for 800ms, then settle on 404
   useEffect(() => {
     unlock("got-404");
     let raf = 0;
@@ -115,7 +115,7 @@ const NotFoundPage = () => {
     return () => clearTimeout(raf);
   }, []);
 
-  // ── Random flicker on settled digits (one digit briefly glitches) ──────────
+  // Random flicker on settled digits (one digit briefly glitches)
   useEffect(() => {
     if (digits !== "404") return;
     const id = setInterval(() => {
@@ -244,7 +244,7 @@ const NotFoundPage = () => {
           </Text>
         </Stack>
 
-        {/* Compass — visual flair, always points roughly home */}
+        {/* Compass - visual flair, always points roughly home */}
         <MotionBox
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{ opacity: 1, scale: 1 }}

@@ -54,7 +54,7 @@ interface Tile {
 let TILE_ID = 1;
 const nextId = () => TILE_ID++;
 
-// ── Tile colors — zinc → indigo → gold ───────────────────────────────────────
+// Tile colors: zinc to indigo to gold
 const TILE_COLOR: Record<number, { bg: string; fg: string }> = {
   2: { bg: "#27272a", fg: "#e4e4e7" },
   4: { bg: "#3f3f46", fg: "#e4e4e7" },
@@ -165,7 +165,7 @@ const Game2048 = () => {
   const boardBg = useColorModeValue("gray.100", "rgba(255,255,255,0.03)");
   const cellBg = useColorModeValue("rgba(0,0,0,0.04)", "rgba(255,255,255,0.04)");
 
-  // ── Measure cell size ──────────────────────────────────────────────────────
+  // Measure cell size
   useLayoutEffect(() => {
     const measure = () => {
       const w = boardRef.current?.offsetWidth || 360;
@@ -203,7 +203,7 @@ const Game2048 = () => {
     lockRef.current = false;
   };
 
-  // ── Move ───────────────────────────────────────────────────────────────────
+  // Move
   const move = useCallback((dir: Direction) => {
     if (lockRef.current || over) return;
 
@@ -234,7 +234,7 @@ const Game2048 = () => {
 
         const next = inBounds(nx, ny) ? grid[ny][nx] : null;
         if (next && next.value === tile.value && !doubledIds.has(next.id)) {
-          // Merge tile INTO next — tile slides onto next's cell, then removed
+          // Merge tile INTO next - tile slides onto next's cell, then removed
           grid[y][x] = null;
           tile.row = next.row;
           tile.col = next.col;
@@ -308,7 +308,7 @@ const Game2048 = () => {
     }, 120);
   }, [best, over]);
 
-  // ── Keyboard ───────────────────────────────────────────────────────────────
+  // Keyboard
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
@@ -327,7 +327,7 @@ const Game2048 = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, [move]);
 
-  // ── Touch swipe ────────────────────────────────────────────────────────────
+  // Touch swipe
   useEffect(() => {
     let sx = 0, sy = 0;
     const board = boardRef.current;

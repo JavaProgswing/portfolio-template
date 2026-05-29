@@ -1,5 +1,5 @@
 /**
- * Achievement tracker — persists discovered easter eggs in localStorage.
+ * Achievement tracker - persists discovered easter eggs in localStorage.
  *
  * Each achievement has a key, a friendly label, and a short hint. Discovery
  * is global (not per-session) so users can come back and see what they've found.

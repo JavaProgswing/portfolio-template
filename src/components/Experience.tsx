@@ -26,9 +26,9 @@ export interface ExperienceItem {
 }
 
 /**
- * Work experience (internships / jobs) section.
- * Renders nothing when `experience` is empty/undefined, so a fresh portfolio
- * with no internships yet simply hides the section.
+ * Work experience (internships and jobs) section.
+ * Returns null when `experience` is empty or undefined, so a portfolio
+ * with no entries hides the section entirely.
  */
 const Experience = ({ experience }: { experience?: ExperienceItem[] }) => {
   const cardBg = useColorModeValue("rgba(0,0,0,0.02)", "rgba(255,255,255,0.02)");

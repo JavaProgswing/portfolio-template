@@ -70,7 +70,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
   const { isOpen, onToggle } = useDisclosure();
   const [displayedText, setDisplayedText] = useState(data.desc_brief);
 
-  // Hoist — never call inside loops/maps
+  // Hoist - never call inside loops/maps
   const skillCardBg    = useColorModeValue("gray.100", "rgba(255,255,255,0.04)");
   const skillCardBorder = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
   const cursorColor    = useColorModeValue("gray.500", "gray.500");
@@ -97,7 +97,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
 
   return (
     <Box w="100%">
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      {/* Hero */}
       <Flex
         direction={{ base: "column", md: "row" }}
         align={{ base: "flex-start", md: "center" }}
@@ -233,13 +233,13 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
         </MotionStack>
       </Flex>
 
-      {/* ── Tools ────────────────────────────────────────────────────────── */}
+      {/* Tools */}
       <MotionBox
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, delay: 0.3 }}
       >
-        {/* Languages — pill chips, primary highlighted */}
+        {/* Languages - pill chips, primary highlighted */}
         <Text fontSize="10px" fontFamily="mono" color="gray.600"
           letterSpacing="0.16em" mb={4} textTransform="uppercase">
           Languages
@@ -283,7 +283,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
           })}
         </Wrap>
 
-        {/* Frameworks — grouped by category */}
+        {/* Frameworks - grouped by category */}
         <Text fontSize="10px" fontFamily="mono" color="gray.600"
           letterSpacing="0.16em" mb={5} textTransform="uppercase">
           Frameworks & Tools

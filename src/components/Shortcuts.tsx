@@ -33,7 +33,7 @@ import {
 import { THEMES, applyTheme } from "../themes/palettes";
 import { unlock } from "../lib/achievements";
 
-// ── Keyboard Shortcuts Modal (triggered by `?`) ──────────────────────────────
+// Keyboard Shortcuts Modal (triggered by `?`)
 
 interface ShortcutGroup {
   label: string;
@@ -151,7 +151,7 @@ export const ShortcutsModal = () => {
   );
 };
 
-// ── G-prefix navigation (g→h, g→p, etc.) ─────────────────────────────────────
+// G-prefix navigation (g then h, g then p, etc.)
 
 const SECTION_KEYS: Record<string, string> = {
   h: "home",
@@ -196,7 +196,7 @@ export const GNavigator = () => {
   return null;
 };
 
-// ── Command Palette (triggered by cmd+k / ctrl+k) ────────────────────────────
+// Command Palette (triggered by cmd+k / ctrl+k)
 
 interface Command {
   id: string;

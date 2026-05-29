@@ -118,7 +118,7 @@ const ColophonPage = ({ data }: Props) => {
         A meta page about the meta page. Stack, decisions, and the hardware it all runs on.
       </Text>
 
-      {/* Homelab — "running on" hero block */}
+      {/* Homelab - "running on" hero block */}
       {homelab && (
         <MotionBox
           mb={12}

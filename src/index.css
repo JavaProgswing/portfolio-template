@@ -29,7 +29,7 @@ code, pre, kbd, .mono {
   scrollbar-color: rgba(0, 127, 255, 0.25) transparent;
 }
 
-/* ── Easter egg: Konami code activates matrix mode (swap brand color) ──── */
+/* Easter egg: Konami code activates matrix mode (swap brand color) */
 body.konami-active {
   --chakra-colors-brand-300: #6effa6;
   --chakra-colors-brand-400: #00ff41;
@@ -48,7 +48,7 @@ body.konami-active * {
   100% { filter: hue-rotate(0deg) saturate(1); }
 }
 
-/* ── Rainbow mode: cycle hue ──── */
+/* Rainbow mode: cycle hue */
 body.rainbow-active {
   animation: rainbow-cycle 3s linear infinite;
 }
@@ -58,13 +58,12 @@ body.rainbow-active {
   100% { filter: hue-rotate(360deg); }
 }
 
-/* ── Theme palettes ─────────────────────────────────────────────────────────
+/* Theme palettes
    Applied via body[data-theme="..."]. Each theme overrides the brand color
    ramp and base background. Chakra v2 stores colors as CSS variables, so
-   overriding them at body level cascades through every component.
-   ────────────────────────────────────────────────────────────────────────── */
+   overriding them at body level cascades through every component. */
 
-/* Evergreen — deep forest + sage green */
+/* Evergreen - deep forest + sage green */
 body[data-theme="evergreen"] {
   background-color: #1a1f16 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #2a3320 0%, #121610 70%) !important;
@@ -75,7 +74,7 @@ body[data-theme="evergreen"] {
   --cursor-glow: rgba(134, 239, 172, 0.12);
 }
 
-/* Cyberpunk — electric yellow + cyan, near-black */
+/* Cyberpunk - electric yellow + cyan, near-black */
 body[data-theme="cyberpunk"] {
   background-color: #0a0a0f !important;
   background-image: radial-gradient(ellipse at 50% 0%, #16161f 0%, #050507 70%) !important;
@@ -86,7 +85,7 @@ body[data-theme="cyberpunk"] {
   --cursor-glow: rgba(252, 238, 10, 0.12);
 }
 
-/* Aurora — cyan + emerald on deep navy (northern lights) */
+/* Aurora - cyan + emerald on deep navy (northern lights) */
 body[data-theme="aurora"] {
   background-color: #0a1120 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #102a3a 0%, #060c16 70%) !important;
@@ -97,7 +96,7 @@ body[data-theme="aurora"] {
   --cursor-glow: rgba(34, 211, 238, 0.12);
 }
 
-/* Amber CRT — old terminal */
+/* Amber CRT - old terminal */
 body[data-theme="amber"] {
   background-color: #0a0700 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #1f1500 0%, #060400 70%) !important;
@@ -111,7 +110,7 @@ body[data-theme="amber"] * {
   text-shadow: 0 0 2px rgba(255, 176, 0, 0.15);
 }
 
-/* Rosé Pine — soft rose + iris on dawn-dark */
+/* Rosé Pine - soft rose + iris on dawn-dark */
 body[data-theme="rosepine"] {
   background-color: #191724 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #26233a 0%, #110f1e 70%) !important;
@@ -122,7 +121,7 @@ body[data-theme="rosepine"] {
   --cursor-glow: rgba(235, 188, 186, 0.12);
 }
 
-/* Gruvbox — warm yellow + orange retro */
+/* Gruvbox - warm yellow + orange retro */
 body[data-theme="gruvbox"] {
   background-color: #282828 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #3c3836 0%, #1d2021 70%) !important;
@@ -133,9 +132,9 @@ body[data-theme="gruvbox"] {
   --cursor-glow: rgba(250, 189, 47, 0.12);
 }
 
-/* ── Pop-culture themes ────────────────────────────────────────────────── */
+/* Pop-culture themes */
 
-/* Valorant — tactical red + gunmetal HUD */
+/* Valorant - tactical red + gunmetal HUD */
 body[data-theme="valorant"] {
   background-color: #0f1923 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #1a2836 0%, #0a1018 70%) !important;
@@ -145,13 +144,13 @@ body[data-theme="valorant"] {
   --chakra-colors-brand-600: #ece8e1;
   --cursor-glow: rgba(255, 70, 85, 0.14);
 }
-/* Valorant crosshair cursor — clean dot sight */
+/* Valorant crosshair cursor - clean dot sight */
 body[data-theme="valorant"],
 body[data-theme="valorant"] * {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="4" x2="12" y2="9" stroke="%23ff4655" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="20" stroke="%23ff4655" stroke-width="2"/><line x1="4" y1="12" x2="9" y2="12" stroke="%23ff4655" stroke-width="2"/><line x1="15" y1="12" x2="20" y2="12" stroke="%23ff4655" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="%23ff4655"/></svg>') 12 12, crosshair;
 }
 
-/* Arcane — hextech blue + shimmer gold on deep Piltover navy */
+/* Arcane - hextech blue + shimmer gold on deep Piltover navy */
 body[data-theme="arcane"] {
   background-color: #0a0e1a !important;
   background-image: radial-gradient(ellipse at 50% 0%, #141c30 0%, #060810 70%) !important;
@@ -165,7 +164,7 @@ body[data-theme="arcane"] * {
   text-shadow: 0 0 1px rgba(30, 144, 255, 0.08);
 }
 
-/* Pragmata — lunar void, near-black + cold cyan signal */
+/* Pragmata - lunar void, near-black + cold cyan signal */
 body[data-theme="pragmata"] {
   background-color: #050508 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #0c0c14 0%, #020204 70%) !important;
@@ -175,7 +174,7 @@ body[data-theme="pragmata"] {
   --chakra-colors-brand-600: #a0a0b0;
   --cursor-glow: rgba(0, 212, 255, 0.10);
 }
-/* Pragmata thin crosshair — astronaut HUD visor */
+/* Pragmata thin crosshair - astronaut HUD visor */
 body[data-theme="pragmata"],
 body[data-theme="pragmata"] * {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="10" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="12" y1="14" x2="12" y2="22" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="2" y1="12" x2="10" y2="12" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><line x1="14" y1="12" x2="22" y2="12" stroke="%2300d4ff" stroke-width="1" opacity="0.7"/><circle cx="12" cy="12" r="1" fill="%2300d4ff" opacity="0.9"/></svg>') 12 12, crosshair;
@@ -188,9 +187,9 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* ── Theme FX: persistent visual overlays ───────────────────────────── */
+/* Theme FX: persistent visual overlays */
 
-/* Amber CRT — scanline overlay */
+/* Amber CRT - scanline overlay */
 body[data-theme="amber"]::after {
   content: "";
   position: fixed;
@@ -206,7 +205,7 @@ body[data-theme="amber"]::after {
   );
 }
 
-/* Amber CRT — vignette (darkened edges) */
+/* Amber CRT - vignette (darkened edges) */
 body[data-theme="amber"]::before {
   content: "";
   position: fixed;
@@ -221,7 +220,7 @@ body[data-theme="amber"]::before {
 
 
 
-/* Aurora — northern lights shimmer bands */
+/* Aurora - northern lights shimmer bands */
 body[data-theme="aurora"]::after {
   content: "";
   position: fixed;
@@ -246,7 +245,7 @@ body[data-theme="aurora"]::after {
   66%      { transform: translateX(-2%) scaleY(0.7); opacity: 0.8; }
 }
 
-/* Cyberpunk — subtle neon text flicker on interactive elements */
+/* Cyberpunk - subtle neon text flicker on interactive elements */
 body[data-theme="cyberpunk"] a:hover,
 body[data-theme="cyberpunk"] button:hover {
   animation: fx-neon-flicker 0.15s ease-in-out;
@@ -260,7 +259,7 @@ body[data-theme="cyberpunk"] button:hover {
   100%{ opacity: 1; }
 }
 
-/* ── Theme FX: keyframes for JS-created elements ────────────────────── */
+/* Theme FX: keyframes for JS-created elements */
 
 /* Valorant hit marker (× at click point) */
 @keyframes fx-hit-marker {
@@ -320,7 +319,7 @@ body[data-theme="cyberpunk"] button:hover {
   100% { transform: translateX(120%); opacity: 0; }
 }
 
-/* ── Enhanced FX keyframes ──────────────────────────────────────────── */
+/* Enhanced FX keyframes */
 
 /* Valorant: kill feed notification slide-in */
 @keyframes fx-killfeed-in {

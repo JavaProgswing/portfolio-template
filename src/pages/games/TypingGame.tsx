@@ -18,7 +18,7 @@ import { unlock } from "../../lib/achievements";
 const MotionBox = motion(Box);
 const HS_KEY = "portfolio-typing-bestwpm";
 
-// Dev-flavored snippets — quotes + code. Kept short so a round is ~15-30s.
+// Dev-flavored snippets - quotes + code. Kept short so a round is ~15-30s.
 const SNIPPETS = [
   "premature optimization is the root of all evil",
   "there are only two hard things: cache invalidation and naming things",
@@ -102,7 +102,7 @@ const TypingGame = () => {
     setPhase("done");
 
     // Anti-cheese: high WPM with garbage accuracy = key-spam. No best, no real
-    // achievements — but a cheeky one for the effort.
+    // achievements - but a cheeky one for the effort.
     const legit = acc >= 70;
     if (!legit && finalWpm >= 60) {
       setCheesed(true);

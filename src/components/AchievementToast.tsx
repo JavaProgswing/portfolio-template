@@ -17,7 +17,7 @@ interface Notif {
 
 // Display durations
 const SOLO_MS = 4200;   // when nothing else is queued
-const RUSH_MS = 900;    // when more are waiting → drain fast
+const RUSH_MS = 900;    // when more are waiting, drain fast
 
 const AchievementToast = () => {
   const [queue, setQueue] = useState<Notif[]>([]);
