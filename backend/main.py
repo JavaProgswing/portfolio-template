@@ -24,10 +24,15 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+import psycopg2
+import psycopg2.extras
 
 # ── Config ───────────────────────────────────────────────────────────────────
 
 DB_PATH = Path(__file__).parent / "portfolio.db"
+
+_POSTGRES_URL = os.getenv("POSTGRES_URL") or os.getenv("POSTGRES_PRISMA_URL") or os.getenv("POSTGRES_URL_NON_POOLING")
+IS_POSTGRES = bool(_POSTGRES_URL)
 
 # Comma-separated list of allowed origins. Set in .env or as env var.
 # e.g. ALLOWED_ORIGINS="https://yourdomain.com,http://localhost:5173"
@@ -67,62 +72,151 @@ app.add_middleware(
 )
 
 
-def db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+class DBWrapper:
+    def __init__(self):
+        self.is_postgres = IS_POSTGRES
+        if self.is_postgres:
+            self.conn = psycopg2.connect(_POSTGRES_URL)
+            self.conn.autocommit = True
+        else:
+            self.conn = sqlite3.connect(DB_PATH)
+            self.conn.row_factory = sqlite3.Row
 
+    def execute(self, query: str, params: tuple = ()):
+        if self.is_postgres:
+            # Replace SQLite positional parameters with Postgres ones
+            query = query.replace("?", "%s")
+            
+            cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            cursor.execute(query, params)
+            return cursor
+        else:
+            return self.conn.execute(query, params)
+
+    def executescript(self, script: str):
+        if self.is_postgres:
+            cursor = self.conn.cursor()
+            cursor.execute(script)
+        else:
+            self.conn.executescript(script)
+            
+    def commit(self):
+        self.conn.commit()
+
+    def close(self):
+        self.conn.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self.is_postgres and exc_type is None:
+            self.conn.commit()
+        self.close()
+
+def db():
+    return DBWrapper()
 
 def init_db():
     with db() as conn:
-        conn.executescript("""
-            CREATE TABLE IF NOT EXISTS guestbook (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                message TEXT NOT NULL,
-                ip TEXT,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS visits (
-                day TEXT PRIMARY KEY,
-                count INTEGER NOT NULL DEFAULT 0
-            );
-            CREATE TABLE IF NOT EXISTS suggestions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                message TEXT NOT NULL,
-                ip TEXT,
-                status TEXT DEFAULT 'pending',
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE TABLE IF NOT EXISTS blog_ratings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                slug TEXT NOT NULL,
-                rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
-                ip TEXT,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(slug, ip)
-            );
-            CREATE TABLE IF NOT EXISTS blog_comments (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                slug TEXT NOT NULL,
-                name TEXT,
-                message TEXT NOT NULL,
-                reply_to INTEGER,
-                is_author INTEGER NOT NULL DEFAULT 0,
-                status TEXT NOT NULL DEFAULT 'pending',
-                ip TEXT,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
-            );
-            CREATE INDEX IF NOT EXISTS idx_guestbook_created ON guestbook(created_at DESC);
-            CREATE INDEX IF NOT EXISTS idx_suggestions_created ON suggestions(created_at DESC);
-            CREATE INDEX IF NOT EXISTS idx_blog_ratings_slug ON blog_ratings(slug);
-            CREATE INDEX IF NOT EXISTS idx_blog_comments_slug ON blog_comments(slug, status);
+        if IS_POSTGRES:
+            try:
+                conn.executescript("""
+                    CREATE TABLE IF NOT EXISTS guestbook (
+                        id SERIAL PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        message TEXT NOT NULL,
+                        ip TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    CREATE TABLE IF NOT EXISTS visits (
+                        day TEXT PRIMARY KEY,
+                        count INTEGER NOT NULL DEFAULT 0
+                    );
+                    CREATE TABLE IF NOT EXISTS suggestions (
+                        id SERIAL PRIMARY KEY,
+                        name TEXT,
+                        message TEXT NOT NULL,
+                        ip TEXT,
+                        status TEXT DEFAULT 'pending',
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    CREATE TABLE IF NOT EXISTS blog_ratings (
+                        id SERIAL PRIMARY KEY,
+                        slug TEXT NOT NULL,
+                        rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+                        ip TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE(slug, ip)
+                    );
+                    CREATE TABLE IF NOT EXISTS blog_comments (
+                        id SERIAL PRIMARY KEY,
+                        slug TEXT NOT NULL,
+                        name TEXT,
+                        message TEXT NOT NULL,
+                        reply_to INTEGER,
+                        is_author INTEGER NOT NULL DEFAULT 0,
+                        status TEXT NOT NULL DEFAULT 'pending',
+                        ip TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_guestbook_created ON guestbook(created_at DESC);
+                    CREATE INDEX IF NOT EXISTS idx_suggestions_created ON suggestions(created_at DESC);
+                    CREATE INDEX IF NOT EXISTS idx_blog_ratings_slug ON blog_ratings(slug);
+                    CREATE INDEX IF NOT EXISTS idx_blog_comments_slug ON blog_comments(slug, status);
+                """)
+            except Exception as e:
+                print("DB Init Error (Postgres):", e)
+        else:
+            conn.executescript("""
+                CREATE TABLE IF NOT EXISTS guestbook (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    message TEXT NOT NULL,
+                    ip TEXT,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS visits (
+                    day TEXT PRIMARY KEY,
+                    count INTEGER NOT NULL DEFAULT 0
+                );
+                CREATE TABLE IF NOT EXISTS suggestions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    message TEXT NOT NULL,
+                    ip TEXT,
+                    status TEXT DEFAULT 'pending',
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS blog_ratings (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    slug TEXT NOT NULL,
+                    rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+                    ip TEXT,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(slug, ip)
+                );
+                CREATE TABLE IF NOT EXISTS blog_comments (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    slug TEXT NOT NULL,
+                    name TEXT,
+                    message TEXT NOT NULL,
+                    reply_to INTEGER,
+                    is_author INTEGER NOT NULL DEFAULT 0,
+                    status TEXT NOT NULL DEFAULT 'pending',
+                    ip TEXT,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_guestbook_created ON guestbook(created_at DESC);
+                CREATE INDEX IF NOT EXISTS idx_suggestions_created ON suggestions(created_at DESC);
+                CREATE INDEX IF NOT EXISTS idx_blog_ratings_slug ON blog_ratings(slug);
+                CREATE INDEX IF NOT EXISTS idx_blog_comments_slug ON blog_comments(slug, status);
             """)
 
-
-init_db()
-
+try:
+    init_db()
+except Exception as e:
+    print("Database initialization skipped or failed:", e)
 
 # ── Models ───────────────────────────────────────────────────────────────────
 
