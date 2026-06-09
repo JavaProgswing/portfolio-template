@@ -28,6 +28,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { API_BASE } from "../config";
 import { SiCodeforces, SiLeetcode } from "react-icons/si";
 import {
   FaExternalLinkAlt,
@@ -327,7 +328,7 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
     const tryEndpoints = async () => {
       // 1. Our backend proxy (LeetCode GraphQL server-side, cached 5min)
       try {
-        const r = await fetch(`/api/portfolio/leetcode/${lcHandle}`, {
+        const r = await fetch(`${API_BASE}/leetcode/${lcHandle}`, {
           signal: AbortSignal.timeout(8000),
         });
         if (r.ok) {

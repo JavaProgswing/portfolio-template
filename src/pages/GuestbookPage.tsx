@@ -17,8 +17,7 @@ import { unlock } from "../lib/achievements";
 
 const MotionBox = motion(Box);
 
-// API base - change to /api/portfolio when deployed behind nginx
-const API_BASE = "/api/portfolio";
+import { API_BASE } from "../config";
 
 interface GuestEntry {
   id: number;

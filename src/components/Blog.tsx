@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState, ElementType } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { API_BASE } from "../config";
 import {
   FaStar,
   FaRegStar,
@@ -110,7 +111,7 @@ const RatingBar = ({ slug }: { slug: string }) => {
   const toast = useToast();
 
   const load = useCallback(() => {
-    fetch(`/api/portfolio/blog/${slug}/stats`)
+    fetch(`${API_BASE}/blog/${slug}/stats`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (d) setStats(d);
@@ -131,7 +132,7 @@ const RatingBar = ({ slug }: { slug: string }) => {
     map[slug] = n;
     setRatedMap(map);
     try {
-      const res = await fetch(`/api/portfolio/blog/${slug}/rate`, {
+      const res = await fetch(`${API_BASE}/blog/${slug}/rate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rating: n }),
@@ -223,7 +224,7 @@ const CommentsSection = ({ slug }: { slug: string }) => {
 
   const load = useCallback(() => {
     setLoading(true);
-    fetch(`/api/portfolio/blog/${slug}/comments`)
+    fetch(`${API_BASE}/blog/${slug}/comments`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d) => setComments(Array.isArray(d) ? d : []))
       .catch(() => setAvailable(false))
@@ -238,7 +239,7 @@ const CommentsSection = ({ slug }: { slug: string }) => {
     if (!message.trim()) return;
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/portfolio/blog/${slug}/comments`, {
+      const res = await fetch(`${API_BASE}/blog/${slug}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -16,6 +16,7 @@ import { useState, useRef, useEffect, ElementType } from "react";
 import { FaRobot, FaTimes, FaPaperPlane } from "react-icons/fa";
 import { unlock } from "../lib/achievements";
 import { motion, AnimatePresence } from "framer-motion";
+import { API_BASE } from "../config";
 
 type Role = "user" | "assistant" | "system";
 interface Message { role: Role; content: string }
@@ -178,8 +179,8 @@ You: "GSoC 2025 with LenovoLegionToolkit — adding OS-level automation actions 
 
 // Backend endpoints
 
-const CHAT_ENDPOINT = "/api/portfolio/chat";
-const STATUS_ENDPOINT = "/api/portfolio/chat/status";
+const CHAT_ENDPOINT = `${API_BASE}/chat`;
+const STATUS_ENDPOINT = `${API_BASE}/chat/status`;
 
 const MotionBox = motion(Box);
 

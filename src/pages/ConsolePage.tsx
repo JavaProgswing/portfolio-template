@@ -1,6 +1,7 @@
 import { Box, HStack, IconButton, Input, Stack, Text, Tooltip } from "@chakra-ui/react";
 import { useEffect, useRef, useState, useCallback, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../config";
 import { unlock, getStats, ACHIEVEMENTS } from "../lib/achievements";
 import { useKeystrokeSounds } from "../hooks/useKeystrokeSounds";
 
@@ -219,7 +220,7 @@ press ↑/↓ for command history`,
     if (!message) return "usage: suggest <your feedback or idea>";
     if (message.length < 3) return "suggestion too short";
     try {
-      const res = await fetch("/api/portfolio/suggestions", {
+      const res = await fetch(`${API_BASE}/suggestions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: "console-visitor", message }),

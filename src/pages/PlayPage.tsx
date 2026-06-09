@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState, ElementType } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config";
 import { motion } from "framer-motion";
 import { FaGamepad, FaArrowRight } from "react-icons/fa";
 import { unlock } from "../lib/achievements";
@@ -166,7 +167,7 @@ const SuggestionForm = () => {
   const border = useColorModeValue("gray.200", "rgba(255,255,255,0.07)");
 
   useEffect(() => {
-    fetch("/api/portfolio/health", { signal: AbortSignal.timeout(3000) })
+    fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) })
       .then((r) => setAvailable(r.ok))
       .catch(() => setAvailable(false));
   }, []);
@@ -177,7 +178,7 @@ const SuggestionForm = () => {
     if (!message.trim()) return;
     setSubmitting(true);
     try {
-      const res = await fetch("/api/portfolio/suggestions", {
+      const res = await fetch(`${API_BASE}/suggestions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
