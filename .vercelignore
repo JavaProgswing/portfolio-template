@@ -23,8 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-src/data/me.ts
-src/data/repos.json
 .env
 
 # Backend runtime
@@ -41,6 +39,4 @@ backend/portfolio-api.service.local
 # Personal resume PDF (drop in public/ to serve at /resume.pdf)
 public/resume.pdf
 public/cv.pdf
-public/me.jpg
-public/me.png
 .vercel

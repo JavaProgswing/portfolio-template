@@ -10,7 +10,7 @@ import data from "./data/me";
 // DevTools welcome message for anyone who opens the console.
 if (typeof window !== "undefined") {
   const firstName = data.name.split(" ")[0].toLowerCase();
-  const github = data.contacts.find((c) => c.id === "github")?.link || "";
+  const github = data.contacts.find((c: { id: string; link: string }) => c.id === "github")?.link || "";
   // Extract the handle if this is a direct github.com URL.
   const ghMatch = github.match(/github\.com\/([^/?#]+)/);
   const ghUrl = ghMatch ? `https://github.com/${ghMatch[1]}` : github;
