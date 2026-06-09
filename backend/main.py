@@ -17,6 +17,7 @@ import html as _html
 import json
 import os
 import sqlite3
+from urllib.parse import urlparse
 from typing import AsyncIterator, Optional
 
 import httpx
@@ -31,7 +32,7 @@ import psycopg2.extras
 
 DB_PATH = Path(__file__).parent / "portfolio.db"
 
-_POSTGRES_URL = os.getenv("POSTGRES_URL") or os.getenv("POSTGRES_PRISMA_URL") or os.getenv("POSTGRES_URL_NON_POOLING")
+_POSTGRES_URL = os.getenv("POSTGRES_URL_NON_POOLING") or os.getenv("POSTGRES_PRISMA_URL") or os.getenv("POSTGRES_URL")
 IS_POSTGRES = bool(_POSTGRES_URL)
 
 # Comma-separated list of allowed origins. Set in .env or as env var.
@@ -76,7 +77,14 @@ class DBWrapper:
     def __init__(self):
         self.is_postgres = IS_POSTGRES
         if self.is_postgres:
-            self.conn = psycopg2.connect(_POSTGRES_URL)
+            parsed = urlparse(_POSTGRES_URL)
+            self.conn = psycopg2.connect(
+                host=parsed.hostname,
+                user=parsed.username,
+                password=parsed.password,
+                dbname=parsed.path.lstrip("/"),
+                port=parsed.port or 5432
+            )
             self.conn.autocommit = True
         else:
             self.conn = sqlite3.connect(DB_PATH)

@@ -200,7 +200,6 @@ const GuestbookPage = ({ planning = [] }: Props) => {
         <Box p={4} layerStyle="card" border="1px solid" borderColor={border} borderRadius="10px">
           <Text fontSize="sm" color="gray.500">
             Guestbook backend is offline. Make sure the FastAPI service is running:{" "}
-            <Text as="code" color="brand.400">systemctl status portfolio-api</Text>
           </Text>
         </Box>
       ) : loading ? (
