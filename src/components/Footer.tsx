@@ -11,13 +11,15 @@ import {
 import { ElementType, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { FaPenNib } from "react-icons/fa";
+import ContactBadges from "./ContactBadges";
 
 interface Props {
   name: string;
   resumeUrl?: string;
+  contacts: { id: string; name: string; site: string; link: string }[];
 }
 
-const Footer = ({ name }: Props) => {
+const Footer = ({ name, contacts }: Props) => {
   const [time, setTime] = useState(() =>
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   );
@@ -57,12 +59,16 @@ const Footer = ({ name }: Props) => {
         align="center"
         flexWrap="wrap"
         gap={3}
-        maxW="780px"
+        maxW="980px"
         mx="auto"
       >
-        <Text fontSize="13px" color={textColor}>
-          © 2026 {name}
-        </Text>
+        <HStack spacing={4} flexWrap="wrap">
+          <Text fontSize="13px" color={textColor}>
+            © 2026 {name}
+          </Text>
+          <Box w="1px" h="18px" bg={borderColor} display={{ base: "none", sm: "block" }} />
+          <ContactBadges contacts={contacts} variant="footer" />
+        </HStack>
 
         <HStack spacing={3} fontFamily="mono" fontSize="11px">
           {/* ⌘K - opens command palette */}

@@ -21,7 +21,7 @@ import {
 import { useEffect, useState, ElementType } from "react";
 import { motion } from "framer-motion";
 import { getSiteIconUrl } from "../services/favicon-site-url";
-import { FaSpotify, FaLinkedin, FaArrowRight } from "react-icons/fa";
+import { FaSpotify, FaLinkedin, FaArrowRight, FaGithub, FaInstagram, FaDiscord } from "react-icons/fa";
 
 interface Contact {
   id: string;
@@ -46,6 +46,7 @@ interface Profile {
 interface Props {
   contacts: Contact[];
   profile?: Profile;
+  variant?: "header" | "footer";
 }
 
 interface NowPlaying {
@@ -63,16 +64,24 @@ interface NowPlaying {
   } | null;
 }
 
-const BRAND: Record<string, { color: string; glow: string }> = {
-  github:    { color: "#fafafa", glow: "rgba(255,255,255,0.25)" },
+const BRAND: Record<string, { color: string; glow: string; lightColor?: string; lightGlow?: string }> = {
+  github:    { color: "#f0f6fc", glow: "rgba(240,246,252,0.24)", lightColor: "#24292f", lightGlow: "rgba(36,41,47,0.2)" },
   linkedin:  { color: "#0a66c2", glow: "rgba(10,102,194,0.45)" },
   instagram: { color: "#e4405f", glow: "rgba(228,64,95,0.45)" },
+  discord:   { color: "#5865f2", glow: "rgba(88,101,242,0.42)" },
   twitter:   { color: "#fafafa", glow: "rgba(255,255,255,0.25)" },
   x:         { color: "#fafafa", glow: "rgba(255,255,255,0.25)" },
   spotify:   { color: "#1db954", glow: "rgba(29,185,84,0.5)" },
 };
 
 const MotionBox = motion(Box);
+const SOCIAL_ICONS: Record<string, unknown> = {
+  github: FaGithub,
+  linkedin: FaLinkedin,
+  instagram: FaInstagram,
+  discord: FaDiscord,
+  spotify: FaSpotify,
+};
 
 // Shared button style props
 
@@ -80,9 +89,11 @@ const baseButtonProps = (brand: { color: string; glow: string }) => ({
   display: "inline-flex" as const,
   alignItems: "center" as const,
   justifyContent: "center" as const,
-  w: "32px",
-  h: "32px",
-  borderRadius: "md",
+  w: "34px",
+  h: "34px",
+  borderRadius: "full",
+  border: "1px solid var(--border)",
+  bg: "var(--surface)",
   color: "fg.subtle",
   cursor: "pointer" as const,
   _hover: {
@@ -90,6 +101,7 @@ const baseButtonProps = (brand: { color: string; glow: string }) => ({
     bg: `${brand.color}1a`,
     boxShadow: `0 0 14px ${brand.glow}`,
   },
+  _focusVisible: { outline: "2px solid var(--chakra-colors-brand-400)", outlineOffset: "2px" },
   sx: { transition: "color 0.2s, background 0.2s, box-shadow 0.2s" },
 });
 
@@ -97,7 +109,9 @@ const baseButtonProps = (brand: { color: string; glow: string }) => ({
 
 const StandardBadge = ({ contact }: { contact: Contact }) => {
   const brand = BRAND[contact.id] ?? { color: "#a1a1aa", glow: "rgba(255,255,255,0.15)" };
-  const IconComp = getSiteIconUrl(contact.id) as ElementType;
+  const hoverColor = useColorModeValue(brand.lightColor || brand.color, brand.color);
+  const hoverGlow = useColorModeValue(brand.lightGlow || brand.glow, brand.glow);
+  const IconComp = (SOCIAL_ICONS[contact.id] || getSiteIconUrl(contact.id)) as ElementType;
 
   return (
     <Tooltip label={contact.name} fontSize="11px" hasArrow placement="bottom">
@@ -109,8 +123,8 @@ const StandardBadge = ({ contact }: { contact: Contact }) => {
         _hover={{ textDecoration: "none" }}
       >
         <MotionBox
-          {...baseButtonProps(brand)}
-          whileHover={{ scale: 1.1, y: -1 }}
+          {...baseButtonProps({ ...brand, color: hoverColor, glow: hoverGlow })}
+          whileHover={{ scale: 1.07, y: -2 }}
           whileTap={{ scale: 0.93 }}
         >
           <Icon as={IconComp} boxSize={4} />
@@ -151,7 +165,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
           as="button"
           aria-label="LinkedIn · click for profile preview"
           {...baseButtonProps(brand)}
-          whileHover={{ scale: 1.1, y: -1 }}
+          whileHover={{ scale: 1.07, y: -2 }}
           whileTap={{ scale: 0.93 }}
         >
           <Icon as={FaLinkedin as ElementType} boxSize={4} />
@@ -360,7 +374,7 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
           position="relative"
           aria-label="Spotify · click for now playing"
           {...baseButtonProps(brand)}
-          whileHover={{ scale: 1.1, y: -1 }}
+          whileHover={{ scale: 1.07, y: -2 }}
           whileTap={{ scale: 0.93 }}
         >
           <Icon as={FaSpotify as ElementType} boxSize={4} />
@@ -495,10 +509,11 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
 
 // Main
 
-const ContactBadges = ({ contacts, profile }: Props) => {
+const ContactBadges = ({ contacts, profile, variant = "header" }: Props) => {
   return (
-    <HStack spacing={0.5}>
+    <HStack spacing={1} aria-label={variant === "footer" ? "Social links" : undefined}>
       {contacts.map((contact) => {
+        if (variant === "footer") return <StandardBadge key={contact.id} contact={contact} />;
         if (contact.id === "spotify") {
           return <SpotifyBadge key={contact.id} contact={contact} />;
         }

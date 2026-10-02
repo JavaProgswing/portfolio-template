@@ -35,11 +35,15 @@ interface Ctx {
   profile: LabProfile | null;
   user: string;
   owner: string;
-  setUser: (u: string) => void;
   os: OsKey;
   setOs: (o: OsKey) => void;
   hue: number;
   setHue: (h: number) => void;
+  wallpaperId: WallpaperId;
+  setWallpaperId: (id: WallpaperId) => void;
+  wallpaperColor: string;
+  setWallpaperColor: (color: string) => void;
+  wallpaper: string;
   open: (kind: Kind, repo?: string) => void;
   loading: boolean;
   offline: boolean;
@@ -61,7 +65,14 @@ const FaStar_ = I(FaStar);
 const FaWindows_ = I(FaWindows);
 
 const PREF_KEY = "lab-prefs";
-interface Prefs { os?: OsKey; hue?: number; user?: string }
+const WALLPAPERS = [
+  { id: "aurora", label: "Aurora", background: "radial-gradient(ellipse at 18% 18%, rgba(45,212,191,.48), transparent 38%), radial-gradient(ellipse at 80% 20%, rgba(99,102,241,.44), transparent 42%), linear-gradient(145deg,#071723,#0c1024 66%,#071018)" },
+  { id: "sunset", label: "Afterglow", background: "radial-gradient(ellipse at 72% 26%, rgba(251,113,133,.48), transparent 34%), radial-gradient(ellipse at 28% 78%, rgba(124,58,237,.38), transparent 42%), linear-gradient(145deg,#1b1020,#111329 66%,#111827)" },
+  { id: "ocean", label: "Deep ocean", background: "radial-gradient(ellipse at 20% 18%, rgba(14,165,233,.42), transparent 40%), radial-gradient(ellipse at 86% 84%, rgba(20,184,166,.24), transparent 38%), linear-gradient(145deg,#071522,#091321 68%,#101827)" },
+  { id: "forest", label: "Night forest", background: "radial-gradient(ellipse at 75% 18%, rgba(132,169,91,.34), transparent 38%), radial-gradient(ellipse at 15% 80%, rgba(45,106,79,.38), transparent 44%), linear-gradient(145deg,#101b17,#111713 66%,#192019)" },
+] as const;
+type WallpaperId = "system" | "custom" | (typeof WALLPAPERS)[number]["id"];
+interface Prefs { os?: OsKey; hue?: number; wallpaperId?: WallpaperId; wallpaperColor?: string }
 const loadPrefs = (): Prefs => {
   try { return JSON.parse(localStorage.getItem(PREF_KEY) || "{}"); } catch { return {}; }
 };
@@ -339,7 +350,7 @@ const inputStyle = (skin: Skin): CSSProperties => ({
 interface Line { t: string; c?: "cmd" | "err" | "dim" | "acc" }
 
 const TerminalApp = () => {
-  const { skin, repos, deployed, profile, user, setUser, setOs, open } = useLab();
+  const { skin, repos, deployed, profile, user, setOs, wallpaperId, setWallpaperId, open } = useLab();
   const prompt = `${user || "guest"}@${skin.key === "windows" ? "wsl" : skin.key}:~$`;
   const [lines, setLines] = useState<Line[]>([
     { t: "Type `help` to see commands. Try `ls`, `open <name>`, `neofetch`.", c: "dim" },
@@ -365,7 +376,7 @@ const TerminalApp = () => {
       case "help":
         push("help               this list", "ls [-a]            deployed projects (-a: every repo)", "open <name>        launch a project window",
           "cat <name>         project details", "whoami            who owns this desktop", "neofetch          system info",
-          "user <github>      switch to another GitHub user", "os <windows|ubuntu|debian>   change desktop skin",
+          "wallpaper <name>   change desktop wallpaper", "os <windows|ubuntu|debian>   change desktop skin",
           "date | echo | clear");
         break;
       case "ls": {
@@ -397,9 +408,17 @@ const TerminalApp = () => {
           `Projects: ${repos.length} (${deployed.length} live)`, `Host: ${typeof navigator !== "undefined" ? navigator.platform || "browser" : "browser"}`);
         break;
       case "user":
-        if (!arg) out.push({ t: "usage: user <github-username>", c: "err" });
-        else { setUser(arg); push(`switching to ${arg}…`); }
+        push(`GitHub profile is locked to @${user}.`);
         break;
+      case "wallpaper": {
+        const next = arg.toLowerCase();
+        if (!next) push(`wallpaper: ${wallpaperId}`, "available: system, aurora, sunset, ocean, forest, custom");
+        else if (["system", "custom", ...WALLPAPERS.map((item) => item.id)].includes(next)) {
+          setWallpaperId(next as WallpaperId);
+          push(`wallpaper set to ${next}`);
+        } else out.push({ t: "usage: wallpaper <system|aurora|sunset|ocean|forest|custom>", c: "err" });
+        break;
+      }
       case "os":
         if (["windows", "ubuntu", "debian"].includes(arg)) { setOs(arg as OsKey); push(`desktop is now ${arg}`); }
         else out.push({ t: "usage: os <windows|ubuntu|debian>", c: "err" });
@@ -492,9 +511,7 @@ const ProfileApp = () => {
 };
 
 const SettingsApp = () => {
-  const { skin, user, setUser, os, setOs, hue, setHue, owner, error, loading } = useLab();
-  const [draft, setDraft] = useState(user);
-  useEffect(() => setDraft(user), [user]);
+  const { skin, user, os, setOs, hue, setHue, wallpaperId, setWallpaperId, wallpaperColor, setWallpaperColor } = useLab();
   const label: CSSProperties = { fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: skin.muted, margin: "16px 0 8px" };
   const osBtn = (k: OsKey, Ico: unknown) => {
     const Comp = I(Ico);
@@ -509,21 +526,29 @@ const SettingsApp = () => {
   };
   return (
     <div style={{ padding: 18, overflow: "auto", height: "100%", color: skin.text }}>
-      <div style={{ ...label, marginTop: 0 }}>Whose desktop is this?</div>
-      <form onSubmit={(e) => { e.preventDefault(); const u = draft.trim().replace(/^@/, ""); if (u) setUser(u); }} style={{ display: "flex", gap: 8 }}>
-        <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="github username" style={{ ...inputStyle(skin), flex: 1, minWidth: 0 }} />
-        <button type="submit" style={{ ...inputStyle(skin), background: skin.accent, color: "#fff", cursor: "pointer", border: "none" }}>Load</button>
-      </form>
-      <div style={{ fontSize: 12, color: error ? "#f87171" : skin.muted, marginTop: 6 }}>
-        {error || (loading ? "Fetching from GitHub…" : "Any public GitHub user works. Deployed = repos whose homepage points at a live site.")}
+      <div style={{ ...label, marginTop: 0 }}>GitHub profile · locked</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "10px 12px", borderRadius: skin.radius, background: "rgba(255,255,255,.06)", border: `1px solid ${skin.border}`, fontSize: 13 }}>
+        <FaGithub_ size={15} color={skin.accent} /> <span>@{user}</span>
+        <span style={{ marginLeft: "auto", color: skin.muted, fontSize: 11 }}>portfolio owner</span>
       </div>
-      {user.toLowerCase() !== owner.toLowerCase() && (
-        <button onClick={() => setUser(owner)} style={{ ...inputStyle(skin), marginTop: 8, cursor: "pointer" }}>↩ back to {owner}</button>
-      )}
       <div style={label}>Operating system</div>
       <div style={{ display: "flex", gap: 8 }}>
         {osBtn("windows", FaWindows)}{osBtn("ubuntu", FaUbuntu)}{osBtn("debian", SiDebian)}
       </div>
+      <div style={label}>Desktop wallpaper</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 8 }}>
+        {[{ id: "system", label: `${SKINS[os].label} default`, background: SKINS[os].wallpaper }, ...WALLPAPERS].map((wallpaper) => (
+          <button key={wallpaper.id} type="button" onClick={() => setWallpaperId(wallpaper.id as WallpaperId)} aria-pressed={wallpaperId === wallpaper.id} style={{
+            display: "flex", alignItems: "flex-end", height: 52, padding: 7, borderRadius: skin.radius, color: "#fff", cursor: "pointer", font: "inherit", fontSize: 11,
+            textShadow: "0 1px 3px rgba(0,0,0,.8)", background: wallpaper.background, border: `2px solid ${wallpaperId === wallpaper.id ? skin.accent : skin.border}`,
+          }}>{wallpaper.label}</button>
+        ))}
+      </div>
+      <label style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8, padding: "8px 10px", borderRadius: skin.radius, border: `1px solid ${skin.border}`, background: wallpaperId === "custom" ? "rgba(255,255,255,.08)" : "transparent", fontSize: 12, cursor: "pointer" }}>
+        <input type="color" aria-label="Choose custom wallpaper color" value={wallpaperColor} onChange={(e) => { setWallpaperColor(e.target.value); setWallpaperId("custom"); }} style={{ width: 28, height: 24, padding: 0, border: 0, background: "transparent", cursor: "pointer" }} />
+        <span>Custom glow</span>
+        {wallpaperId === "custom" && <span style={{ marginLeft: "auto", color: skin.accent }}>selected</span>}
+      </label>
       <div style={label}>Wallpaper tint</div>
       <input type="range" min={0} max={360} value={hue} onChange={(e) => setHue(Number(e.target.value))} style={{ width: "100%", accentColor: skin.accent }} />
     </div>
@@ -673,25 +698,36 @@ const LabPage = ({ data }: { data: { name: string; contacts: { id: string; link:
   const owner = data.lab?.defaultUser || ghHandle(data.contacts) || "octocat";
   const prefs = useMemo(loadPrefs, []);
   const params = useMemo(() => new URLSearchParams(window.location.search), []);
-
-  const [user, setUserState] = useState(() => (params.get("user") || prefs.user || owner).replace(/^@/, ""));
+  const user = owner;
   const [os, setOs] = useState<OsKey>(() => {
     const p = params.get("os") as OsKey | null;
     return p && SKINS[p] ? p : prefs.os && SKINS[prefs.os] ? prefs.os : "windows";
   });
   const [hue, setHue] = useState(prefs.hue ?? 0);
+  const [wallpaperId, setWallpaperId] = useState<WallpaperId>(() => {
+    const saved = prefs.wallpaperId;
+    return saved === "system" || saved === "custom" || WALLPAPERS.some((wallpaper) => wallpaper.id === saved)
+      ? saved as WallpaperId
+      : "system";
+  });
+  const [wallpaperColor, setWallpaperColor] = useState(prefs.wallpaperColor || "#536b9b");
   const skin = SKINS[os];
-
-  const setUser = useCallback((u: string) => {
-    setUserState(u);
-    const url = new URL(window.location.href);
-    if (u.toLowerCase() === owner.toLowerCase()) url.searchParams.delete("user"); else url.searchParams.set("user", u);
-    window.history.replaceState(null, "", url);
-  }, [owner]);
+  const wallpaper = wallpaperId === "system"
+    ? skin.wallpaper
+    : wallpaperId === "custom"
+      ? `radial-gradient(ellipse at 24% 18%, ${wallpaperColor} 0%, transparent 56%), linear-gradient(145deg,#080d16,#101827)`
+      : WALLPAPERS.find((item) => item.id === wallpaperId)?.background || skin.wallpaper;
 
   useEffect(() => {
-    try { localStorage.setItem(PREF_KEY, JSON.stringify({ os, hue, user })); } catch { /* ignore */ }
-  }, [os, hue, user]);
+    if (!params.has("user")) return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete("user");
+    window.history.replaceState(window.history.state, "", url);
+  }, [params]);
+
+  useEffect(() => {
+    try { localStorage.setItem(PREF_KEY, JSON.stringify({ os, hue, wallpaperId, wallpaperColor })); } catch { /* ignore */ }
+  }, [os, hue, wallpaperId, wallpaperColor]);
 
   const lab = useGithubLab(user, owner, data.lab || {});
   const deployed = useMemo(() => lab.repos.filter((r) => r.deployUrl && !r.down && !r.fork), [lab.repos]);
@@ -761,7 +797,8 @@ const LabPage = ({ data }: { data: { name: string; contacts: { id: string; link:
   };
 
   const ctx: Ctx = {
-    skin, repos: lab.repos, deployed, profile: lab.profile, user, owner, setUser, os, setOs, hue, setHue, open,
+    skin, repos: lab.repos, deployed, profile: lab.profile, user, owner, os, setOs, hue, setHue,
+    wallpaperId, setWallpaperId, wallpaperColor, setWallpaperColor, wallpaper, open,
     loading: lab.loading, offline: lab.offline, error: lab.error,
   };
 
@@ -826,7 +863,7 @@ const LabPage = ({ data }: { data: { name: string; contacts: { id: string; link:
           fontFamily: skin.font, border: "1px solid var(--border-strong)", boxShadow: "0 24px 70px rgba(0,0,0,.45)",
           background: "#000", isolation: "isolate",
         }}>
-          <div style={{ position: "absolute", inset: 0, background: skin.wallpaper, filter: `hue-rotate(${hue}deg)`, transition: "filter .2s" }} />
+          <div style={{ position: "absolute", inset: 0, background: wallpaper, filter: `hue-rotate(${hue}deg)`, transition: "filter .2s, background .25s" }} />
 
           {/* desktop icons */}
           <div onPointerDown={() => setSelIcon("")} style={{

@@ -222,15 +222,15 @@ body[data-palette="solarized"] {
   --bg-base: #002b36;
 }
 body[data-palette="solarized"][data-mode="light"] {
-  background-color: #fdf6e3 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #fffaf0 0%, #eee8d5 70%) !important;
+  background-color: #f1ebdc !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #f8f2e4 0%, #e3dbc8 72%) !important;
   --chakra-colors-brand-300: #b58900;
   --chakra-colors-brand-400: #b58900;
   --chakra-colors-brand-500: #2aa198;
   --chakra-colors-brand-600: #268bd2;
   --cursor-glow: rgba(181, 137, 0, 0.12);
   --brand-rgb: 181, 137, 0;
-  --bg-base: #fdf6e3;
+  --bg-base: #f1ebdc;
 }
 
 /* Sunset - dusk gradient */
@@ -262,14 +262,15 @@ body[data-palette="mono"] {
   --bg-base: #0a0a0a;
 }
 body[data-palette="mono"][data-mode="light"] {
-  background-color: #fafafa !important;
+  background-color: #f0f0f0 !important;
+  background-image: linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%) !important;
   --chakra-colors-brand-300: #404040;
   --chakra-colors-brand-400: #171717;
   --chakra-colors-brand-500: #0a0a0a;
   --chakra-colors-brand-600: #000000;
   --cursor-glow: rgba(0, 0, 0, 0.06);
   --brand-rgb: 23, 23, 23;
-  --bg-base: #fafafa;
+  --bg-base: #f0f0f0;
 }
 
 /* Global polish: nicer selection, focus rings, scrollbars, glass lift */
@@ -313,62 +314,72 @@ body {
    solely for indigo/rosepine/gruvbox/evergreen, so these dark-on-light
    surfaces never reach an immersive theme. */
 body[data-mode="light"] {
-  --surface: rgba(0, 0, 0, 0.025);
-  --surface-strong: rgba(0, 0, 0, 0.05);
-  --border: rgba(0, 0, 0, 0.1);
-  --border-strong: rgba(0, 0, 0, 0.14);
+  --surface: rgba(30, 35, 55, 0.035);
+  --surface-strong: rgba(30, 35, 55, 0.065);
+  --border: rgba(30, 35, 55, 0.11);
+  --border-strong: rgba(30, 35, 55, 0.16);
 }
 
-/* Indigo light - darker accents for contrast on near-white bg.
-   Background itself comes from Chakra (no data-palette bg block for indigo). */
+/* Indigo light - cool paper, indigo ink, and a soft atmospheric wash. */
 body[data-palette="indigo"][data-mode="light"] {
-  --bg-base: #fafafa;
-  --brand-rgb: 79, 70, 229;
-  --chakra-colors-brand-300: #6366f1;
-  --chakra-colors-brand-400: #4f46e5;
-  --chakra-colors-brand-500: #4338ca;
-  --chakra-colors-brand-600: #3730a3;
-  --cursor-glow: rgba(79, 70, 229, 0.1);
-  --brand-rgb: 79, 70, 229;
+  background-color: #eef0f7 !important;
+  background-image:
+    radial-gradient(ellipse at 50% -12%, rgba(129, 140, 248, 0.18), transparent 58%),
+    linear-gradient(155deg, #f5f6fb 0%, #e9ebf4 100%) !important;
+  --bg-base: #eef0f7;
+  --brand-rgb: 67, 56, 202;
+  --chakra-colors-brand-300: #5148c8;
+  --chakra-colors-brand-400: #4338ca;
+  --chakra-colors-brand-500: #3730a3;
+  --chakra-colors-brand-600: #312e81;
+  --cursor-glow: rgba(79, 70, 229, 0.08);
+  --surface: rgba(255, 255, 255, 0.52);
+  --surface-strong: rgba(255, 255, 255, 0.74);
+  --border: rgba(55, 48, 163, 0.12);
+  --border-strong: rgba(55, 48, 163, 0.18);
+}
+body[data-palette="indigo"][data-mode="light"] #root::before {
+  opacity: 0.5;
+  background-image: radial-gradient(rgba(67, 56, 202, 0.12) 1px, transparent 1px);
 }
 
 /* Rosé Pine Dawn - warm parchment + muted rose/iris/pine */
 body[data-palette="rosepine"][data-mode="light"] {
-  background-color: #faf4ed !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #fffaf3 0%, #f2e9e1 70%) !important;
+  background-color: #f2e9e0 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #f8f0e8 0%, #e8ddd3 72%) !important;
   --chakra-colors-brand-300: #d7827e;
   --chakra-colors-brand-400: #b4637a;
   --chakra-colors-brand-500: #907aa9;
   --chakra-colors-brand-600: #286983;
   --cursor-glow: rgba(180, 99, 122, 0.12);
   --brand-rgb: 180, 99, 122;
-  --bg-base: #faf4ed;
+  --bg-base: #f2e9e0;
 }
 
 /* Gruvbox light - cream paper + faded dark accents */
 body[data-palette="gruvbox"][data-mode="light"] {
-  background-color: #fbf1c7 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #f9f5d7 0%, #ebdbb2 70%) !important;
+  background-color: #f3e7c3 !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #f7efcf 0%, #e5d6ad 72%) !important;
   --chakra-colors-brand-300: #d65d0e;
   --chakra-colors-brand-400: #af3a03;
   --chakra-colors-brand-500: #b57614;
   --chakra-colors-brand-600: #79740e;
   --cursor-glow: rgba(175, 58, 3, 0.12);
   --brand-rgb: 175, 58, 3;
-  --bg-base: #fbf1c7;
+  --bg-base: #f3e7c3;
 }
 
 /* Evergreen light - pale sage + deep forest greens */
 body[data-palette="evergreen"][data-mode="light"] {
-  background-color: #eef4e8 !important;
-  background-image: radial-gradient(ellipse at 50% 0%, #f4f8ef 0%, #dde7d2 70%) !important;
+  background-color: #e5ecdf !important;
+  background-image: radial-gradient(ellipse at 50% 0%, #eef3e8 0%, #d2deca 72%) !important;
   --chakra-colors-brand-300: #16a34a;
   --chakra-colors-brand-400: #15803d;
   --chakra-colors-brand-500: #166534;
   --chakra-colors-brand-600: #14532d;
   --cursor-glow: rgba(21, 128, 61, 0.12);
   --brand-rgb: 21, 128, 61;
-  --bg-base: #eef4e8;
+  --bg-base: #e5ecdf;
 }
 
 /* Theme FX: persistent visual overlays */

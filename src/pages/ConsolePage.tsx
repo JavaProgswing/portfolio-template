@@ -108,11 +108,12 @@ shell
 
   skills: ({ data }) =>
     `languages: ${data.languages.join(", ")}\n\n` +
-    `frontend:  ${data.frameworks.frontend.map((f: any) => f.name).join(", ")}\n` +
-    `backend:   ${data.frameworks.backend.map((f: any) => f.name).join(", ")}\n` +
-    `databases: ${data.frameworks.databases.map((f: any) => f.name).join(", ")}\n` +
-    `ml:        ${data.frameworks.machineLearning.map((f: any) => f.name).join(", ")}\n` +
-    `misc:      ${data.frameworks.misc.map((f: any) => f.name).join(", ")}`,
+    Object.entries(data.frameworks || {})
+      .map(([group, items]) => {
+        const label = group.replace(/([A-Z])/g, " $1").toLowerCase();
+        return `${(label + ":").padEnd(18)} ${(items as { name: string }[]).map((f) => f.name).join(", ")}`;
+      })
+      .join("\n"),
 
   journey: ({ data }) =>
     data.journey

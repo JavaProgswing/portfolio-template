@@ -1,222 +1,128 @@
-import {
-  Box,
-  Heading,
-  HStack,
-  Icon,
-  Stack,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box, Heading, HStack, Icon, SimpleGrid, Stack, Tag, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { Link as RouterLink } from "react-router-dom";
 import { ElementType } from "react";
+import { FaDatabase, FaGamepad, FaPalette, FaServer } from "react-icons/fa";
 import { DEFAULT_THEME, THEMES } from "../themes/palettes";
-import { FaServer, FaWrench } from "react-icons/fa";
 
 const MotionBox = motion(Box);
 
-interface HomelabSpec { label: string; value: string }
 interface Homelab {
   headline: string;
   intro: string;
-  specs: HomelabSpec[];
-  notes: string[];
+  specs: { label: string; value: string }[];
+  notes?: string[];
 }
 
 interface Props {
   data?: { homelab?: Homelab };
 }
 
-const SECTIONS = [
+const STACK = ["React 18", "TypeScript", "Vite", "Chakra UI", "Framer Motion", "Web Audio API", "FastAPI", "SQLite / Postgres", "nginx"];
+
+const defaultTheme = THEMES.find((t) => t.key === DEFAULT_THEME)?.name;
+
+/** What's in the codebase. Personal hosting details come from `homelab` in me.ts. */
+const PARTS: { icon: unknown; title: string; body: string }[] = [
   {
-    label: "Stack",
-    items: [
-      "React 18 + TypeScript + Vite",
-      "Chakra UI v2 for components",
-      "Framer Motion for animations",
-      "react-router-dom for routing",
-      "Native Canvas for particles + matrix rain",
-    ],
+    icon: FaDatabase,
+    title: "Content",
+    body: "Everything personal lives in me.ts and a few JSON files (certificates, extra live sites). Repos, live deployments and repo counts come from the GitHub API at runtime, so new work shows up without a rebuild.",
   },
   {
-    label: "Design",
-    items: [
-      "Inter (body) + JetBrains Mono (code/mono labels), plus a display face per theme",
-      `${THEMES.length} themes, ${THEMES.find((t) => t.key === DEFAULT_THEME)?.name} by default (${THEMES.filter((t) => t.key !== DEFAULT_THEME).map((t) => t.name).join(", ")})`,
-      "780px max content width — single-column document feel",
-      "Dark-first · respects prefers-color-scheme",
-    ],
+    icon: FaPalette,
+    title: "Themes",
+    body: `${THEMES.length} themes (${defaultTheme} by default), each with its own type, texture and click effects. Sounds are synthesized in the browser with the Web Audio API: no audio files, and one mute switch.`,
   },
   {
-    label: "Backend",
-    items: [
-      "Self-hosted FastAPI on the same Ubuntu box that serves nginx",
-      "SQLite for guestbook + visitor count",
-      "Spotify now-playing proxy (keeps refresh token server-side)",
-      "Gemma 3 via Gemini API (proxied server-side so the API key stays private)",
-    ],
+    icon: FaServer,
+    title: "Backend",
+    body: "A small FastAPI service for the guestbook, blog ratings and comments, Spotify now-playing and the AI chat. The Gemini API key and Spotify token stay server-side.",
   },
   {
-    label: "Data Source",
-    items: [
-      "Single me.ts file is the source of truth — name, projects, journey, contacts, blogs",
-      "Repos auto-fetched + scored from GitHub API (npm run fetch-repos)",
-      "CP stats from Codeforces + leetcode-stats-api (5s timeout, graceful fallback)",
-      "OSS contributions from GitHub Events API (last 90 days)",
-    ],
-  },
-  {
-    label: "Interactive Touches",
-    items: [
-      "Cursor spotlight tracking · themed per palette",
-      "3D tilt on project cards · disabled on touch devices",
-      "Animated counters with easeOutQuart",
-      "Confetti on 5x logo click within 3 seconds",
-      "Konami code (↑↑↓↓←→←→ba) → Matrix rain for 8 seconds",
-      "Type 'matrix' or 'rainbow' anywhere",
-      "g→[h/j/p/a/w] keyboard navigation",
-      "? for shortcuts modal · ⌘K for command palette",
-    ],
-  },
-  {
-    label: "Hosting",
-    items: [
-      "nginx + Let's Encrypt on Ubuntu",
-      "Static dist/ served from nginx html root",
-      "SPA fallback: try_files $uri /index.html for client routes",
-      "API proxied to 127.0.0.1:27012 via /api/portfolio/ (local) and /_/backend/ on Vercel",
-    ],
-  },
-  {
-    label: "Performance",
-    items: [
-      "Mobile: particle count halved, frame-skipped to ~30 FPS",
-      "Reduced-motion preference respected throughout",
-      "Aggressive Cache-Control for static assets",
-    ],
+    icon: FaGamepad,
+    title: "Extras",
+    body: "A /lab desktop for live projects, a /console shell, mini-games and hidden achievements. Press ? for shortcuts or ⌘K for the command palette.",
   },
 ];
 
 const ColophonPage = ({ data }: Props) => {
   const homelab = data?.homelab;
-  const border = useColorModeValue("gray.200", "rgba(255,255,255,0.08)");
 
   return (
-    <Box maxW="780px" mx="auto" px={{ base: 5, md: 8 }} py={20}>
-      <RouterLink to="/">
-        <Text fontSize="11px" color="brand.400" fontFamily="mono" mb={6}
-          _hover={{ color: "brand.300" }}>
-          ← back to home
-        </Text>
-      </RouterLink>
+    <Box maxW="780px" mx="auto" px={{ base: 5, md: 8 }} py={{ base: 14, md: 20 }}>
+      <Text as={RouterLink} to="/" fontSize="11px" color="brand.400" fontFamily="mono" display="inline-block" mb={6}>
+        ← back to home
+      </Text>
 
-      <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
-        letterSpacing="0.14em" mb={2} textTransform="uppercase">
+      <Text fontSize="11px" fontFamily="mono" color="fg.subtle" letterSpacing="0.14em" mb={2} textTransform="uppercase">
         Colophon
       </Text>
-      <Heading size="lg" mb={3}>How This Site Was Built</Heading>
-      <Text fontSize="md" color="fg.muted" mb={10} maxW="600px" lineHeight="1.75">
-        A meta page about the meta page. Stack, decisions, and the hardware it all runs on.
+      <Heading size="lg" mb={3}>How this site is built</Heading>
+      <Text fontSize="md" color="fg.muted" mb={8} maxW="600px" lineHeight="1.75">
+        The stack, what each part does, and the machine it runs on.
       </Text>
 
-      {/* Homelab - "running on" hero block */}
+      <Wrap spacing={2} mb={10}>
+        {STACK.map((s) => (
+          <WrapItem key={s}>
+            <Tag size="md" variant="subtle" colorScheme="purple" fontFamily="mono" fontSize="11px">{s}</Tag>
+          </WrapItem>
+        ))}
+      </Wrap>
+
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={12}>
+        {PARTS.map((p, i) => (
+          <MotionBox
+            key={p.title}
+            p={5} borderRadius="14px" layerStyle="card" className="lift"
+            initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: i * 0.06 }}
+          >
+            <HStack spacing={2.5} mb={2}>
+              <Icon as={p.icon as ElementType} color="brand.400" boxSize={3.5} />
+              <Heading size="sm">{p.title}</Heading>
+            </HStack>
+            <Text fontSize="sm" color="fg.muted" lineHeight="1.7">{p.body}</Text>
+          </MotionBox>
+        ))}
+      </SimpleGrid>
+
       {homelab && (
         <MotionBox
-          mb={12}
-          p={{ base: 5, md: 6 }}
-          borderRadius="14px"
-          layerStyle="card"
-          border="1px solid"
-          borderColor="brand.500"
-          boxShadow="0 0 32px rgba(var(--brand-rgb),0.1)"
-          position="relative"
-          overflow="hidden"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          p={{ base: 5, md: 6 }} borderRadius="14px" layerStyle="card"
+          border="1px solid" borderColor="rgba(var(--brand-rgb),0.35)"
+          initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
         >
-          <Box
-            position="absolute" top="-40px" right="-40px"
-            w="160px" h="160px" borderRadius="full"
-            bg="brand.500" opacity={0.08} filter="blur(40px)" pointerEvents="none"
-          />
-
           <HStack spacing={2.5} mb={3}>
-            <Icon as={FaServer as ElementType} color="brand.400" boxSize={4} />
-            <Text fontSize="10px" fontFamily="mono" color="brand.400"
-              letterSpacing="0.16em" textTransform="uppercase">
-              Running On
+            <Icon as={FaServer as ElementType} color="brand.400" boxSize={3.5} />
+            <Text fontSize="10px" fontFamily="mono" color="brand.400" letterSpacing="0.16em" textTransform="uppercase">
+              Running on
             </Text>
           </HStack>
-
           <Heading size="md" mb={2} lineHeight="1.3">{homelab.headline}</Heading>
-          <Text fontSize="sm" color="fg.muted" lineHeight="1.7" mb={5} maxW="560px">
-            {homelab.intro}
-          </Text>
-
-          {/* Specs as label/value rows */}
-          <Stack spacing={2.5} mb={5}>
+          <Text fontSize="sm" color="fg.muted" lineHeight="1.7" mb={5} maxW="560px">{homelab.intro}</Text>
+          <Stack spacing={2.5}>
             {homelab.specs.map((s) => (
               <HStack key={s.label} align="flex-start" spacing={4}>
-                <Text
-                  fontSize="10px" fontFamily="mono" color="fg.subtle"
-                  letterSpacing="0.1em" textTransform="uppercase"
-                  w={{ base: "90px", md: "110px" }} flexShrink={0} pt="2px"
-                >
+                <Text fontSize="10px" fontFamily="mono" color="fg.subtle" letterSpacing="0.1em" textTransform="uppercase"
+                  w={{ base: "90px", md: "110px" }} flexShrink={0} pt="2px">
                   {s.label}
                 </Text>
-                <Text fontSize="13px" color="fg.body" lineHeight="1.6">
-                  {s.value}
-                </Text>
+                <Text fontSize="13px" color="fg.body" lineHeight="1.6">{s.value}</Text>
               </HStack>
             ))}
           </Stack>
-
-          {/* Battle scars */}
-          {homelab.notes.length > 0 && (
-            <Box pt={4} borderTop="1px solid" borderColor={border}>
-              <HStack spacing={2} mb={2.5}>
-                <Icon as={FaWrench as ElementType} color="orange.400" boxSize={3} />
-                <Text fontSize="10px" fontFamily="mono" color="orange.400"
-                  letterSpacing="0.14em" textTransform="uppercase">
-                  Battle Scars
-                </Text>
-              </HStack>
-              <Stack spacing={2}>
-                {homelab.notes.map((n, i) => (
-                  <Text key={i} fontSize="13px" color="fg.muted" lineHeight="1.65"
-                    pl={4} borderLeft="1px solid" borderColor="rgba(251,146,60,0.3)">
-                    {n}
-                  </Text>
-                ))}
-              </Stack>
-            </Box>
+          {homelab.notes && homelab.notes.length > 0 && (
+            <Stack spacing={2} mt={5} pt={4} borderTop="1px solid var(--border)">
+              {homelab.notes.map((n, i) => (
+                <Text key={i} fontSize="13px" color="fg.muted" lineHeight="1.65">{n}</Text>
+              ))}
+            </Stack>
           )}
         </MotionBox>
       )}
-
-      <Stack spacing={10}>
-        {SECTIONS.map((section, i) => (
-          <MotionBox key={section.label}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: i * 0.06 }}>
-            <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
-              letterSpacing="0.16em" mb={3} textTransform="uppercase">
-              {section.label}
-            </Text>
-            <Stack spacing={2}>
-              {section.items.map((item, j) => (
-                <Text key={j} fontSize="sm" color="fg.body" lineHeight="1.7" pl={4}
-                  borderLeft="1px solid" borderColor="rgba(255,255,255,0.08)">
-                  {item}
-                </Text>
-              ))}
-            </Stack>
-          </MotionBox>
-        ))}
-      </Stack>
     </Box>
   );
 };

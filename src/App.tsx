@@ -88,7 +88,7 @@ function App() {
 
         <AnimatedRoutes />
 
-        <Footer name={data.name} resumeUrl={data.resumeUrl} />
+        <Footer name={data.name} resumeUrl={data.resumeUrl} contacts={data.contacts} />
       </Box>
 
       <AiChat data={data} />

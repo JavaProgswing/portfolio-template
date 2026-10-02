@@ -131,7 +131,15 @@ const Navbar = ({ data }: Props) => {
         </Box>
 
         <Show above="lg">
-          <HStack spacing={1}>
+          <HStack
+            as="nav"
+            aria-label="Primary navigation"
+            spacing={0.5}
+            p={1}
+            border="1px solid var(--border)"
+            borderRadius="12px"
+            bg="var(--surface)"
+          >
             {NAV.map(n => (
               <Link
                 key={n.href} href={"/" + n.href} onClick={(e) => goSection(e, n.href)}
@@ -165,7 +173,7 @@ const Navbar = ({ data }: Props) => {
         </Show>
 
         <HStack spacing={1} flex="1" justify="flex-end" minW={0}>
-          <Box display={{ base: "none", md: "block" }}>
+          <Box display={{ base: "none", md: "block" }} aria-label="Social links">
           <ContactBadges
             contacts={data.contacts}
             profile={{
