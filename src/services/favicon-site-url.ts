@@ -69,10 +69,10 @@ const getSiteIconUrl = (site: string): IconType => {
 };
 
 /*
-Convert site links to favicon URLs by http://www.google.com/s2/favicons?domain=
+Convert site links to favicon URLs by https://www.google.com/s2/favicons?domain=
 */
 const getFaviconUrl = (site: string): string => {
-  return `http://www.google.com/s2/favicons?sz=32&domain=${site}`;
+  return `https://www.google.com/s2/favicons?sz=32&domain=${site}`;
 };
 
 export { getFaviconUrl, getSiteIconUrl };

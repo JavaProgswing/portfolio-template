@@ -6,7 +6,6 @@ import {
   Icon,
   Stack,
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { useEffect, useState, useCallback, ElementType } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -67,7 +66,6 @@ const WordleGame = () => {
   const [shakeRow, setShakeRow] = useState(-1);
   const [keyStates, setKeyStates] = useState<Record<string, Cell>>({});
 
-  const border = useColorModeValue("gray.200", "rgba(255,255,255,0.08)");
 
   const newGame = useCallback(() => {
     setAnswer(WORDS[Math.floor(Math.random() * WORDS.length)]);

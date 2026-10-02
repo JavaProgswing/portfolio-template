@@ -439,8 +439,8 @@ const AiChat = ({ data }: Props) => {
                   minW="52px"
                   bg="brand.500"
                   color="white"
-                  boxShadow="0 0 24px rgba(99,102,241,0.5)"
-                  _hover={{ bg: "brand.400", boxShadow: "0 0 36px rgba(99,102,241,0.7)" }}
+                  boxShadow="0 0 24px rgba(var(--brand-rgb),0.5)"
+                  _hover={{ bg: "brand.400", boxShadow: "0 0 36px rgba(var(--brand-rgb),0.7)" }}
                   p={0}
                   position="relative"
                 >
@@ -576,7 +576,7 @@ const AiChat = ({ data }: Props) => {
                   <Text fontSize="xs" color="gray.500" textAlign="center" fontFamily="mono">
                     chat is offline
                   </Text>
-                  <Text fontSize="10px" color="gray.600" textAlign="center" fontFamily="mono">
+                  <Text fontSize="10px" color="fg.subtle" textAlign="center" fontFamily="mono">
                     backend missing <Text as="code" color="brand.400">GEMINI_API_KEY</Text>
                   </Text>
                 </Stack>
@@ -594,7 +594,7 @@ const AiChat = ({ data }: Props) => {
                     fontSize={{ base: "16px", md: "sm" }}
                     _focus={{
                       borderColor: "brand.400",
-                      boxShadow: "0 0 0 1px rgba(99,102,241,0.4)",
+                      boxShadow: "0 0 0 1px rgba(var(--brand-rgb),0.4)",
                     }}
                     border="1px solid"
                     borderColor={borderCol}
@@ -613,7 +613,7 @@ const AiChat = ({ data }: Props) => {
                 </HStack>
               )}
               {model && available && !loading && (
-                <Text fontSize="9px" color="gray.600" textAlign="center" fontFamily="mono" mt={2}>
+                <Text fontSize="9px" color="fg.subtle" textAlign="center" fontFamily="mono" mt={2}>
                   powered by {model}
                 </Text>
               )}

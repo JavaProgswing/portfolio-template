@@ -8,19 +8,19 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
-  Stack,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState, ElementType } from "react";
-import { FaPalette, FaCheck } from "react-icons/fa";
-import { motion } from "framer-motion";
+import { FaPalette, FaCheck, FaVolumeUp, FaVolumeMute, FaMagic, FaBolt } from "react-icons/fa";
+import { isFxMuted, setFxMuted } from "../lib/fx";
 import {
   THEMES,
   applyTheme,
   resolveInitialTheme,
+  isMinimalTheme,
 } from "../themes/palettes";
-import { unlock, getStats } from "../lib/achievements";
+import { unlock } from "../lib/achievements";
 
 const TRIED_KEY = "portfolio-themes-tried";
 
@@ -36,11 +36,36 @@ function recordThemeTry(key: string) {
   }
 }
 
-const MotionBox = motion(Box);
+
+export function useFxMuted(): boolean {
+  const [muted, setMuted] = useState(isFxMuted);
+  useEffect(() => {
+    const on = (e: Event) => setMuted((e as CustomEvent<boolean>).detail);
+    window.addEventListener("fxmutechange", on);
+    return () => window.removeEventListener("fxmutechange", on);
+  }, []);
+  return muted;
+}
+
+/** Compact navbar speaker toggle for theme sounds. */
+export const SoundToggle = () => {
+  const muted = useFxMuted();
+  return (
+    <Button
+      onClick={() => setFxMuted(!muted)} size="xs" variant="outline" borderColor="var(--border-strong)"
+      color={muted ? "gray.500" : "gray.400"} borderRadius="md" px={2} h="22px" minW="22px"
+      aria-label={muted ? "Unmute theme sounds" : "Mute theme sounds"} title={muted ? "Unmute theme sounds" : "Mute theme sounds"}
+      _hover={{ color: "brand.400", borderColor: "brand.500" }}
+    >
+      <Icon as={(muted ? FaVolumeMute : FaVolumeUp) as ElementType} boxSize={2.5} />
+    </Button>
+  );
+};
 
 const ThemeSwitcher = () => {
   const [current, setCurrent] = useState<string>(() => resolveInitialTheme());
   const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+  const muted = useFxMuted();
 
   // Apply initial theme on mount + react to external changes (URL param etc.)
   useEffect(() => {
@@ -55,7 +80,7 @@ const ThemeSwitcher = () => {
 
   const handlePick = (key: string) => {
     setCurrent(key);
-    applyTheme(key);
+    applyTheme(key, true);
     recordThemeTry(key);
   };
 
@@ -77,14 +102,14 @@ const ThemeSwitcher = () => {
           size="xs"
           variant="outline"
           borderColor="rgba(255,255,255,0.14)"
-          color="gray.400"
+          color="fg.muted"
           borderRadius="md"
           px={2}
           h="22px"
           minW="22px"
           aria-label="Switch theme"
           _hover={{
-            color: "gray.100",
+            color: "fg.strong",
             borderColor: "rgba(255,255,255,0.3)",
             bg: "rgba(255,255,255,0.05)",
           }}
@@ -94,70 +119,75 @@ const ThemeSwitcher = () => {
       </PopoverTrigger>
 
       <PopoverContent
-        bg="#0f0f10"
-        borderColor="rgba(255,255,255,0.1)"
-        boxShadow="0 12px 36px rgba(0,0,0,0.6)"
-        w="260px"
-        _focus={{ outline: "none", boxShadow: "0 12px 36px rgba(0,0,0,0.6)" }}
+        bg="var(--bg-base)"
+        borderColor="var(--border-strong)"
+        boxShadow="0 12px 36px rgba(0,0,0,0.5)"
+        w="316px"
+        maxW="calc(100vw - 16px)"
+        _focus={{ outline: "none", boxShadow: "0 12px 36px rgba(0,0,0,0.5)" }}
       >
-        <PopoverArrow bg="#0f0f10" />
-        <PopoverBody p={2}>
-          <Text
-            fontSize="9px"
-            color="gray.500"
-            fontFamily="mono"
-            letterSpacing="0.14em"
-            mb={2}
-            px={2}
-            pt={1}
-            textTransform="uppercase"
-          >
-            Theme
-          </Text>
-          <Stack spacing={0.5}>
-            {THEMES.map((t) => {
-              const active = current === t.key;
-              return (
-                <MotionBox
-                  key={t.key}
-                  as="button"
-                  onClick={() => handlePick(t.key)}
-                  px={2}
-                  py={2}
-                  borderRadius="md"
-                  textAlign="left"
-                  bg={active ? "rgba(255,255,255,0.06)" : "transparent"}
-                  _hover={{ bg: "rgba(255,255,255,0.04)" }}
-                  whileHover={{ x: 2 }}
-                  sx={{ transition: "background 0.15s" }}
-                  cursor="pointer"
-                  border="1px solid"
-                  borderColor={active ? "rgba(255,255,255,0.1)" : "transparent"}
-                >
-                  <HStack justify="space-between">
-                    <HStack spacing={2.5}>
-                      <HStack spacing={0} borderRadius="sm" overflow="hidden" flexShrink={0}>
+        <PopoverArrow bg="var(--bg-base)" />
+        <PopoverBody p={2} maxH="min(70vh, 480px)" overflowY="auto">
+          <HStack justify="space-between" px={1} pt={1} pb={2} mb={1} borderBottom="1px solid var(--border)">
+            <HStack spacing={2.5} fontFamily="mono" fontSize="9px" color="gray.500">
+              <HStack spacing={1}><Icon as={FaVolumeUp as ElementType} boxSize={2.5} /><Text color="inherit">sound</Text></HStack>
+              <HStack spacing={1}><Icon as={FaMagic as ElementType} boxSize={2.5} /><Text color="inherit">ambient</Text></HStack>
+              <HStack spacing={1}><Icon as={FaBolt as ElementType} boxSize={2.5} /><Text color="inherit">immersive</Text></HStack>
+            </HStack>
+            <Button size="xs" variant="ghost" h="22px" px={2} fontFamily="mono" fontSize="10px"
+              color={muted ? "gray.500" : "brand.400"} onClick={() => setFxMuted(!muted)}
+              leftIcon={<Icon as={(muted ? FaVolumeMute : FaVolumeUp) as ElementType} boxSize={3} />}>
+              {muted ? "muted" : "sound on"}
+            </Button>
+          </HStack>
+          {[
+            { label: "Light & dark", items: THEMES.filter((t) => isMinimalTheme(t.key)) },
+            { label: "Dark only", items: THEMES.filter((t) => !isMinimalTheme(t.key)) },
+          ].map((group) => (
+            <Box key={group.label} mb={2}>
+              <Text fontSize="9px" color="gray.500" fontFamily="mono" letterSpacing="0.14em" mb={1.5} px={1} pt={1} textTransform="uppercase">
+                {group.label}
+              </Text>
+              <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1.5}>
+                {group.items.map((t) => {
+                  const active = current === t.key;
+                  return (
+                    <Box
+                      key={t.key}
+                      as="button"
+                      type="button"
+                      title={t.desc}
+                      onClick={() => handlePick(t.key)}
+                      p={2}
+                      borderRadius="md"
+                      textAlign="left"
+                      cursor="pointer"
+                      bg={active ? "var(--surface-strong)" : "var(--surface)"}
+                      border="1px solid"
+                      borderColor={active ? "brand.400" : "var(--border)"}
+                      _hover={{ borderColor: "brand.500" }}
+                      transition="border-color 0.15s"
+                    >
+                      <HStack spacing={0} borderRadius="sm" overflow="hidden" mb={1.5} h="16px">
                         {t.swatch.map((c, i) => (
-                          <Box key={i} w="14px" h="14px" bg={c} />
+                          <Box key={i} flex={1} h="100%" bg={c} />
                         ))}
                       </HStack>
-                      <Box>
-                        <Text fontSize="xs" fontWeight="600" color="gray.100">
-                          {t.name}
-                        </Text>
-                        <Text fontSize="10px" color="gray.500" fontFamily="mono">
-                          {t.desc}
-                        </Text>
-                      </Box>
-                    </HStack>
-                    {active && (
-                      <Icon as={FaCheck as ElementType} boxSize={2.5} color="brand.400" />
-                    )}
-                  </HStack>
-                </MotionBox>
-              );
-            })}
-          </Stack>
+                      <HStack justify="space-between" spacing={1}>
+                        <Text fontSize="xs" fontWeight="600" isTruncated>{t.name}</Text>
+                        <HStack spacing={1} color={active ? "brand.400" : "gray.500"} flexShrink={0}>
+                          {t.fx.immersive && <Icon as={FaBolt as ElementType} boxSize={2.5} aria-label="immersive" />}
+                          {t.fx.ambient && <Icon as={FaMagic as ElementType} boxSize={2.5} aria-label="ambient visuals" />}
+                          {t.fx.sound && <Icon as={(muted ? FaVolumeMute : FaVolumeUp) as ElementType} boxSize={2.5} aria-label="sound" opacity={muted ? 0.5 : 1} />}
+                          {active && <Icon as={FaCheck as ElementType} boxSize={2.5} />}
+                        </HStack>
+                      </HStack>
+                    </Box>
+                  );
+                })}
+              </Box>
+            </Box>
+          ))}
         </PopoverBody>
       </PopoverContent>
     </Popover>

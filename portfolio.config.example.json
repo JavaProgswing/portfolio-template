@@ -1,0 +1,16 @@
+{
+  "_comment": "Copy to portfolio.config.json (gitignored). Machine-specific settings for the helper scripts; the site itself is configured in src/data/me.ts.",
+  "deploy": {
+    "sshAliases": ["myserver"],
+    "publicHost": "user@your-server.example.com",
+    "domain": "your-domain.example.com",
+    "htmlDir": "/var/www/your-domain.example.com/html",
+    "stageDir": "/tmp/portfolio-deploy",
+    "identityFile": "~/.ssh/id_ed25519",
+    "healthPath": "/api/portfolio/health"
+  },
+  "resume": {
+    "_comment": "Optional. Absolute path to the PDF that `npm run resume:sync` copies to public/resume.pdf. A current_resume.txt next to it can point at a different file in that folder.",
+    "source": ""
+  }
+}

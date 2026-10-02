@@ -182,6 +182,27 @@ DOMAIN=yourdomain.com SERVER=user@your-server ./scripts/deploy.sh
 
 Or `chmod +x scripts/deploy.sh` and export those vars to your shell rc.
 
+### Windows (PowerShell)
+
+Copy `portfolio.config.example.json` to `portfolio.config.json` and fill in the `deploy` block (SSH aliases to try first, public `user@host`, domain, nginx web root). Then:
+
+```powershell
+npm run setup:ssh    # once: creates/installs your SSH key on deploy.publicHost
+npm run deploy:ssh   # add -- -SkipFetch to skip the GitHub repo refresh
+```
+
+What it does:
+
+- tries each `deploy.sshAliases` entry (e.g. a LAN alias), then `deploy.publicHost`
+- refreshes repo data and probes live deployments
+- builds locally and uploads `dist/` to a temporary directory
+- syncs into `deploy.htmlDir`
+- checks `https://<domain><healthPath>` (or the home page when `healthPath` is empty)
+
+The first deploy may ask for `sudo` once to make the nginx web root writable by
+your SSH user. Static file updates do not require nginx to be reloaded, so later
+deploys run without `sudo`.
+
 ---
 
 ## 5. Verify

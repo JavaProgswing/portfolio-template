@@ -107,7 +107,7 @@ const AchievementToast = () => {
               border="1px solid"
               borderColor="brand.400"
               borderRadius="14px"
-              boxShadow="0 12px 40px rgba(99,102,241,0.35), 0 0 0 1px rgba(99,102,241,0.15)"
+              boxShadow="0 12px 40px rgba(var(--brand-rgb),0.35), 0 0 0 1px rgba(var(--brand-rgb),0.15)"
               overflow="hidden"
               position="relative"
             >
@@ -151,7 +151,7 @@ const AchievementToast = () => {
                   w="40px" h="40px" borderRadius="10px"
                   bgGradient="linear(135deg, brand.400, purple.500)"
                   display="flex" alignItems="center" justifyContent="center"
-                  boxShadow="0 4px 14px rgba(99,102,241,0.45)"
+                  boxShadow="0 4px 14px rgba(var(--brand-rgb),0.45)"
                 >
                   <Icon as={FaTrophy as ElementType} color="white" boxSize={4} />
                 </MotionBox>
@@ -191,9 +191,9 @@ const AchievementToast = () => {
                 <Icon
                   as={FaTimes as ElementType}
                   boxSize={2.5}
-                  color="gray.600"
+                  color="fg.subtle"
                   cursor="pointer"
-                  _hover={{ color: "gray.300" }}
+                  _hover={{ color: "fg.body" }}
                   onClick={(e) => { e.stopPropagation(); dismiss(); }}
                 />
               </HStack>

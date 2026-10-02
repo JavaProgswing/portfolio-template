@@ -41,7 +41,7 @@ const SECTIONS = [
     label: "Design",
     items: [
       "Inter (body) + JetBrains Mono (code/mono labels)",
-      "Zinc/Indigo default · 9 alt themes (Ros\u00e9 Pine, Gruvbox, Evergreen, Cyberpunk, Aurora, Amber CRT, Tokyo Night, Valorant, Pragmata)",
+      "Zinc/Indigo default · 7 alt themes (Ros\u00e9 Pine, Gruvbox, Evergreen, Cyberpunk, Aurora, Amber CRT, Tokyo Night)",
       "780px max content width — single-column document feel",
       "Dark-first · respects prefers-color-scheme",
     ],
@@ -114,7 +114,7 @@ const ColophonPage = ({ data }: Props) => {
         Colophon
       </Text>
       <Heading size="lg" mb={3}>How This Site Was Built</Heading>
-      <Text fontSize="md" color="gray.400" mb={10} maxW="600px" lineHeight="1.75">
+      <Text fontSize="md" color="fg.muted" mb={10} maxW="600px" lineHeight="1.75">
         A meta page about the meta page. Stack, decisions, and the hardware it all runs on.
       </Text>
 
@@ -127,7 +127,7 @@ const ColophonPage = ({ data }: Props) => {
           layerStyle="card"
           border="1px solid"
           borderColor="brand.500"
-          boxShadow="0 0 32px rgba(99,102,241,0.1)"
+          boxShadow="0 0 32px rgba(var(--brand-rgb),0.1)"
           position="relative"
           overflow="hidden"
           initial={{ opacity: 0, y: 16 }}
@@ -149,7 +149,7 @@ const ColophonPage = ({ data }: Props) => {
           </HStack>
 
           <Heading size="md" mb={2} lineHeight="1.3">{homelab.headline}</Heading>
-          <Text fontSize="sm" color="gray.400" lineHeight="1.7" mb={5} maxW="560px">
+          <Text fontSize="sm" color="fg.muted" lineHeight="1.7" mb={5} maxW="560px">
             {homelab.intro}
           </Text>
 
@@ -164,7 +164,7 @@ const ColophonPage = ({ data }: Props) => {
                 >
                   {s.label}
                 </Text>
-                <Text fontSize="13px" color="gray.300" lineHeight="1.6">
+                <Text fontSize="13px" color="fg.body" lineHeight="1.6">
                   {s.value}
                 </Text>
               </HStack>
@@ -183,7 +183,7 @@ const ColophonPage = ({ data }: Props) => {
               </HStack>
               <Stack spacing={2}>
                 {homelab.notes.map((n, i) => (
-                  <Text key={i} fontSize="13px" color="gray.400" lineHeight="1.65"
+                  <Text key={i} fontSize="13px" color="fg.muted" lineHeight="1.65"
                     pl={4} borderLeft="1px solid" borderColor="rgba(251,146,60,0.3)">
                     {n}
                   </Text>
@@ -207,7 +207,7 @@ const ColophonPage = ({ data }: Props) => {
             </Text>
             <Stack spacing={2}>
               {section.items.map((item, j) => (
-                <Text key={j} fontSize="sm" color="gray.300" lineHeight="1.7" pl={4}
+                <Text key={j} fontSize="sm" color="fg.body" lineHeight="1.7" pl={4}
                   borderLeft="1px solid" borderColor="rgba(255,255,255,0.08)">
                   {item}
                 </Text>

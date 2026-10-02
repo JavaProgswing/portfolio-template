@@ -103,7 +103,7 @@ const PlayPage = () => {
         </Text>
       </HStack>
       <Heading size="lg" mb={3}>Take a break</Heading>
-      <Text fontSize="md" color="gray.400" mb={10} maxW="540px" lineHeight="1.75">
+      <Text fontSize="md" color="fg.muted" mb={10} maxW="540px" lineHeight="1.75">
         Pick one. Keyboard or touch — both work. High scores save locally.
       </Text>
 
@@ -124,7 +124,7 @@ const PlayPage = () => {
             sx={{ transition: "border-color 0.2s, box-shadow 0.2s" }}
             _hover={{
               borderColor: "brand.500",
-              boxShadow: "0 0 24px rgba(99,102,241,0.12)",
+              boxShadow: "0 0 24px rgba(var(--brand-rgb),0.12)",
             }}
           >
             <HStack justify="space-between" mb={2}>
@@ -136,7 +136,7 @@ const PlayPage = () => {
               </Text>
             </HStack>
             <Heading size="md" mb={2}>{g.label}</Heading>
-            <Text fontSize="sm" color="gray.400" lineHeight="1.6" mb={4}>
+            <Text fontSize="sm" color="fg.muted" lineHeight="1.6" mb={4}>
               {g.blurb}
             </Text>
             <HStack
@@ -217,7 +217,7 @@ const SuggestionForm = () => {
         letterSpacing="0.14em" mb={3} textTransform="uppercase">
         Got Feedback?
       </Text>
-      <Text fontSize="sm" color="gray.400" mb={4} maxW="500px" lineHeight="1.7">
+      <Text fontSize="sm" color="fg.muted" mb={4} maxW="500px" lineHeight="1.7">
         Spotted a bug, want a feature, or have a thought about the site? Suggestions are
         moderated before anything ships.
       </Text>
@@ -242,7 +242,7 @@ const SuggestionForm = () => {
             isDisabled={submitting}
           />
           <HStack justify="space-between">
-            <Text fontSize="11px" color="gray.600" fontFamily="mono">
+            <Text fontSize="11px" color="fg.subtle" fontFamily="mono">
               {message.length}/500
             </Text>
             <Button

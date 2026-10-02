@@ -24,7 +24,6 @@ import {
   FaLinkedin,
   FaQuestion,
   FaTerminal,
-  FaBook,
   FaCalendarDay,
   FaInfoCircle,
   FaPenNib,
@@ -275,6 +274,9 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
     ];
 
     const pages: Command[] = [
+      { id: "page-blog",       group: "Pages", icon: FaPenNib as ElementType,      label: "Blog · all posts",            hint: "/blog",      action: () => goTo("/blog") },
+      { id: "page-lab",        group: "Pages", icon: FaTerminal as ElementType,    label: "Lab · deployed projects desktop", hint: "/lab",   action: () => goTo("/lab") },
+      { id: "page-certs",      group: "Pages", icon: FaFilePdf as ElementType,     label: "Certificates · hackathons & courses", hint: "/certificates", action: () => goTo("/certificates") },
       { id: "page-now",       group: "Pages", icon: FaCalendarDay as ElementType, label: "Now · what I'm doing",         hint: "/now",       action: () => goTo("/now") },
       { id: "page-colophon",  group: "Pages", icon: FaInfoCircle as ElementType,  label: "Colophon · how this site was built", hint: "/colophon", action: () => goTo("/colophon") },
       { id: "page-console",   group: "Pages", icon: FaTerminal as ElementType,    label: "Console · interactive terminal", hint: "/console",  action: () => goTo("/console") },
@@ -462,7 +464,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
                   <Text
                     px={4} pt={1.5} pb={1}
                     fontSize="9px"
-                    color="gray.600"
+                    color="fg.subtle"
                     fontFamily="mono"
                     letterSpacing="0.14em"
                     textTransform="uppercase"
@@ -481,7 +483,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
                         w="full"
                         px={4} py={1.5}
                         spacing={2.5}
-                        bg={isSelected ? "rgba(99,102,241,0.12)" : "transparent"}
+                        bg={isSelected ? "rgba(var(--brand-rgb),0.12)" : "transparent"}
                         borderLeft="2px solid"
                         borderColor={isSelected ? "brand.400" : "transparent"}
                         textAlign="left"

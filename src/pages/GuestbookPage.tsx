@@ -38,11 +38,7 @@ const formatDate = (iso: string) => {
   }
 };
 
-interface Props {
-  planning?: string[];
-}
-
-const GuestbookPage = ({ planning = [] }: Props) => {
+const GuestbookPage = () => {
   const [entries, setEntries] = useState<GuestEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -115,42 +111,9 @@ const GuestbookPage = ({ planning = [] }: Props) => {
         Guestbook
       </Text>
       <Heading size="lg" mb={3}>Sign the Wall</Heading>
-      <Text fontSize="md" color="gray.400" mb={10} maxW="600px" lineHeight="1.75">
+      <Text fontSize="md" color="fg.muted" mb={10} maxW="600px" lineHeight="1.75">
         Leave a note. Be kind. Messages are public and stored on my server.
       </Text>
-
-      {/* Planning - what's next */}
-      {planning.length > 0 && (
-        <Box
-          mb={10} p={5}
-          borderRadius="12px"
-          layerStyle="card"
-          border="1px solid"
-          borderColor="rgba(99,102,241,0.25)"
-          bg="rgba(99,102,241,0.04)"
-        >
-          <Text fontSize="10px" fontFamily="mono" color="brand.400"
-            letterSpacing="0.16em" mb={3} textTransform="uppercase">
-            ⌥ planning next
-          </Text>
-          <Stack spacing={2}>
-            {planning.map((p, i) => (
-              <HStack key={i} align="flex-start" spacing={3}>
-                <Box
-                  w="5px" h="5px"
-                  bg="brand.400"
-                  borderRadius="full"
-                  mt={2}
-                  flexShrink={0}
-                />
-                <Text fontSize="sm" color="gray.300" lineHeight="1.65">
-                  {p}
-                </Text>
-              </HStack>
-            ))}
-          </Stack>
-        </Box>
-      )}
 
       {/* Form */}
       <Box
@@ -179,7 +142,7 @@ const GuestbookPage = ({ planning = [] }: Props) => {
             isDisabled={submitting || available === false}
           />
           <HStack justify="space-between">
-            <Text fontSize="11px" color="gray.600" fontFamily="mono">
+            <Text fontSize="11px" color="fg.subtle" fontFamily="mono">
               {message.length}/500
             </Text>
             <Button
@@ -220,14 +183,14 @@ const GuestbookPage = ({ planning = [] }: Props) => {
               transition={{ duration: 0.3, delay: i * 0.04 }}
             >
               <HStack justify="space-between" mb={1.5}>
-                <Text fontSize="sm" fontWeight="600" color="gray.100">
+                <Text fontSize="sm" fontWeight="600" color="fg.strong">
                   {entry.name}
                 </Text>
-                <Text fontSize="10px" color="gray.600" fontFamily="mono">
+                <Text fontSize="10px" color="fg.subtle" fontFamily="mono">
                   {formatDate(entry.created_at)}
                 </Text>
               </HStack>
-              <Text fontSize="sm" color="gray.300" whiteSpace="pre-wrap" lineHeight="1.65">
+              <Text fontSize="sm" color="fg.body" whiteSpace="pre-wrap" lineHeight="1.65">
                 {entry.message}
               </Text>
             </MotionBox>

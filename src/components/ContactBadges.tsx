@@ -197,7 +197,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
             <Box mb={3}>
               <Text
                 fontSize="9px"
-                color="gray.600"
+                color="fg.subtle"
                 fontFamily="mono"
                 letterSpacing="0.14em"
                 mb={1}
@@ -218,7 +218,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
           <Box mb={4}>
             <Text
               fontSize="9px"
-              color="gray.600"
+              color="fg.subtle"
               fontFamily="mono"
               letterSpacing="0.14em"
               mb={2}
@@ -436,7 +436,7 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
                 {data.artist}
               </Text>
               {data.context && (
-                <Text fontSize="10px" color="gray.600" fontFamily="mono" mt={1.5} noOfLines={1}>
+                <Text fontSize="10px" color="fg.subtle" fontFamily="mono" mt={1.5} noOfLines={1}>
                   from {data.context.type}:{" "}
                   {data.context.url ? (
                     <Link
@@ -448,10 +448,10 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
                       {data.context.name}
                     </Link>
                   ) : (
-                    <Text as="span" color="gray.400">{data.context.name}</Text>
+                    <Text as="span" color="fg.muted">{data.context.name}</Text>
                   )}
                   {data.context.owner && data.context.type === "playlist" && (
-                    <Text as="span" color="gray.700"> · by {data.context.owner}</Text>
+                    <Text as="span" color="fg.faint"> · by {data.context.owner}</Text>
                   )}
                 </Text>
               )}
@@ -475,7 +475,7 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
                   href={contact.link}
                   isExternal
                   fontSize="10px"
-                  color="gray.400"
+                  color="fg.muted"
                   display="inline-flex"
                   alignItems="center"
                   gap={1}

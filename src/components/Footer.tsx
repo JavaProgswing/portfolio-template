@@ -91,7 +91,7 @@ const Footer = ({ name }: Props) => {
                 borderRadius="4px"
                 bg={kbdBg}
                 fontSize="10px"
-                color="gray.400"
+                color="fg.muted"
                 fontWeight="600"
               >
                 ⌘K

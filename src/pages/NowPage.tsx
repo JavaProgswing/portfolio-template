@@ -24,7 +24,7 @@ const NowPage = ({ data }: { data: { now?: NowData; name: string } }) => {
         Now
       </Text>
       <Heading size="lg" mb={3}>What I'm Doing Now</Heading>
-      <Text fontSize="md" color="gray.400" mb={3} maxW="600px" lineHeight="1.75">
+      <Text fontSize="md" color="fg.muted" mb={3} maxW="600px" lineHeight="1.75">
         Longer-form version of the "NOW" widget on the homepage.
         Inspired by{" "}
         <Text as="a" href="https://nownownow.com/about" target="_blank" rel="noopener"
@@ -34,7 +34,7 @@ const NowPage = ({ data }: { data: { now?: NowData; name: string } }) => {
       </Text>
 
       {now && (
-        <Text fontSize="11px" color="gray.600" fontFamily="mono" mb={10}>
+        <Text fontSize="11px" color="fg.subtle" fontFamily="mono" mb={10}>
           last updated: {now.updatedAt}
         </Text>
       )}
@@ -58,7 +58,7 @@ const NowPage = ({ data }: { data: { now?: NowData; name: string } }) => {
               letterSpacing="0.16em" mb={2} textTransform="uppercase">
               {section.label}
             </Text>
-            <Text fontSize="md" color="gray.300" lineHeight="1.8" maxW="640px"
+            <Text fontSize="md" color="fg.body" lineHeight="1.8" maxW="640px"
               whiteSpace="pre-wrap">
               {section.content}
             </Text>

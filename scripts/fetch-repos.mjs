@@ -18,6 +18,9 @@ import { dirname, join } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = join(__dirname, "../src/data/repos.json");
+const CURATION = JSON.parse(readFileSync(join(__dirname, "../src/data/repo-curation.json"), "utf8"));
+const PRIMARY = CURATION.primaryRepos.map((name) => name.toLowerCase());
+const useAI = !process.argv.includes("--no-ai");
 
 // Read me.ts once — used for username + filter config.
 let ME_SRC = "";
@@ -49,6 +52,15 @@ const LANG_SCORE = {
 
 // Names that signal tutorials/practice/throwaway projects
 const GENERIC_NAME = /^(test[-_]?|hello[-_]?world|practice|playground|exercise|first[-_]?|demo[-_]?|example[-_]?|sample[-_]?|tutorial|learn[-_]|my[-_]first|untitled|new[-_]?repo|repo[-_]?\d|temp[-_]?|tmp[-_]?|wip[-_]?|sandbox|scratch)/i;
+const THIN_WRAPPER_NAME = /(^site[-_])|(-vercel$)|(^vercel[-_])|(^github[-_]?io$)/i;
+
+function normalizeUrl(url) {
+  try {
+    return new URL(url).toString().replace(/\/$/, "");
+  } catch {
+    return "";
+  }
+}
 
 function scoreRepo(repo) {
   const nameLC = repo.name.toLowerCase();
@@ -62,9 +74,12 @@ function scoreRepo(repo) {
   if ((repo.fork || repo.archived || repo.private) && !forced) return -1;
 
   let s = 0;
+  const repoUrl = normalizeUrl(repo.html_url || "");
+  const homepageUrl = normalizeUrl(repo.homepage || "");
+  const hasRealHomepage = !!homepageUrl && homepageUrl !== repoUrl;
 
   // Forced repos get a big boost so they surface near the top
-  if (forced) s += 18;
+  if (forced) s += 10;
 
   // ── Validation (peer interest is the strongest signal) ──────────────────────
   s += repo.stargazers_count * 8;
@@ -72,7 +87,7 @@ function scoreRepo(repo) {
   s += Math.min(repo.forks_count, repo.stargazers_count + 2) * 4;
 
   // ── Polish (deployed = the user actually shipped it) ────────────────────────
-  if (repo.homepage) s += 10;
+  if (hasRealHomepage) s += 10;
   // has_pages only counts when the repo has substance — prevents empty GH Pages stubs from inflating
   if (repo.has_pages && (repo.size || 0) > 100) s += 5;
 
@@ -91,21 +106,23 @@ function scoreRepo(repo) {
   else if (sizeKB < 10)    s -= 8;     // PENALTY: empty/scaffold
   else if (sizeKB < 50)    s -= 5;     // PENALTY: tiny
 
-  // ── Recency — favor newer projects, decay over 1 year ──────────────────────
-  // Substantial older projects (stars >= 2) still rank high via star bonus,
-  // but fresh ones get a real boost. Small + old = dropped.
+  // ── Recency — active, substantial work should rise quickly ─────────────────
+  // Activity decays over 18 months, while quality gates keep empty new repos
+  // from outranking projects that are actually useful or shipped.
   const ageDays = (Date.now() - new Date(repo.pushed_at).getTime()) / 86_400_000;
-  const recency = Math.max(0, 1 - ageDays / 365);
-  s += recency * 6;
+  const recency = Math.max(0, 1 - ageDays / 540);
+  s += recency * 14;
 
-  // Fresh + substantial bonus: pushed in last 30 days AND has description AND size
-  if (ageDays < 30 && desc.length >= 30 && (repo.size || 0) >= 200) {
-    s += 5;
+  // Fresh + substantial bonus: recent work with enough code and context.
+  if (ageDays < 45 && desc.length >= 30 && sizeKB >= 200) {
+    s += 9;
+  } else if (ageDays < 120 && desc.length >= 30 && sizeKB >= 200) {
+    s += 4;
   }
 
-  // Forgotten penalty: not touched 2+ years AND fewer than 2 stars
-  if (ageDays > 730 && repo.stargazers_count < 2) {
-    s -= 6;
+  // Stale, unvalidated projects should make room for current work.
+  if (ageDays > 540 && repo.stargazers_count < 2) {
+    s -= 8;
   }
 
   // ── Language complexity ────────────────────────────────────────────────────
@@ -119,15 +136,20 @@ function scoreRepo(repo) {
   if (repo.open_issues_count > 0 && repo.stargazers_count > 0) s += 2;
 
   // ── Combo: starred AND deployed = complete polished project ────────────────
-  if (repo.stargazers_count > 0 && repo.homepage) s += 5;
+  if (repo.stargazers_count > 0 && hasRealHomepage) s += 5;
 
   // ── Penalties ───────────────────────────────────────────────────────────────
   if (GENERIC_NAME.test(repo.name)) s -= 8;
+  if (THIN_WRAPPER_NAME.test(repo.name)) s -= 8;
+
+  // Force-included forks should stay visible, but they should not dominate the grid
+  // over original work when they have no stars/forks on the fork itself.
+  if (forced && repo.fork && repo.stargazers_count === 0 && repo.forks_count === 0) s -= 10;
 
   // Triple-weak penalty: weak description + no real deploy + tiny size = low effort
   // (has_pages without size doesn't count as "deployed" here)
   const weakDesc = desc.length < 40;
-  const noRealDeploy = !repo.homepage;
+  const noRealDeploy = !hasRealHomepage;
   const small = sizeKB < 500;
   if (weakDesc && noRealDeploy && small) s -= 5;
 
@@ -135,7 +157,7 @@ function scoreRepo(repo) {
 }
 
 // ── Resolve username ──────────────────────────────────────────────────────────
-let username = process.argv[2];
+let username = process.argv.slice(2).find((arg) => !arg.startsWith("--"));
 
 if (!username && ME_SRC) {
   // Find ALL github.com/<username> matches and pick the most frequent one.
@@ -207,14 +229,60 @@ while (true) {
 
 console.log(`Found ${allRepos.length} public repos. Scoring…`);
 
-const scored = allRepos
-  .map((r) => ({ repo: r, score: scoreRepo(r) }))
-  .filter(({ score }) => score >= 0)
-  .sort((a, b) => b.score - a.score)
-  .slice(0, 12)
-  .map(({ repo: r, score }) => ({
+const candidates = allRepos
+  .map((repo) => ({ repo, score: scoreRepo(repo) }))
+  .filter(({ repo, score }) => score >= 0 || PRIMARY.includes(repo.name.toLowerCase()))
+  .filter(({ repo }) => repo.html_url === `https://github.com/${username}/${repo.name}`)
+  .sort((a, b) => b.score - a.score);
+
+// AI supplies a bounded editorial signal. GitHub metadata and pinned primary
+// projects remain authoritative; malformed model output cannot change files.
+let aiScores = new Map();
+if (useAI && candidates.length) {
+  const shortlist = candidates.slice(0, 35).map(({ repo, score }) => ({
+    name: repo.name,
+    description: (repo.description || "").slice(0, 300),
+    language: repo.language,
+    topics: repo.topics,
+    stars: repo.stargazers_count,
+    sizeKB: repo.size,
+    baseScore: Math.round(score),
+  }));
+  const prompt = `Rank these public software repositories for a student ML/software-engineering portfolio. Award an integer editorial score from -15 to 15 for original engineering, demonstrable functionality, evaluation, and useful documentation. Penalize thin wrappers, tutorials, vague claims, and duplicates. Do not invent evidence. Return only JSON: {"scores":[{"name":"exact repo name","score":integer}]} with one entry per input.\n${JSON.stringify(shortlist)}`;
+  try {
+    const response = await fetch("http://127.0.0.1:11434/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: CURATION.model, prompt, stream: false, format: "json", options: { temperature: 0, num_ctx: 8192 } }),
+      signal: AbortSignal.timeout(180_000),
+    });
+    if (!response.ok) throw new Error(`Ollama HTTP ${response.status}`);
+    const payload = await response.json();
+    const parsed = JSON.parse(payload.response);
+    if (!Array.isArray(parsed.scores)) throw new Error("missing scores array");
+    const allowed = new Set(shortlist.map((repo) => repo.name.toLowerCase()));
+    for (const item of parsed.scores) {
+      if (typeof item.name !== "string" || !allowed.has(item.name.toLowerCase()) ||
+          !Number.isInteger(item.score) || item.score < -15 || item.score > 15) {
+        throw new Error("invalid model score");
+      }
+      aiScores.set(item.name.toLowerCase(), item.score);
+    }
+    if (aiScores.size !== shortlist.length) throw new Error("incomplete model scores");
+    console.log(`Ollama ${CURATION.model} evaluated ${aiScores.size} repos.`);
+  } catch (error) {
+    aiScores = new Map();
+    console.warn(`Ollama ranking unavailable (${error.message}); using verified GitHub scoring.`);
+  }
+}
+
+const scored = candidates
+  .map(({ repo, score }) => ({ repo, score: score + (aiScores.get(repo.name.toLowerCase()) || 0), primary: PRIMARY.includes(repo.name.toLowerCase()) }))
+  .sort((a, b) => Number(b.primary) - Number(a.primary) || b.score - a.score || a.repo.name.localeCompare(b.repo.name))
+  .slice(0, CURATION.maxRepos)
+  .map(({ repo: r, score, primary }) => ({
     name: r.name,
-    description: r.description || "",
+    description: r.description || CURATION.descriptions[r.name] || "",
     url: r.html_url,
     homepage: r.homepage || "",
     language: r.language || "",
@@ -223,11 +291,15 @@ const scored = allRepos
     topics: r.topics || [],
     pushedAt: r.pushed_at,
     score: Math.round(score * 10) / 10,
+    primary,
   }));
+
+const missingPrimary = CURATION.primaryRepos.filter((name) => !scored.some((repo) => repo.name.toLowerCase() === name.toLowerCase()));
+if (missingPrimary.length) console.warn(`Primary repos not public/available: ${missingPrimary.join(", ")}`);
 
 writeFileSync(
   OUT,
-  JSON.stringify({ repos: scored, fetchedAt: new Date().toISOString(), username }, null, 2)
+  JSON.stringify({ repos: scored, fetchedAt: new Date().toISOString(), username, rankingModel: aiScores.size ? CURATION.model : "github-fallback" }, null, 2)
 );
 
 console.log(`\n✓ Wrote ${scored.length} repos to src/data/repos.json\n`);

@@ -17,6 +17,26 @@ const STRIP_PREFIX =
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      // Chakra and framer-motion ship "use client" directives (for React Server
+      // Components). They're meaningless in a Vite SPA, so don't print hundreds
+      // of warnings about them.
+      onwarn(warning, warn) {
+        if (warning.code === "MODULE_LEVEL_DIRECTIVE") return;
+        warn(warning);
+      },
+      // Long-lived vendor chunks: they change far less often than app code,
+      // so browsers keep them cached across deploys.
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          chakra: ["@chakra-ui/react", "@emotion/react", "@emotion/styled"],
+          motion: ["framer-motion"],
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       "/api/portfolio": {

@@ -102,14 +102,14 @@ const Experience = ({ experience }: { experience?: ExperienceItem[] }) => {
                   {item.date}
                 </Text>
                 {item.location && (
-                  <Text fontSize="11px" color="gray.600" fontFamily="mono">
+                  <Text fontSize="11px" color="fg.subtle" fontFamily="mono">
                     {item.location}
                   </Text>
                 )}
               </Stack>
             </HStack>
 
-            <Text fontSize="sm" color="gray.400" lineHeight="1.75" mt={3} maxW="640px">
+            <Text fontSize="sm" color="fg.muted" lineHeight="1.75" mt={3} maxW="640px">
               {item.description}
             </Text>
 

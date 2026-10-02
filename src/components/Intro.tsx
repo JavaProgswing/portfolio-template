@@ -163,7 +163,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
             ))}
           </HStack>
 
-          <Text fontSize="sm" color="gray.400" lineHeight="1.8" whiteSpace="pre-wrap" maxW="480px">
+          <Text fontSize="sm" color="fg.muted" lineHeight="1.8" whiteSpace="pre-wrap" maxW="480px">
             {displayedText}
             <Text as="span" ml="1px" color={cursorColor}
               fontWeight="bold" animation="blink 1s steps(2, start) infinite">|</Text>
@@ -211,7 +211,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
               bg="var(--surface)"
               border="1px solid" borderColor="var(--border)"
               maxW="fit-content"
-              _hover={{ borderColor: "rgba(99,102,241,0.3)" }}
+              _hover={{ borderColor: "rgba(var(--brand-rgb),0.3)" }}
               sx={{ transition: "border-color 0.2s" }}
             >
               <Box
@@ -248,7 +248,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
         transition={{ duration: 0.45, delay: 0.3 }}
       >
         {/* Languages - pill chips, primary highlighted */}
-        <Text fontSize="10px" fontFamily="mono" color="gray.600"
+        <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
           letterSpacing="0.16em" mb={4} textTransform="uppercase">
           Languages
         </Text>
@@ -265,9 +265,9 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
                   <MotionBox
                     display="flex" alignItems="center" gap={2}
                     px={3.5} py={1.5}
-                    bg={primary ? "rgba(99,102,241,0.08)" : skillCardBg}
+                    bg={primary ? "rgba(var(--brand-rgb),0.08)" : skillCardBg}
                     border="1px solid"
-                    borderColor={primary ? "rgba(99,102,241,0.4)" : skillCardBorder}
+                    borderColor={primary ? "rgba(var(--brand-rgb),0.4)" : skillCardBorder}
                     borderRadius="full" cursor="default"
                     whileHover={{ y: -2 }}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -292,7 +292,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
         </Wrap>
 
         {/* Frameworks - grouped by category */}
-        <Text fontSize="10px" fontFamily="mono" color="gray.600"
+        <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
           letterSpacing="0.16em" mb={5} textTransform="uppercase">
           Frameworks & Tools
         </Text>
@@ -323,7 +323,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
                             px={2.5} py={1.5}
                             bg={skillCardBg} border="1px solid" borderColor={skillCardBorder}
                             borderRadius="md" cursor="default"
-                            whileHover={{ y: -1, borderColor: "rgba(99,102,241,0.35)" }}
+                            whileHover={{ y: -1, borderColor: "rgba(var(--brand-rgb),0.35)" }}
                             initial={{ opacity: 0, x: -8 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.03 * i + gi * 0.05 + 0.15 }}
@@ -347,7 +347,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
           <Box as="button" onClick={onScrollDown}
             display="inline-flex" flexDirection="column" alignItems="center" gap={1}
-            color="gray.600" _hover={{ color: "brand.400" }} transition="color 0.2s">
+            color="fg.subtle" _hover={{ color: "brand.400" }} transition="color 0.2s">
             <Text fontSize="10px" fontFamily="mono" letterSpacing="0.1em">scroll</Text>
             <MotionBox animate={{ y: [0, 4, 0] }}
               transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}>

@@ -9,7 +9,16 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "fetch-repos": "node scripts/fetch-repos.mjs"
+    "fetch-repos": "node scripts/fetch-repos.mjs",
+    "probe-deploys": "node scripts/probe-deploys.mjs",
+    "resume:check": "node scripts/sync-resume.mjs --check",
+    "resume:sync": "node scripts/sync-resume.mjs",
+    "predeploy:prod": "npm run resume:sync && npm run probe-deploys && npm run build",
+    "deploy:prod": "vercel --prod",
+    "predev": "node scripts/init-data.mjs",
+    "prebuild": "node scripts/init-data.mjs",
+    "setup:ssh": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/setup-ssh-key.ps1",
+    "deploy:ssh": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/deploy-ssh.ps1"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.9",

@@ -1,0 +1,11 @@
+{
+  "_comment": "Copy to repo-curation.json. Used by `npm run fetch-repos` to rank your GitHub repos. primaryRepos are always shown; descriptions override empty GitHub descriptions; model is an optional local Ollama model for AI ranking (pass --no-ai to skip).",
+  "primaryRepos": [
+    "my-best-project"
+  ],
+  "descriptions": {
+    "my-best-project": "One-line description if the GitHub repo has none."
+  },
+  "model": "llama3.1",
+  "maxRepos": 12
+}

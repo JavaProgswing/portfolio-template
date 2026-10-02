@@ -201,7 +201,7 @@ const StatCard = ({
       <Text fontSize="2xl" fontWeight="700" color={color} lineHeight="1">
         {displayValue}
       </Text>
-      <Text fontSize="10px" color="gray.600" fontFamily="mono" mt={1.5}>
+      <Text fontSize="10px" color="fg.subtle" fontFamily="mono" mt={1.5}>
         {sub}
       </Text>
     </Box>
@@ -747,7 +747,7 @@ const OSSPanel = ({ handle }: { handle: string }) => {
 
       {/* Empty state for PRs only - if everything else worked */}
       {data.externalPRs.length === 0 && data.topRepos.length > 0 && (
-        <Text fontSize="xs" color="gray.600" fontFamily="mono" textAlign="center" pt={2}>
+        <Text fontSize="xs" color="fg.subtle" fontFamily="mono" textAlign="center" pt={2}>
           no external PRs in last 90 days · <Link href={`https://github.com/${data.handle}`}
           isExternal color="brand.400">view on github ↗</Link>
         </Text>

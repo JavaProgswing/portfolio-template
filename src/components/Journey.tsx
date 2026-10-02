@@ -95,7 +95,7 @@ const Journey = ({ data }: Props) => {
 
                 <Text
                   fontSize="sm"
-                  color="gray.400"
+                  color="fg.muted"
                   lineHeight="1.75"
                   maxW="580px"
                 >
@@ -116,7 +116,7 @@ const Journey = ({ data }: Props) => {
                           variant="subtle"
                           colorScheme="gray"
                           cursor="pointer"
-                          _hover={{ colorScheme: "blue", bg: "rgba(99,102,241,0.12)", color: "brand.400" }}
+                          _hover={{ colorScheme: "blue", bg: "rgba(var(--brand-rgb),0.12)", color: "brand.400" }}
                           transition="all 0.15s"
                         >
                           <Icon as={FaExternalLinkAlt as ElementType} mr={1} boxSize={2.5} />

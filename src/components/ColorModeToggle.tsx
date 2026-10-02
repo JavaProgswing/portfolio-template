@@ -9,7 +9,7 @@ const ColorModeToggle = () => {
       size="xs"
       variant="outline"
       borderColor="rgba(255,255,255,0.14)"
-      color="gray.400"
+      color="fg.muted"
       borderRadius="md"
       fontFamily="mono"
       fontSize="11px"
@@ -17,7 +17,7 @@ const ColorModeToggle = () => {
       px={2.5}
       h="22px"
       _hover={{
-        color: "gray.100",
+        color: "fg.strong",
         borderColor: "rgba(255,255,255,0.3)",
         bg: "rgba(255,255,255,0.05)",
       }}

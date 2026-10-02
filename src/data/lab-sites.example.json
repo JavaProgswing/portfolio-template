@@ -1,0 +1,10 @@
+{
+  "_comment": "Copy to lab-sites.json. Live sites with no GitHub repo homepage (CLI deploys, private repos, other orgs). Shown in /lab and counted as live sites. `repo` (optional) attaches the URL to one of your GitHub repos instead of adding a new entry.",
+  "sites": [
+    {
+      "name": "My CLI-deployed app",
+      "url": "https://my-app.vercel.app",
+      "description": "One line about it."
+    }
+  ]
+}

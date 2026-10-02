@@ -17,6 +17,7 @@ import {
   FaExpand,
   FaCompress,
 } from "react-icons/fa";
+import Certificates from "../components/Certificates";
 
 interface Props {
   data: { resumeUrl?: string; name: string };
@@ -56,8 +57,8 @@ const ResumePage = ({ data }: Props) => {
         </RouterLink>
         <Box p={8} borderRadius="12px" layerStyle="card"
           border="1px solid" borderColor={border} textAlign="center">
-          <Icon as={FaFilePdf as ElementType} boxSize={10} color="gray.600" mb={3} />
-          <Heading size="md" color="gray.300" mb={2}>No resume configured</Heading>
+          <Icon as={FaFilePdf as ElementType} boxSize={10} color="fg.subtle" mb={3} />
+          <Heading size="md" color="fg.body" mb={2}>No resume configured</Heading>
           <Text fontSize="sm" color="gray.500" fontFamily="mono">
             set <Text as="code" color="brand.400">resumeUrl</Text> in <Text as="code" color="brand.400">me.ts</Text>
           </Text>
@@ -91,8 +92,8 @@ const ResumePage = ({ data }: Props) => {
               </Button>
               <Button as="a" href={url} download
                 size="sm" variant="outline"
-                borderColor="rgba(255,255,255,0.14)" color="gray.400"
-                _hover={{ color: "gray.100", borderColor: "rgba(255,255,255,0.3)", bg: "rgba(255,255,255,0.05)" }}
+                borderColor="rgba(255,255,255,0.14)" color="fg.muted"
+                _hover={{ color: "fg.strong", borderColor: "rgba(255,255,255,0.3)", bg: "rgba(255,255,255,0.05)" }}
                 leftIcon={<Icon as={FaDownload as ElementType} boxSize={3} />}>
                 download
               </Button>
@@ -165,12 +166,12 @@ const ResumePage = ({ data }: Props) => {
           download
           size="xs"
           variant="ghost"
-          color="gray.400"
+          color="fg.muted"
           fontFamily="mono"
           fontSize="11px"
           h="28px"
           leftIcon={<Icon as={FaDownload as ElementType} boxSize={3} />}
-          _hover={{ color: "brand.400", bg: "rgba(99,102,241,0.08)" }}
+          _hover={{ color: "brand.400", bg: "rgba(var(--brand-rgb),0.08)" }}
         >
           download
         </Button>
@@ -181,12 +182,12 @@ const ResumePage = ({ data }: Props) => {
           rel="noopener noreferrer"
           size="xs"
           variant="ghost"
-          color="gray.400"
+          color="fg.muted"
           fontFamily="mono"
           fontSize="11px"
           h="28px"
           leftIcon={<Icon as={FaExternalLinkAlt as ElementType} boxSize={2.5} />}
-          _hover={{ color: "brand.400", bg: "rgba(99,102,241,0.08)" }}
+          _hover={{ color: "brand.400", bg: "rgba(var(--brand-rgb),0.08)" }}
         >
           new tab
         </Button>
@@ -194,12 +195,12 @@ const ResumePage = ({ data }: Props) => {
           onClick={() => setFullscreen((v) => !v)}
           size="xs"
           variant="ghost"
-          color="gray.400"
+          color="fg.muted"
           fontFamily="mono"
           fontSize="11px"
           h="28px"
           leftIcon={<Icon as={(fullscreen ? FaCompress : FaExpand) as ElementType} boxSize={2.5} />}
-          _hover={{ color: "brand.400", bg: "rgba(99,102,241,0.08)" }}
+          _hover={{ color: "brand.400", bg: "rgba(var(--brand-rgb),0.08)" }}
           title="fullscreen (esc to exit)"
         >
           {fullscreen ? "exit" : "fullscreen"}
@@ -228,10 +229,15 @@ const ResumePage = ({ data }: Props) => {
       </Box>
 
       {!fullscreen && (
-        <Text fontSize="10px" color="gray.600" fontFamily="mono"
-          textAlign="center" mt={3}>
-          scroll within frame · zoom with browser controls · fullscreen for distraction-free
-        </Text>
+        <>
+          <Text fontSize="10px" color="fg.subtle" fontFamily="mono"
+            textAlign="center" mt={3}>
+            scroll within frame · zoom with browser controls · fullscreen for distraction-free
+          </Text>
+          <Box mt={10}>
+            <Certificates limit={6} />
+          </Box>
+        </>
       )}
     </Box>
   );

@@ -7,6 +7,17 @@ const config: ThemeConfig = {
 
 const theme = extendTheme({
   config,
+  // Text colours that flip with colour mode. Use these instead of raw grays so
+  // copy stays readable on light themes (raw gray.300 vanishes on white).
+  semanticTokens: {
+    colors: {
+      "fg.strong": { default: "gray.900", _dark: "gray.100" },
+      "fg.body": { default: "gray.700", _dark: "gray.300" },
+      "fg.muted": { default: "gray.600", _dark: "gray.400" },
+      "fg.subtle": { default: "gray.500", _dark: "gray.600" },
+      "fg.faint": { default: "gray.400", _dark: "gray.700" },
+    },
+  },
   fonts: {
     heading: "'Inter', system-ui, sans-serif",
     body: "'Inter', system-ui, sans-serif",
@@ -120,8 +131,8 @@ const theme = extendTheme({
           borderColor: "brand.400",
           color: "brand.400",
           _hover: {
-            boxShadow: "0 0 12px rgba(99,102,241,0.4)",
-            bg: "rgba(99,102,241,0.08)",
+            boxShadow: "0 0 12px rgba(var(--brand-rgb),0.4)",
+            bg: "rgba(var(--brand-rgb),0.08)",
           },
         },
       },

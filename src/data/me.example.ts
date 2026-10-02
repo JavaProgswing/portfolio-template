@@ -14,26 +14,11 @@ export default {
   //  Leave "" to hide the /resume page.
   resumeUrl: "/resume.pdf",
 
-  // Pinned projects - shown FIRST in "What I've Built" before auto-ranked repos.
-  // Great for active PRs, GSoC work, anything you want highlighted regardless of stars.
-  // Leave [] to skip.
-  pinnedProjects: [
-    {
-      name: "Project · Subtitle",
-      description: "Why it matters, in one sentence.",
-      repoUrl: "https://github.com/owner/repo",
-      prUrl: "https://github.com/owner/repo/pull/123",  // optional
-      language: "TypeScript",
-      badge: "Featured",  // optional pill text
-      skills: ["TypeScript", "React"],
-    },
-  ],
-
-  // Max cards in the auto-ranked grid (pinned always show on top, not counted).
+  // Max cards in the ranked grid.
   // 0 or omit = show all.
   maxProjects: 9,
 
-  // Custom projects merged INTO the auto-ranked grid by `score` (not pinned-on-top).
+  // Custom projects merged into the ranked grid by `score`.
   // For private repos, other accounts, GitLab, or non-code work the script can't see.
   // `score` competes with auto-fetched scores (~15-60). Higher = higher in the grid.
   customProjects: [
@@ -57,12 +42,17 @@ export default {
   excludeRepos: ["old-tutorial-project", "first-website"],
   includeRepos: [],
 
-  // Planning - shown at top of /guestbook so visitors know what's next.
-  planning: [
-    "What you're shipping this month",
-    "Bigger goal for the quarter",
-    "Stretch goal",
-  ],
+
+  // Lab (/lab) - desktop view of your deployed GitHub projects.
+  // Live sites are auto-detected from each repo's GitHub "homepage" field.
+  // Add `deployed` for live URLs GitHub doesn't know about (repo name -> URL).
+  // Visitors can load anyone's GitHub in Settings; these overrides only apply to you.
+  lab: {
+    // defaultUser: "your-github-handle", // optional, defaults to your github contact
+    deployed: {
+      // "my-repo": "https://my-repo.vercel.app",
+    },
+  },
 
   // Homelab - "how this site runs". Rendered on /colophon. Omit/delete to hide.
   // Fill in your own hosting story (VPS, Raspberry Pi, old laptop, cloud, etc.).
