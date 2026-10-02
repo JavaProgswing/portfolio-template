@@ -83,7 +83,7 @@ const baseButtonProps = (brand: { color: string; glow: string }) => ({
   w: "32px",
   h: "32px",
   borderRadius: "md",
-  color: "gray.500",
+  color: "fg.subtle",
   cursor: "pointer" as const,
   _hover: {
     color: brand.color,
@@ -184,7 +184,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
               <Text fontSize="sm" fontWeight="600" color={nameColor} noOfLines={1}>
                 {profile.name}
               </Text>
-              <Text fontSize="11px" color="gray.500" noOfLines={2}>
+              <Text fontSize="11px" color="fg.subtle" noOfLines={2}>
                 {profile.tags.join(" · ")}
               </Text>
             </Box>
@@ -208,7 +208,7 @@ const LinkedInBadge = ({ contact, profile }: { contact: Contact; profile?: Profi
               <Text fontSize="xs" fontWeight="500" color={subColor} lineHeight="1.4">
                 {profile.currentWork.title}
               </Text>
-              <Text fontSize="11px" color="gray.500">
+              <Text fontSize="11px" color="fg.subtle">
                 at {profile.currentWork.org}
               </Text>
             </Box>
@@ -420,7 +420,7 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
                 ) : (
                   <Text
                     fontSize="9px"
-                    color="gray.500"
+                    color="fg.subtle"
                     fontFamily="mono"
                     fontWeight="700"
                     letterSpacing="0.08em"
@@ -432,7 +432,7 @@ const SpotifyBadge = ({ contact }: { contact: Contact }) => {
               <Text fontSize="sm" fontWeight="600" color={titleColor} noOfLines={1} title={data.title}>
                 {data.title}
               </Text>
-              <Text fontSize="xs" color="gray.500" noOfLines={1} title={data.artist}>
+              <Text fontSize="xs" color="fg.subtle" noOfLines={1} title={data.artist}>
                 {data.artist}
               </Text>
               {data.context && (

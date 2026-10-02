@@ -37,11 +37,8 @@ const Navbar = ({ data }: Props) => {
 
   const NAV = [
     { label: "about",    href: "#home" },
-    { label: "journey",  href: "#journey" },
     ...(hasExperience ? [{ label: "experience", href: "#experience" }] : []),
     { label: "projects", href: "#projects" },
-    { label: "activity", href: "#activity" },
-    { label: "writing",  href: "#writing" },
   ];
   const PAGES = [
     { label: "blog", to: "/blog" },
@@ -117,7 +114,9 @@ const Navbar = ({ data }: Props) => {
         borderBottom="1px solid" borderColor={border}
         px={6} py={3}
         justifyContent="space-between"
+        spacing={4}
       >
+        <Box flex="1" minW={0}>
         <Text
           as="a" href="/"
           onClick={(e: React.MouseEvent) => { handleLogoClick(); if (location.pathname !== "/") { e.preventDefault(); navigate("/"); } else { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); } }}
@@ -129,31 +128,34 @@ const Navbar = ({ data }: Props) => {
         >
           ~/{data.name.split(" ")[0].toLowerCase()}
         </Text>
+        </Box>
 
         <Show above="lg">
-          <HStack spacing={0.5}>
+          <HStack spacing={1}>
             {NAV.map(n => (
               <Link
                 key={n.href} href={"/" + n.href} onClick={(e) => goSection(e, n.href)}
-                px={3} py={1} borderRadius="md"
+                px={3.5} py={1.5} borderRadius="md"
                 fontSize="12px" fontFamily="mono"
-                color={location.pathname === "/" && activeId === n.href.slice(1) ? "brand.400" : "gray.500"}
-                bg={location.pathname === "/" && activeId === n.href.slice(1) ? "rgba(var(--brand-rgb),0.1)" : undefined}
+                color={location.pathname === "/" && activeId === n.href.slice(1) ? "brand.400" : "fg.subtle"}
+                bg={location.pathname === "/" && activeId === n.href.slice(1) ? "rgba(var(--brand-rgb),0.13)" : undefined}
+                boxShadow={location.pathname === "/" && activeId === n.href.slice(1) ? "inset 0 0 0 1px rgba(var(--brand-rgb),0.12)" : undefined}
                 _hover={{ color: "fg.strong", bg: "rgba(var(--brand-rgb),0.06)", textDecoration: "none" }}
                 transition="all 0.15s"
               >
                 {n.label}
               </Link>
             ))}
-            <Box w="1px" h="14px" bg={border} mx={1} />
+            <Box w="1px" h="14px" bg={border} />
             {PAGES.map(n => (
               <Link
                 key={n.to} as={RouterLink} to={n.to}
-                px={3} py={1} borderRadius="md"
+                px={3.5} py={1.5} borderRadius="md"
                 fontSize="12px" fontFamily="mono"
-                color={isActive(n.to) ? "brand.400" : "gray.400"}
-                bg={isActive(n.to) ? "rgba(255,255,255,0.06)" : undefined}
-                _hover={{ color: "brand.300", bg: "rgba(255,255,255,0.05)", textDecoration: "none" }}
+                color={isActive(n.to) ? "brand.400" : "fg.subtle"}
+                bg={isActive(n.to) ? "rgba(var(--brand-rgb),0.13)" : undefined}
+                boxShadow={isActive(n.to) ? "inset 0 0 0 1px rgba(var(--brand-rgb),0.12)" : undefined}
+                _hover={{ color: "fg.strong", bg: "rgba(var(--brand-rgb),0.06)", textDecoration: "none" }}
                 transition="all 0.15s"
               >
                 {n.label}
@@ -162,7 +164,7 @@ const Navbar = ({ data }: Props) => {
           </HStack>
         </Show>
 
-        <HStack spacing={1} flexShrink={0}>
+        <HStack spacing={1} flex="1" justify="flex-end" minW={0}>
           <Box display={{ base: "none", md: "block" }}>
           <ContactBadges
             contacts={data.contacts}

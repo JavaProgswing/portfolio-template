@@ -1,5 +1,7 @@
-// Theme palettes, applied at runtime via document.body.dataset.theme = key.
-// Matching CSS variables live in src/index.css under body[data-theme="X"].
+// Theme palettes, applied at runtime via document.body.dataset.palette = key.
+// (Not data-theme: Chakra reserves that attribute and resets its colour-mode
+// variables on any element carrying it.)
+// Matching CSS variables live in src/index.css under body[data-palette="X"].
 
 export interface ThemePalette {
   key: string;
@@ -11,15 +13,20 @@ export interface ThemePalette {
   fx: { sound: boolean; ambient: boolean; immersive?: boolean };
 }
 
-/** Themes beyond this index (in THEMES order) are the immersive FX group. */
-
 export const THEMES: ThemePalette[] = [
-  // Minimal themes (no immersive FX)
+  // Ranked: picker shows them in this order within each group.
   {
-    key: "indigo",
-    name: "Indigo",
-    desc: "Calm, clean, stays out of the way",
-    swatch: ["#09090b", "#818cf8", "#a5b4fc"],
+    key: "gruvbox",
+    name: "Gruvbox",
+    desc: "Warm retro hacker comfort",
+    swatch: ["#282828", "#fabd2f", "#fe8019"],
+    fx: { sound: true, ambient: false },
+  },
+  {
+    key: "mono",
+    name: "Mono",
+    desc: "Pure ink and paper, no colour",
+    swatch: ["#0a0a0a", "#fafafa", "#d4d4d4"],
     fx: { sound: true, ambient: false },
   },
   {
@@ -30,24 +37,10 @@ export const THEMES: ThemePalette[] = [
     fx: { sound: true, ambient: true },
   },
   {
-    key: "gruvbox",
-    name: "Gruvbox",
-    desc: "Warm retro hacker comfort",
-    swatch: ["#282828", "#fabd2f", "#fe8019"],
-    fx: { sound: true, ambient: false },
-  },
-  {
     key: "evergreen",
     name: "Evergreen",
     desc: "Quiet forest stillness",
     swatch: ["#1a1f16", "#86efac", "#4ade80"],
-    fx: { sound: true, ambient: true },
-  },
-  {
-    key: "crimson",
-    name: "Crimson",
-    desc: "Black and signal red, no mercy",
-    swatch: ["#0d0708", "#f87171", "#ef4444"],
     fx: { sound: true, ambient: true },
   },
   {
@@ -58,20 +51,12 @@ export const THEMES: ThemePalette[] = [
     fx: { sound: true, ambient: false },
   },
   {
-    key: "sunset",
-    name: "Sunset",
-    desc: "Dusk gradient, coral to violet",
-    swatch: ["#1a0f1f", "#ff7a59", "#c77dff"],
-    fx: { sound: true, ambient: true },
-  },
-  {
-    key: "mono",
-    name: "Mono",
-    desc: "Pure ink and paper, no colour",
-    swatch: ["#0a0a0a", "#fafafa", "#d4d4d4"],
+    key: "indigo",
+    name: "Indigo",
+    desc: "Calm, clean, stays out of the way",
+    swatch: ["#09090b", "#818cf8", "#a5b4fc"],
     fx: { sound: true, ambient: false },
   },
-  // Immersive FX themes
   {
     key: "cyberpunk",
     name: "Cyberpunk",
@@ -80,10 +65,10 @@ export const THEMES: ThemePalette[] = [
     fx: { sound: true, ambient: true, immersive: true },
   },
   {
-    key: "aurora",
-    name: "Aurora",
-    desc: "Serene northern-lights drift",
-    swatch: ["#0a1120", "#22d3ee", "#34d399"],
+    key: "tokyonight",
+    name: "Tokyo Night",
+    desc: "Midnight city, lights still on",
+    swatch: ["#1a1b26", "#7aa2f7", "#bb9af7"],
     fx: { sound: true, ambient: true, immersive: true },
   },
   {
@@ -94,20 +79,34 @@ export const THEMES: ThemePalette[] = [
     fx: { sound: true, ambient: true, immersive: true },
   },
   {
-    key: "tokyonight",
-    name: "Tokyo Night",
-    desc: "Midnight city, lights still on",
-    swatch: ["#1a1b26", "#7aa2f7", "#bb9af7"],
+    key: "aurora",
+    name: "Aurora",
+    desc: "Serene northern-lights drift",
+    swatch: ["#0a1120", "#22d3ee", "#34d399"],
     fx: { sound: true, ambient: true, immersive: true },
+  },
+  {
+    key: "sunset",
+    name: "Sunset",
+    desc: "Dusk gradient, coral to violet",
+    swatch: ["#1a0f1f", "#ff7a59", "#c77dff"],
+    fx: { sound: true, ambient: true },
+  },
+  {
+    key: "crimson",
+    name: "Crimson",
+    desc: "Black and signal red, no mercy",
+    swatch: ["#0d0708", "#f87171", "#ef4444"],
+    fx: { sound: true, ambient: true },
   },
 ];
 
-export const DEFAULT_THEME = "indigo";
+export const DEFAULT_THEME = "gruvbox";
 const STORAGE_KEY = "portfolio-theme";
 
 // Themes that ship a polished light variant. Immersive and pop-culture
 // themes are dark-only by design, so light mode is gated to these keys.
-export const MINIMAL_THEMES = ["indigo", "rosepine", "gruvbox", "evergreen", "solarized", "mono"];
+export const MINIMAL_THEMES = ["gruvbox", "mono", "rosepine", "evergreen", "solarized", "indigo"];
 
 export function isMinimalTheme(key: string): boolean {
   return MINIMAL_THEMES.includes(key);
@@ -134,7 +133,7 @@ type ViewTransitionDoc = Document & {
 };
 
 function commitTheme(key: string) {
-  document.body.dataset.theme = key;
+  document.body.dataset.palette = key;
   try {
     localStorage.setItem(STORAGE_KEY, key);
   } catch {
@@ -148,7 +147,7 @@ export function applyTheme(key: string, animate = false) {
   if (!THEMES.some((t) => t.key === key)) return;
   const doc = document as ViewTransitionDoc;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!animate || reduced || !doc.startViewTransition || document.body.dataset.theme === key) {
+  if (!animate || reduced || !doc.startViewTransition || document.body.dataset.palette === key) {
     commitTheme(key);
     return;
   }

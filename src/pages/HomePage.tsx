@@ -56,7 +56,7 @@ const HomePage = ({ data }: Props) => {
             filter="blur(30px)" zIndex={0}
           />
           <Box position="relative" zIndex={1} w="100%">
-            <Intro data={data} currentWork={data.currentWork} resumeUrl={data.resumeUrl}
+            <Intro data={data} resumeUrl={data.resumeUrl}
               onScrollDown={() => scrollTo(journeyRef)} />
           </Box>
         </Box>

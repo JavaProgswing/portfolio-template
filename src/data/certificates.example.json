@@ -1,5 +1,5 @@
 {
-  "_comment": "Copy to certificates.json. Put certificate files in public/certificates/ and reference them as /certificates/<file>. category: hackathon | certification | other. result (optional): 1st place, Finalist, Participant... featured: shown first and on /resume. url (optional): public verification link.",
+  "_comment": "Copy to certificates.json. Put certificate files in public/files/certificates/ and reference them as /files/certificates/<file>. category: hackathon | certification | other. result (optional): 1st place, Finalist, Participant... featured: shown first and on /resume. url (optional): public verification link.",
   "certificates": [
     {
       "title": "Example Hackathon 2026",
@@ -9,7 +9,7 @@
       "result": "1st place",
       "featured": true,
       "description": "One line on what you built or won.",
-      "file": "/certificates/example-hackathon-2026.pdf"
+      "file": "/files/certificates/example-hackathon-2026.pdf"
     },
     {
       "title": "Example Course",

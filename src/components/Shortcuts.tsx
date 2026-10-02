@@ -113,7 +113,7 @@ export const ShortcutsModal = () => {
             <Text fontSize="sm" fontWeight="600">
               Keyboard Shortcuts
             </Text>
-            <Text fontSize="10px" color="gray.500" fontFamily="mono" ml="auto">
+            <Text fontSize="10px" color="fg.subtle" fontFamily="mono" ml="auto">
               press <Kbd fontSize="9px">Esc</Kbd> to close
             </Text>
           </HStack>
@@ -123,7 +123,7 @@ export const ShortcutsModal = () => {
               <Box key={group.label}>
                 <Text
                   fontSize="10px"
-                  color="gray.500"
+                  color="fg.subtle"
                   fontFamily="mono"
                   letterSpacing="0.14em"
                   mb={2}
@@ -437,7 +437,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
       >
         <ModalBody p={0}>
           <HStack px={4} py={3} borderBottom="1px solid" borderColor={rowBorder}>
-            <Icon as={FaSearch as ElementType} color="gray.500" boxSize={3} />
+            <Icon as={FaSearch as ElementType} color="fg.subtle" boxSize={3} />
             <Input
               ref={inputRef}
               value={query}
@@ -446,16 +446,16 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
               variant="unstyled"
               fontSize={{ base: "16px", md: "sm" }}
               color={textColor}
-              _placeholder={{ color: "gray.500" }}
+              _placeholder={{ color: "fg.subtle" }}
             />
-            <Kbd fontSize="9px" bg={kbdBg} borderColor={kbdBorder} color="gray.500">
+            <Kbd fontSize="9px" bg={kbdBg} borderColor={kbdBorder} color="fg.subtle">
               Esc
             </Kbd>
           </HStack>
 
           <Box maxH="62dvh" overflowY="auto" py={1}>
             {filtered.length === 0 ? (
-              <Text fontSize="sm" color="gray.500" textAlign="center" py={6} fontFamily="mono">
+              <Text fontSize="sm" color="fg.subtle" textAlign="center" py={6} fontFamily="mono">
                 no results for "{query}"
               </Text>
             ) : (
@@ -489,14 +489,14 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
                         textAlign="left"
                         cursor="pointer"
                       >
-                        <Icon as={c.icon} boxSize={3} color={isSelected ? "brand.400" : "gray.500"} flexShrink={0} />
+                        <Icon as={c.icon} boxSize={3} color={isSelected ? "brand.400" : "fg.subtle"} flexShrink={0} />
                         <Text fontSize="13px" color={textColor} isTruncated flex={1} minW={0}>
                           {c.label}
                         </Text>
                         {c.hint && (
                           <Text
                             fontSize="10px"
-                            color={isSelected ? "gray.400" : "gray.600"}
+                            color={isSelected ? "fg.muted" : "fg.subtle"}
                             fontFamily="mono"
                             isTruncated
                             flexShrink={0}
@@ -520,7 +520,7 @@ export const CommandPalette = ({ contacts = [] }: CommandPaletteProps) => {
             borderColor={rowBorder}
             spacing={4}
             fontSize="10px"
-            color="gray.500"
+            color="fg.subtle"
             fontFamily="mono"
           >
             <HStack spacing={1}>

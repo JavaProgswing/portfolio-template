@@ -111,6 +111,7 @@ shell
     `frontend:  ${data.frameworks.frontend.map((f: any) => f.name).join(", ")}\n` +
     `backend:   ${data.frameworks.backend.map((f: any) => f.name).join(", ")}\n` +
     `databases: ${data.frameworks.databases.map((f: any) => f.name).join(", ")}\n` +
+    `ml:        ${data.frameworks.machineLearning.map((f: any) => f.name).join(", ")}\n` +
     `misc:      ${data.frameworks.misc.map((f: any) => f.name).join(", ")}`,
 
   journey: ({ data }) =>
@@ -292,7 +293,7 @@ shell
   },
 
   theme: (_, args) => {
-    const current = document.body.dataset.theme;
+    const current = document.body.dataset.palette;
     if (!args[0]) {
       return THEMES.map((t) => `  ${t.key === current ? "*" : " "} ${t.key.padEnd(12)} ${t.desc}`).join("\n") + "\n\nusage: theme <name>";
     }
@@ -312,7 +313,7 @@ shell
   neofetch: ({ data }) => {
     const user = data.name.split(" ")[0].toLowerCase();
     const host = window.location.hostname || "localhost";
-    const theme = THEMES.find((t) => t.key === document.body.dataset.theme)?.name || "default";
+    const theme = THEMES.find((t) => t.key === document.body.dataset.palette)?.name || "default";
     const art = ["   ▄▄▄▄▄▄▄   ", "  █ ▄▄▄▄▄ █  ", "  █ █   █ █  ", "  █ █▄▄▄█ █  ", "  █▄▄▄▄▄▄▄█  ", "    ▀▀▀▀▀    "];
     const info = [
       `${user}@${host}`,
@@ -515,7 +516,7 @@ const ConsolePage = ({ data }: { data: any }) => {
           right={3}
           size="sm"
           variant="ghost"
-          color={soundMuted ? "gray.500" : "brand.400"}
+          color={soundMuted ? "fg.subtle" : "brand.400"}
           _hover={{ bg: "whiteAlpha.100" }}
           fontSize="16px"
         >

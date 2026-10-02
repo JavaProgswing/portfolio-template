@@ -157,7 +157,7 @@ const Caption = ({ children }: { children: ReactNode }) => (
   <Text
     fontSize="10px"
     fontFamily="mono"
-    color="gray.500"
+    color="fg.subtle"
     letterSpacing="0.14em"
     mb={3}
     textTransform="uppercase"
@@ -194,7 +194,7 @@ const StatCard = ({
     >
       <HStack spacing={1.5} mb={2}>
         <Icon as={I} boxSize={2.5} color={color} />
-        <Text fontSize="10px" color="gray.500" fontFamily="mono" letterSpacing="0.06em">
+        <Text fontSize="10px" color="fg.subtle" fontFamily="mono" letterSpacing="0.06em">
           {label}
         </Text>
       </HStack>
@@ -229,7 +229,7 @@ const LangBar = ({ name, count, pct }: { name: string; count: number; pct: numbe
       </Box>
       <Text
         fontSize="11px"
-        color="gray.500"
+        color="fg.subtle"
         fontFamily="mono"
         w="60px"
         textAlign="right"
@@ -271,19 +271,19 @@ const MiniRepoCard = ({ repo }: { repo: MiniRepo }) => {
           {repo.stars > 0 && (
             <HStack spacing={1} flexShrink={0}>
               <Icon as={FaStar as ElementType} boxSize={2.5} color="yellow.400" />
-              <Text fontSize="11px" color="gray.500" fontFamily="mono">
+              <Text fontSize="11px" color="fg.subtle" fontFamily="mono">
                 {repo.stars}
               </Text>
             </HStack>
           )}
         </HStack>
-        <Text fontSize="11px" color="gray.500" noOfLines={2} mb={2.5} lineHeight="1.5">
+        <Text fontSize="11px" color="fg.subtle" noOfLines={2} mb={2.5} lineHeight="1.5">
           {repo.description || "—"}
         </Text>
         {repo.language && (
           <HStack spacing={1.5}>
             <Box w="7px" h="7px" bg={langColor} borderRadius="full" />
-            <Text fontSize="10px" color="gray.500" fontFamily="mono">
+            <Text fontSize="10px" color="fg.subtle" fontFamily="mono">
               {repo.language}
             </Text>
           </HStack>
@@ -396,21 +396,21 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
           <Stack spacing={3}>
             <HStack spacing={8}>
               <Stat size="sm">
-                <StatLabel color="gray.500" fontSize="xs">Rating</StatLabel>
+                <StatLabel color="fg.subtle" fontSize="xs">Rating</StatLabel>
                 <StatNumber color={CF_COLOR} fontSize="xl">{String(cfData.rating ?? "—")}</StatNumber>
                 <StatHelpText fontSize="xs" mb={0}>max {String(cfData.maxRating ?? "—")}</StatHelpText>
               </Stat>
               <Stat size="sm">
-                <StatLabel color="gray.500" fontSize="xs">Rank</StatLabel>
+                <StatLabel color="fg.subtle" fontSize="xs">Rank</StatLabel>
                 <StatNumber fontSize="sm" color={getRankColor(String(cfData.rank ?? ""))} fontWeight="600">
                   {cap(String(cfData.rank ?? "—"))}
                 </StatNumber>
-                <StatHelpText fontSize="xs" mb={0} color="gray.500">
+                <StatHelpText fontSize="xs" mb={0} color="fg.subtle">
                   max {cap(String(cfData.maxRank ?? "—"))}
                 </StatHelpText>
               </Stat>
             </HStack>
-            <Text fontSize="11px" color="gray.500" fontFamily="mono">
+            <Text fontSize="11px" color="fg.subtle" fontFamily="mono">
               contribution: <Text as="span" color="green.400">+{String(cfData.contribution ?? 0)}</Text>
             </Text>
           </Stack>
@@ -443,7 +443,7 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
           <Stack spacing={3}>
             <HStack justify="space-between">
               <Stat size="sm">
-                <StatLabel color="gray.500" fontSize="xs">Solved</StatLabel>
+                <StatLabel color="fg.subtle" fontSize="xs">Solved</StatLabel>
                 <StatNumber color="yellow.400" fontSize="xl">{String(lcData.totalSolved)}</StatNumber>
                 {Number(lcData.ranking) > 0 && (
                   <StatHelpText fontSize="xs" mb={0}>
@@ -462,13 +462,13 @@ const CompetitivePanel = ({ cfHandle, lcHandle }: { cfHandle: string; lcHandle: 
                       size="46px" thickness="7px" trackColor="whiteAlpha.100">
                       <CircularProgressLabel fontSize="9px" fontWeight="700">{s}</CircularProgressLabel>
                     </CircularProgress>
-                    <Text fontSize="9px" color="gray.500" fontFamily="mono">{l}</Text>
+                    <Text fontSize="9px" color="fg.subtle" fontFamily="mono">{l}</Text>
                   </Stack>
                 ))}
               </HStack>
             </HStack>
             {Number(lcData.acceptanceRate) > 0 && (
-              <Text fontSize="11px" color="gray.500" fontFamily="mono">
+              <Text fontSize="11px" color="fg.subtle" fontFamily="mono">
                 acceptance: <Text as="span" color="green.400">{Number(lcData.acceptanceRate).toFixed(1)}%</Text>
               </Text>
             )}
@@ -618,8 +618,8 @@ const OSSPanel = ({ handle }: { handle: string }) => {
     return (
       <Box p={5} layerStyle="card" border="1px solid" borderColor={border} borderRadius="10px">
         <HStack spacing={2}>
-          <Icon as={FaGithub as ElementType} color="gray.500" />
-          <Text fontSize="sm" color="gray.500">
+          <Icon as={FaGithub as ElementType} color="fg.subtle" />
+          <Text fontSize="sm" color="fg.subtle">
             Couldn't load GitHub data. Check that contacts.github.link points to github.com/yourname or has direct repo links.
           </Text>
         </HStack>
@@ -733,8 +733,8 @@ const OSSPanel = ({ handle }: { handle: string }) => {
                     </Text>
                   </Stack>
                   <HStack spacing={2} flexShrink={0}>
-                    <Text fontSize="10px" color="gray.500" fontFamily="mono">{pr.date}</Text>
-                    <Link href={pr.url} isExternal color="gray.500" _hover={{ color: "brand.400" }}>
+                    <Text fontSize="10px" color="fg.subtle" fontFamily="mono">{pr.date}</Text>
+                    <Link href={pr.url} isExternal color="fg.subtle" _hover={{ color: "brand.400" }}>
                       <Icon as={FaExternalLinkAlt as ElementType} boxSize={3} />
                     </Link>
                   </HStack>
@@ -784,7 +784,7 @@ const FollowingPanel = ({ areas, following }: { areas: string[]; following: Foll
                   {item.type}
                 </Badge>
               </HStack>
-              <Text fontSize="xs" color="gray.500">{item.desc}</Text>
+              <Text fontSize="xs" color="fg.subtle">{item.desc}</Text>
             </MotionBox>
           </Link>
         ))}
@@ -804,7 +804,7 @@ const Activity = ({ data }: Props) => {
 
   return (
     <Box>
-      <Text fontSize="11px" fontFamily="mono" color="gray.500"
+      <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
         letterSpacing="0.14em" mb={2} textTransform="uppercase">
         Activity
       </Text>

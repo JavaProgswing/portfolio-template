@@ -168,7 +168,7 @@ const BlogPostPage = ({ blogs }: { blogs: BlogPost[] }) => {
     return (
       <Box maxW="720px" mx="auto" px={6} py={24} textAlign="center">
         <Heading size="lg" mb={3}>Post not found</Heading>
-        <Text color="gray.500" mb={6}>That slug doesn't match any post.</Text>
+        <Text color="fg.subtle" mb={6}>That slug doesn't match any post.</Text>
         <Button as={RouterLink} to="/blog" variant="glow" size="sm">← all posts</Button>
       </Box>
     );
@@ -193,7 +193,7 @@ const BlogPostPage = ({ blogs }: { blogs: BlogPost[] }) => {
       : { as: "a", href: p.link, target: "_blank", rel: "noopener noreferrer" };
     return (
       <Box {...props} flex="1 1 260px" p={4} borderRadius="12px" layerStyle="card" className="lift">
-        <Text fontSize="10px" fontFamily="mono" color="gray.500" textTransform="uppercase" letterSpacing="0.12em">{label}</Text>
+        <Text fontSize="10px" fontFamily="mono" color="fg.subtle" textTransform="uppercase" letterSpacing="0.12em">{label}</Text>
         <Text fontSize="sm" fontWeight="600" mt={1} noOfLines={2}>{p.title}</Text>
       </Box>
     );
@@ -205,7 +205,7 @@ const BlogPostPage = ({ blogs }: { blogs: BlogPost[] }) => {
     <MotionBox key={slug} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
       {/* floating rail (wide screens) */}
       <Box position="fixed" right={{ base: 3, md: 6 }} bottom={{ base: 20, md: 8 }} zIndex={150} display={progress > 3 ? "flex" : "none"} flexDirection="column" gap={2} alignItems="center">
-        <Text fontFamily="mono" fontSize="10px" color="gray.500" textAlign="center">
+        <Text fontFamily="mono" fontSize="10px" color="fg.subtle" textAlign="center">
           {left > 0 ? `${left}m left` : "done"}
         </Text>
         <Ring pct={progress} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
@@ -232,7 +232,7 @@ const BlogPostPage = ({ blogs }: { blogs: BlogPost[] }) => {
               <Avatar size="sm" name={post.authors?.[0] || "Author"} bg="brand.500" color="white" />
               <Box>
                 <Text fontSize="sm" fontWeight="600" lineHeight="1.2">{post.authors?.join(", ") || "Anonymous"}</Text>
-                <Text fontFamily="mono" fontSize="11px" color="gray.500">{post.date} · {post.readTime}</Text>
+                <Text fontFamily="mono" fontSize="11px" color="fg.subtle">{post.date} · {post.readTime}</Text>
               </Box>
             </HStack>
             <HStack spacing={1}>
@@ -253,7 +253,7 @@ const BlogPostPage = ({ blogs }: { blogs: BlogPost[] }) => {
 
             {related.length > 0 && (
               <Box mt={14}>
-                <Text fontFamily="mono" fontSize="11px" color="gray.500" letterSpacing="0.14em" textTransform="uppercase" mb={3}>Keep reading</Text>
+                <Text fontFamily="mono" fontSize="11px" color="fg.subtle" letterSpacing="0.14em" textTransform="uppercase" mb={3}>Keep reading</Text>
                 <Flex gap={3} wrap="wrap">
                   {related.map((r) => <Fragment key={r.title}>{nav(r, "related")}</Fragment>)}
                 </Flex>
@@ -268,7 +268,7 @@ const BlogPostPage = ({ blogs }: { blogs: BlogPost[] }) => {
 
           {headings.length > 1 && (
             <Box display={{ base: "none", lg: "block" }} position="sticky" top="90px" w="220px" flexShrink={0}>
-              <Text fontFamily="mono" fontSize="10px" color="gray.500" letterSpacing="0.14em" textTransform="uppercase" mb={3}>On this page</Text>
+              <Text fontFamily="mono" fontSize="10px" color="fg.subtle" letterSpacing="0.14em" textTransform="uppercase" mb={3}>On this page</Text>
               {headings.map((h) => (
                 <Box key={h} as="a" href={`#${slugify(h)}`} display="block" fontSize="13px" color="fg.muted" py={1} pl={3}
                   borderLeft="2px solid var(--border)" _hover={{ color: "brand.400", borderColor: "brand.400", textDecoration: "none" }}>

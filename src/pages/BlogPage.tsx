@@ -36,7 +36,7 @@ const BlogPage = ({ blogs }: { blogs: BlogPost[] }) => {
       <Text as={RouterLink} to="/" fontSize="11px" color="brand.400" fontFamily="mono" display="inline-block" mb={6}>
         ← back to home
       </Text>
-      <Text fontSize="11px" fontFamily="mono" color="gray.500" letterSpacing="0.14em" mb={2} textTransform="uppercase">
+      <Text fontSize="11px" fontFamily="mono" color="fg.subtle" letterSpacing="0.14em" mb={2} textTransform="uppercase">
         The Blog
       </Text>
       <Heading size="2xl" mb={3} className="grad-text">Notes &amp; write-ups</Heading>
@@ -46,7 +46,7 @@ const BlogPage = ({ blogs }: { blogs: BlogPost[] }) => {
 
       <InputGroup mb={4} size="md">
         <InputLeftElement pointerEvents="none">
-          <Icon as={FaSearch as ElementType} color="gray.500" boxSize={3.5} />
+          <Icon as={FaSearch as ElementType} color="fg.subtle" boxSize={3.5} />
         </InputLeftElement>
         <Input
           placeholder="search posts, tags…" value={q} onChange={(e) => setQ(e.target.value)}
@@ -73,7 +73,7 @@ const BlogPage = ({ blogs }: { blogs: BlogPost[] }) => {
 
       <Stack spacing={4}>
         {shown.length === 0 && (
-          <Text color="gray.500" fontFamily="mono" fontSize="sm">no posts match. try fewer words.</Text>
+          <Text color="fg.subtle" fontFamily="mono" fontSize="sm">no posts match. try fewer words.</Text>
         )}
         {shown.map((post, i) => {
           const external = !post.content && post.link;
@@ -92,8 +92,8 @@ const BlogPage = ({ blogs }: { blogs: BlogPost[] }) => {
                 className="lift" _hover={{ textDecoration: "none" }}
               >
                 <Flex justify="space-between" mb={2} gap={3}>
-                  <Text fontSize="11px" fontFamily="mono" color="gray.500">{post.date}</Text>
-                  <Text fontSize="11px" fontFamily="mono" color="gray.500" whiteSpace="nowrap">{post.readTime}</Text>
+                  <Text fontSize="11px" fontFamily="mono" color="fg.subtle">{post.date}</Text>
+                  <Text fontSize="11px" fontFamily="mono" color="fg.subtle" whiteSpace="nowrap">{post.readTime}</Text>
                 </Flex>
                 <Heading size={i === 0 && !q && !tag ? "lg" : "md"} lineHeight="1.35" mb={2}>{post.title}</Heading>
                 <Text fontSize="sm" color="fg.muted" lineHeight="1.75" mb={3}>{post.excerpt}</Text>

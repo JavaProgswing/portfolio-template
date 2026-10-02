@@ -225,7 +225,7 @@ const ProjectApp = ({ repo }: { repo: LabRepo }) => {
           <p style={{ color: skin.text, lineHeight: 1.65, fontSize: 14, margin: "0 0 14px" }}>
             {repo.description || "No description provided."}
           </p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16, paddingTop: 4 }}>
             {repo.language && <Chip>{repo.language}</Chip>}
             <Chip><FaStar_ size={10} style={{ display: "inline", marginRight: 4 }} />{repo.stars}</Chip>
             <Chip><FaCodeBranch_ size={10} style={{ display: "inline", marginRight: 4 }} />{repo.forks}</Chip>
@@ -560,11 +560,13 @@ const Frame = ({ win, title, icon, active, compact, area, onFocus, onChange, onC
 
   return (
     <div
+      className="lab-window"
       onPointerDown={onFocus}
       style={{
         position: "absolute", ...geo, zIndex: win.z, display: win.min ? "none" : "flex", flexDirection: "column",
         background: skin.winBg, boxShadow: active ? skin.shadow : "0 6px 20px rgba(0,0,0,.35)", overflow: "hidden",
         opacity: active ? 1 : 0.96, color: skin.text, border: `1px solid ${skin.border}`,
+        animation: "lab-window-in 220ms cubic-bezier(.2,.75,.25,1) both",
       }}
     >
       <div
@@ -817,10 +819,6 @@ const LabPage = ({ data }: { data: { name: string; contacts: { id: string; link:
               {user.toLowerCase() === owner.toLowerCase() ? `${data.name.split(" ")[0]}'s deployed lab` : `${user}'s deployed lab`}
             </Text>
           </Box>
-          <Text fontSize="12px" fontFamily="mono" color="gray.500">
-            {lab.loading ? "loading from GitHub…" : `${deployed.length} live · ${lab.profile?.publicRepos ?? lab.repos.filter((r) => r.url).length} repos`}
-            {lab.offline ? " · offline snapshot" : ""} · open Settings to view anyone's
-          </Text>
         </Box>
 
         <div ref={frameRef} style={{
@@ -928,9 +926,6 @@ const LabPage = ({ data }: { data: { name: string; contacts: { id: string; link:
           )}
         </div>
 
-        <Text fontSize="11px" fontFamily="mono" color="fg.subtle" mt={3} px={1}>
-          drag titlebars · double-click to maximize · terminal supports `help`
-        </Text>
       </Box>
     </LabCtx.Provider>
   );

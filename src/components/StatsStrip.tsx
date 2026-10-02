@@ -11,7 +11,7 @@ const Stat = ({ value, label, to }: { value: number; label: string; to?: string 
     <Box {...(link as object)} textAlign="center" py={2} borderRadius="12px" display="block"
       _hover={to ? { bg: "var(--surface-strong)", textDecoration: "none" } : undefined} transition="background .2s">
       <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="800" lineHeight="1" className="grad-text">{n}</Text>
-      <Text fontFamily="mono" fontSize="11px" color="gray.500" mt={1} textTransform="uppercase" letterSpacing="0.12em">{label}</Text>
+      <Text fontFamily="mono" fontSize="11px" color="fg.subtle" mt={1} textTransform="uppercase" letterSpacing="0.12em">{label}</Text>
     </Box>
   );
 };

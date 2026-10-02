@@ -166,12 +166,12 @@ const AchievementToast = () => {
                   <Text fontSize="sm" fontWeight="700" color={textColor} lineHeight="1.3">
                     {active.label}
                   </Text>
-                  <Text fontSize="11px" color="gray.500" lineHeight="1.45" noOfLines={2}>
+                  <Text fontSize="11px" color="fg.subtle" lineHeight="1.45" noOfLines={2}>
                     {active.hint}
                   </Text>
 
                   <HStack justify="space-between" mt={1.5}>
-                    <Text fontSize="9px" color="gray.500" fontFamily="mono">progress</Text>
+                    <Text fontSize="9px" color="fg.subtle" fontFamily="mono">progress</Text>
                     <Text fontSize="9px" color="brand.400" fontFamily="mono" fontWeight="700">
                       {active.found}/{active.total}
                     </Text>

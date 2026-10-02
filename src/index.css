@@ -59,12 +59,12 @@ body.rainbow-active {
 }
 
 /* Theme palettes
-   Applied via body[data-theme="..."]. Each theme overrides the brand color
+   Applied via body[data-palette="..."]. Each theme overrides the brand color
    ramp and base background. Chakra v2 stores colors as CSS variables, so
    overriding them at body level cascades through every component. */
 
 /* Evergreen - deep forest + sage green */
-body[data-theme="evergreen"] {
+body[data-palette="evergreen"] {
   background-color: #1a1f16 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #2a3320 0%, #121610 70%) !important;
   --chakra-colors-brand-300: #bbf7d0;
@@ -74,10 +74,22 @@ body[data-theme="evergreen"] {
   --cursor-glow: rgba(134, 239, 172, 0.12);
   --brand-rgb: 134, 239, 172;
   --bg-base: #1a1f16;
+  --surface: rgba(180, 210, 145, 0.045);
+  --surface-strong: rgba(180, 210, 145, 0.075);
+  --border: rgba(180, 210, 145, 0.11);
+  --border-strong: rgba(180, 210, 145, 0.2);
+  --journey-kind-color: #a7c957;
+  --journey-kind-rgb: 167, 201, 87;
+  --journey-spine: linear-gradient(to bottom, #a7c957, rgba(134, 239, 172, 0.32) 45%, var(--border));
 }
+body[data-palette="evergreen"] [data-journey-kind="education"] { --journey-kind-color: #e6b566; --journey-kind-rgb: 230, 181, 102; }
+body[data-palette="evergreen"] [data-journey-kind="work"] { --journey-kind-color: #86efac; --journey-kind-rgb: 134, 239, 172; }
+body[data-palette="evergreen"] [data-journey-kind="project"] { --journey-kind-color: #a7c957; --journey-kind-rgb: 167, 201, 87; }
+body[data-palette="evergreen"] [data-journey-kind="community"] { --journey-kind-color: #b7d77a; --journey-kind-rgb: 183, 215, 122; }
+body[data-palette="evergreen"] [data-journey-kind="award"] { --journey-kind-color: #f4a261; --journey-kind-rgb: 244, 162, 97; }
 
 /* Cyberpunk - electric yellow + cyan, near-black */
-body[data-theme="cyberpunk"] {
+body[data-palette="cyberpunk"] {
   background-color: #0a0a0f !important;
   background-image: radial-gradient(ellipse at 50% 0%, #16161f 0%, #050507 70%) !important;
   --chakra-colors-brand-300: #fff45e;
@@ -90,7 +102,7 @@ body[data-theme="cyberpunk"] {
 }
 
 /* Aurora - cyan + emerald on deep navy (northern lights) */
-body[data-theme="aurora"] {
+body[data-palette="aurora"] {
   background-color: #0a1120 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #102a3a 0%, #060c16 70%) !important;
   --chakra-colors-brand-300: #67e8f9;
@@ -100,10 +112,26 @@ body[data-theme="aurora"] {
   --cursor-glow: rgba(34, 211, 238, 0.12);
   --brand-rgb: 34, 211, 238;
   --bg-base: #0a1120;
+  background-image:
+    radial-gradient(ellipse at 18% 5%, rgba(52, 211, 153, 0.16), transparent 38%),
+    radial-gradient(ellipse at 82% 14%, rgba(34, 211, 238, 0.14), transparent 42%),
+    linear-gradient(155deg, #0a1120 8%, #0b1b2b 52%, #07121d 100%) !important;
+  --surface: rgba(118, 219, 207, 0.045);
+  --surface-strong: rgba(118, 219, 207, 0.075);
+  --border: rgba(118, 219, 207, 0.11);
+  --border-strong: rgba(118, 219, 207, 0.2);
+  --journey-kind-color: #67e8f9;
+  --journey-kind-rgb: 103, 232, 249;
+  --journey-spine: linear-gradient(to bottom, #67e8f9, rgba(52, 211, 153, 0.35) 48%, var(--border));
 }
+body[data-palette="aurora"] [data-journey-kind="education"] { --journey-kind-color: #67e8f9; --journey-kind-rgb: 103, 232, 249; }
+body[data-palette="aurora"] [data-journey-kind="work"] { --journey-kind-color: #a7f3d0; --journey-kind-rgb: 167, 243, 208; }
+body[data-palette="aurora"] [data-journey-kind="project"] { --journey-kind-color: #34d399; --journey-kind-rgb: 52, 211, 153; }
+body[data-palette="aurora"] [data-journey-kind="community"] { --journey-kind-color: #93c5fd; --journey-kind-rgb: 147, 197, 253; }
+body[data-palette="aurora"] [data-journey-kind="award"] { --journey-kind-color: #c4b5fd; --journey-kind-rgb: 196, 181, 253; }
 
 /* Amber CRT - old terminal */
-body[data-theme="amber"] {
+body[data-palette="amber"] {
   background-color: #0a0700 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #1f1500 0%, #060400 70%) !important;
   --chakra-colors-brand-300: #ffd060;
@@ -114,12 +142,10 @@ body[data-theme="amber"] {
   --brand-rgb: 255, 176, 0;
   --bg-base: #0a0700;
 }
-body[data-theme="amber"] * {
-  text-shadow: 0 0 2px rgba(255, 176, 0, 0.15);
-}
+body[data-palette="amber"] .chakra-heading { text-shadow: 0 0 12px rgba(255, 176, 0, 0.2); }
 
 /* Rosé Pine - soft rose + iris on dawn-dark */
-body[data-theme="rosepine"] {
+body[data-palette="rosepine"] {
   background-color: #191724 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #26233a 0%, #110f1e 70%) !important;
   --chakra-colors-brand-300: #f0d6d6;
@@ -129,10 +155,22 @@ body[data-theme="rosepine"] {
   --cursor-glow: rgba(235, 188, 186, 0.12);
   --brand-rgb: 235, 188, 186;
   --bg-base: #191724;
+  --surface: rgba(235, 188, 186, 0.045);
+  --surface-strong: rgba(235, 188, 186, 0.075);
+  --border: rgba(235, 188, 186, 0.11);
+  --border-strong: rgba(235, 188, 186, 0.2);
+  --journey-kind-color: #ebbcba;
+  --journey-kind-rgb: 235, 188, 186;
+  --journey-spine: linear-gradient(to bottom, #c4a7e7, rgba(235, 188, 186, 0.36) 48%, var(--border));
 }
+body[data-palette="rosepine"] [data-journey-kind="education"] { --journey-kind-color: #c4a7e7; --journey-kind-rgb: 196, 167, 231; }
+body[data-palette="rosepine"] [data-journey-kind="work"] { --journey-kind-color: #ebbcba; --journey-kind-rgb: 235, 188, 186; }
+body[data-palette="rosepine"] [data-journey-kind="project"] { --journey-kind-color: #9ccfd8; --journey-kind-rgb: 156, 207, 216; }
+body[data-palette="rosepine"] [data-journey-kind="community"] { --journey-kind-color: #f6c177; --journey-kind-rgb: 246, 193, 119; }
+body[data-palette="rosepine"] [data-journey-kind="award"] { --journey-kind-color: #eb6f92; --journey-kind-rgb: 235, 111, 146; }
 
 /* Gruvbox - warm yellow + orange retro */
-body[data-theme="gruvbox"] {
+body[data-palette="gruvbox"] {
   background-color: #282828 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #3c3836 0%, #1d2021 70%) !important;
   --chakra-colors-brand-300: #fce38a;
@@ -145,7 +183,7 @@ body[data-theme="gruvbox"] {
 }
 
 /* Tokyo Night - midnight navy, electric blue + magenta accents */
-body[data-theme="tokyonight"] {
+body[data-palette="tokyonight"] {
   background-color: #1a1b26 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #24283b 0%, #16161e 70%) !important;
   --chakra-colors-brand-300: #a9b8ff;
@@ -159,7 +197,7 @@ body[data-theme="tokyonight"] {
 
 
 /* Crimson - black + signal red */
-body[data-theme="crimson"] {
+body[data-palette="crimson"] {
   background-color: #0d0708 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #2a0d12 0%, #070304 70%) !important;
   --chakra-colors-brand-300: #fca5a5;
@@ -172,7 +210,7 @@ body[data-theme="crimson"] {
 }
 
 /* Solarized - dark teal base, cream light */
-body[data-theme="solarized"] {
+body[data-palette="solarized"] {
   background-color: #002b36 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #073642 0%, #001f27 70%) !important;
   --chakra-colors-brand-300: #e0b84a;
@@ -183,7 +221,7 @@ body[data-theme="solarized"] {
   --brand-rgb: 181, 137, 0;
   --bg-base: #002b36;
 }
-body[data-theme="solarized"][data-mode="light"] {
+body[data-palette="solarized"][data-mode="light"] {
   background-color: #fdf6e3 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #fffaf0 0%, #eee8d5 70%) !important;
   --chakra-colors-brand-300: #b58900;
@@ -196,7 +234,7 @@ body[data-theme="solarized"][data-mode="light"] {
 }
 
 /* Sunset - dusk gradient */
-body[data-theme="sunset"] {
+body[data-palette="sunset"] {
   background-color: #1a0f1f !important;
   background-image:
     radial-gradient(ellipse at 15% 0%, rgba(255, 122, 89, 0.22) 0%, transparent 55%),
@@ -212,7 +250,7 @@ body[data-theme="sunset"] {
 }
 
 /* Mono - ink on paper, zero hue */
-body[data-theme="mono"] {
+body[data-palette="mono"] {
   background-color: #0a0a0a !important;
   background-image: none !important;
   --chakra-colors-brand-300: #ffffff;
@@ -223,7 +261,7 @@ body[data-theme="mono"] {
   --brand-rgb: 250, 250, 250;
   --bg-base: #0a0a0a;
 }
-body[data-theme="mono"][data-mode="light"] {
+body[data-palette="mono"][data-mode="light"] {
   background-color: #fafafa !important;
   --chakra-colors-brand-300: #404040;
   --chakra-colors-brand-400: #171717;
@@ -282,8 +320,8 @@ body[data-mode="light"] {
 }
 
 /* Indigo light - darker accents for contrast on near-white bg.
-   Background itself comes from Chakra (no data-theme bg block for indigo). */
-body[data-theme="indigo"][data-mode="light"] {
+   Background itself comes from Chakra (no data-palette bg block for indigo). */
+body[data-palette="indigo"][data-mode="light"] {
   --bg-base: #fafafa;
   --brand-rgb: 79, 70, 229;
   --chakra-colors-brand-300: #6366f1;
@@ -295,7 +333,7 @@ body[data-theme="indigo"][data-mode="light"] {
 }
 
 /* Rosé Pine Dawn - warm parchment + muted rose/iris/pine */
-body[data-theme="rosepine"][data-mode="light"] {
+body[data-palette="rosepine"][data-mode="light"] {
   background-color: #faf4ed !important;
   background-image: radial-gradient(ellipse at 50% 0%, #fffaf3 0%, #f2e9e1 70%) !important;
   --chakra-colors-brand-300: #d7827e;
@@ -308,7 +346,7 @@ body[data-theme="rosepine"][data-mode="light"] {
 }
 
 /* Gruvbox light - cream paper + faded dark accents */
-body[data-theme="gruvbox"][data-mode="light"] {
+body[data-palette="gruvbox"][data-mode="light"] {
   background-color: #fbf1c7 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #f9f5d7 0%, #ebdbb2 70%) !important;
   --chakra-colors-brand-300: #d65d0e;
@@ -321,7 +359,7 @@ body[data-theme="gruvbox"][data-mode="light"] {
 }
 
 /* Evergreen light - pale sage + deep forest greens */
-body[data-theme="evergreen"][data-mode="light"] {
+body[data-palette="evergreen"][data-mode="light"] {
   background-color: #eef4e8 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #f4f8ef 0%, #dde7d2 70%) !important;
   --chakra-colors-brand-300: #16a34a;
@@ -336,7 +374,7 @@ body[data-theme="evergreen"][data-mode="light"] {
 /* Theme FX: persistent visual overlays */
 
 /* Amber CRT - scanline overlay */
-body[data-theme="amber"]::after {
+body[data-palette="amber"]::after {
   content: "";
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -352,7 +390,7 @@ body[data-theme="amber"]::after {
 }
 
 /* Amber CRT - vignette (darkened edges) */
-body[data-theme="amber"]::before {
+body[data-palette="amber"]::before {
   content: "";
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -367,7 +405,7 @@ body[data-theme="amber"]::before {
 
 
 /* Aurora - northern lights shimmer bands */
-body[data-theme="aurora"]::after {
+body[data-palette="aurora"]::after {
   content: "";
   position: fixed;
   top: -20px; left: -10%; right: -10%;
@@ -392,7 +430,7 @@ body[data-theme="aurora"]::after {
 }
 
 /* Aurora - second shimmer band, offset drift for layered depth */
-body[data-theme="aurora"]::before {
+body[data-palette="aurora"]::before {
   content: "";
   position: fixed;
   top: 30px; left: -10%; right: -10%;
@@ -410,7 +448,7 @@ body[data-theme="aurora"]::before {
 }
 
 /* Tokyo Night - distant city-light glow on the horizon */
-body[data-theme="tokyonight"]::after {
+body[data-palette="tokyonight"]::after {
   content: "";
   position: fixed;
   left: 0; right: 0; bottom: 0;
@@ -427,8 +465,8 @@ body[data-theme="tokyonight"]::after {
 }
 
 /* Cyberpunk - subtle neon text flicker on interactive elements */
-body[data-theme="cyberpunk"] a:hover,
-body[data-theme="cyberpunk"] button:hover {
+body[data-palette="cyberpunk"] a:hover,
+body[data-palette="cyberpunk"] button:hover {
   animation: fx-neon-flicker 0.15s ease-in-out;
 }
 
@@ -563,7 +601,7 @@ body[data-theme="cyberpunk"] button:hover {
 }
 
 /* Indigo - faint dot grid that fades out down the page */
-body[data-theme="indigo"] #root::before {
+body[data-palette="indigo"] #root::before {
   content: "";
   inset: 0;
   background-image: radial-gradient(rgba(var(--brand-rgb), 0.22) 1px, transparent 1px);
@@ -573,20 +611,20 @@ body[data-theme="indigo"] #root::before {
 }
 
 /* Rosé Pine - soft serif headings, paper grain, pill shapes */
-body[data-theme="rosepine"] .chakra-heading,
-body[data-theme="evergreen"] .chakra-heading {
+body[data-palette="rosepine"] .chakra-heading,
+body[data-palette="evergreen"] .chakra-heading {
   font-family: "Fraunces", Georgia, serif !important;
   font-weight: 700;
   letter-spacing: -0.015em;
 }
-body[data-theme="rosepine"] :is(.chakra-button, .chakra-tag, .chakra-badge) { border-radius: 999px !important; }
-body[data-theme="rosepine"] #root::before {
+body[data-palette="rosepine"] :is(.chakra-button, .chakra-tag, .chakra-badge) { border-radius: 999px !important; }
+body[data-palette="rosepine"] #root::before {
   content: "";
   inset: 0;
   opacity: 0.07;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-body[data-theme="rosepine"] #root::after {
+body[data-palette="rosepine"] #root::after {
   content: "";
   width: 520px; height: 520px; right: -160px; top: 10%;
   border-radius: 50%;
@@ -595,15 +633,15 @@ body[data-theme="rosepine"] #root::after {
 }
 
 /* Gruvbox - pixel headings, square everything, hard drop shadows */
-body[data-theme="gruvbox"] .chakra-heading {
+body[data-palette="gruvbox"] .chakra-heading {
   font-family: "Silkscreen", "JetBrains Mono", monospace !important;
   font-weight: 700;
   letter-spacing: 0;
 }
-body[data-theme="gruvbox"] :is(.chakra-button, .chakra-tag, .chakra-badge, .chakra-input, .chakra-kbd) { border-radius: 0 !important; }
-body[data-theme="gruvbox"] .chakra-button { box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.45); }
-body[data-theme="gruvbox"] .chakra-button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.45); }
-body[data-theme="gruvbox"] #root::before {
+body[data-palette="gruvbox"] :is(.chakra-button, .chakra-tag, .chakra-badge, .chakra-input, .chakra-kbd) { border-radius: 0 !important; }
+body[data-palette="gruvbox"] .chakra-button { box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.45); }
+body[data-palette="gruvbox"] .chakra-button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.45); }
+body[data-palette="gruvbox"] #root::before {
   content: "";
   inset: 0;
   opacity: 0.05;
@@ -615,7 +653,7 @@ body[data-theme="gruvbox"] #root::before {
 }
 
 /* Evergreen - topographic contour rings */
-body[data-theme="evergreen"] #root::before {
+body[data-palette="evergreen"] #root::before {
   content: "";
   inset: 0;
   background:
@@ -624,11 +662,11 @@ body[data-theme="evergreen"] #root::before {
 }
 
 /* Solarized - engineer's graph paper + mono headings */
-body[data-theme="solarized"] .chakra-heading {
+body[data-palette="solarized"] .chakra-heading {
   font-family: "JetBrains Mono", monospace !important;
   letter-spacing: -0.04em;
 }
-body[data-theme="solarized"] #root::before {
+body[data-palette="solarized"] #root::before {
   content: "";
   inset: 0;
   background-image:
@@ -640,12 +678,12 @@ body[data-theme="solarized"] #root::before {
 }
 
 /* Sunset - synthwave sun sinking behind a moving grid floor */
-body[data-theme="sunset"] .chakra-heading,
-body[data-theme="aurora"] .chakra-heading {
+body[data-palette="sunset"] .chakra-heading,
+body[data-palette="aurora"] .chakra-heading {
   font-family: "Space Grotesk", Inter, sans-serif !important;
   letter-spacing: -0.03em;
 }
-body[data-theme="sunset"] #root::before {
+body[data-palette="sunset"] #root::before {
   content: "";
   width: min(46vh, 64vw); aspect-ratio: 1;
   left: 50%; bottom: calc(30vh - min(23vh, 32vw));
@@ -657,7 +695,7 @@ body[data-theme="sunset"] #root::before {
   mask-image: linear-gradient(180deg, #000 0 45%, transparent 45% 49%, #000 49% 58%, transparent 58% 63%, #000 63% 71%, transparent 71% 77%, #000 77% 84%, transparent 84% 91%, #000 91%);
   filter: drop-shadow(0 0 40px rgba(255, 122, 89, 0.5));
 }
-body[data-theme="sunset"] #root::after {
+body[data-palette="sunset"] #root::after {
   content: "";
   left: -50%; right: -50%; bottom: 0; height: 30vh;
   opacity: 0.3;
@@ -675,22 +713,22 @@ body[data-theme="sunset"] #root::after {
 @keyframes grid-roll { to { background-position: 0 64px, 0 64px; } }
 
 /* Mono - brutalist: heavy caps, no gradients, square and outlined */
-body[data-theme="mono"] .chakra-heading,
-body[data-theme="crimson"] .chakra-heading {
+body[data-palette="mono"] .chakra-heading,
+body[data-palette="crimson"] .chakra-heading {
   font-family: "Archivo Black", Inter, sans-serif !important;
   font-weight: 400;
   letter-spacing: -0.01em;
 }
-body[data-theme="mono"] .chakra-heading { text-transform: uppercase; }
-body[data-theme="mono"] .grad-text {
+body[data-palette="mono"] .chakra-heading { text-transform: uppercase; }
+body[data-palette="mono"] .grad-text {
   background: none;
   color: var(--chakra-colors-brand-400);
   -webkit-text-fill-color: currentColor;
 }
-body[data-theme="mono"] :is(.chakra-button, .chakra-tag, .chakra-badge, .chakra-input) { border-radius: 0 !important; }
-body[data-theme="mono"] .chakra-button { border-width: 2px !important; }
-body[data-theme="mono"] .chakra-button:hover { background: var(--chakra-colors-brand-400) !important; color: var(--bg-base) !important; }
-body[data-theme="mono"] #root::before {
+body[data-palette="mono"] :is(.chakra-button, .chakra-tag, .chakra-badge, .chakra-input) { border-radius: 0 !important; }
+body[data-palette="mono"] .chakra-button { border-width: 2px !important; }
+body[data-palette="mono"] .chakra-button:hover { background: var(--chakra-colors-brand-400) !important; color: var(--bg-base) !important; }
+body[data-palette="mono"] #root::before {
   content: "";
   left: 0; right: 0; bottom: 0; height: 6px;
   background: var(--chakra-colors-brand-400);
@@ -698,33 +736,33 @@ body[data-theme="mono"] #root::before {
 }
 
 /* Crimson - sharp corners, hazard strip, slashed backdrop */
-body[data-theme="crimson"] :is(.chakra-button, .chakra-tag, .chakra-badge, .chakra-input) { border-radius: 2px !important; }
-body[data-theme="crimson"] #root::before {
+body[data-palette="crimson"] :is(.chakra-button, .chakra-tag, .chakra-badge, .chakra-input) { border-radius: 2px !important; }
+body[data-palette="crimson"] #root::before {
   content: "";
   left: 0; right: 0; bottom: 0; height: 5px;
   background: repeating-linear-gradient(45deg, #ef4444 0 12px, transparent 12px 24px);
   opacity: 0.85;
 }
-body[data-theme="crimson"] #root::after {
+body[data-palette="crimson"] #root::after {
   content: "";
   inset: 0;
   background: repeating-linear-gradient(-55deg, transparent 0 80px, rgba(239, 68, 68, 0.035) 80px 82px);
 }
 
 /* Cyberpunk - Orbitron, chromatic neon headings, cut-corner buttons, neon grid */
-body[data-theme="cyberpunk"] .chakra-heading {
+body[data-palette="cyberpunk"] .chakra-heading {
   font-family: "Orbitron", "JetBrains Mono", monospace !important;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   text-shadow: 2px 0 0 rgba(0, 240, 255, 0.55), -2px 0 0 rgba(255, 0, 110, 0.35), 0 0 18px rgba(252, 238, 10, 0.3);
 }
-body[data-theme="cyberpunk"] .chakra-button {
+body[data-palette="cyberpunk"] .chakra-button {
   border-radius: 0 !important;
   clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
 }
-body[data-theme="cyberpunk"] :is(.chakra-tag, .chakra-badge) { border-radius: 0 !important; }
-body[data-theme="cyberpunk"] #root::before {
+body[data-palette="cyberpunk"] :is(.chakra-tag, .chakra-badge) { border-radius: 0 !important; }
+body[data-palette="cyberpunk"] #root::before {
   content: "";
   inset: 0;
   background-image:
@@ -736,38 +774,48 @@ body[data-theme="cyberpunk"] #root::before {
 }
 
 /* Tokyo Night - neon-glow headings and a city skyline on the horizon */
-body[data-theme="tokyonight"] .chakra-heading {
+body[data-palette="tokyonight"] .chakra-heading {
   text-shadow: 0 0 22px rgba(122, 162, 247, 0.45), 0 0 2px rgba(187, 154, 247, 0.6);
 }
-body[data-theme="tokyonight"] #root::before {
+body[data-palette="tokyonight"] #root::before {
   content: "";
   left: 0; right: 0; bottom: 0; height: 170px;
   opacity: 0.85;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 170' preserveAspectRatio='none'%3E%3Cg fill='%2313141f'%3E%3Crect x='0' y='90' width='40' height='80'/%3E%3Crect x='38' y='60' width='30' height='110'/%3E%3Crect x='70' y='110' width='45' height='60'/%3E%3Crect x='112' y='40' width='26' height='130'/%3E%3Crect x='136' y='80' width='50' height='90'/%3E%3Crect x='184' y='20' width='22' height='150'/%3E%3Crect x='204' y='95' width='40' height='75'/%3E%3Crect x='242' y='65' width='34' height='105'/%3E%3Crect x='274' y='115' width='48' height='55'/%3E%3Crect x='320' y='50' width='28' height='120'/%3E%3Crect x='346' y='85' width='44' height='85'/%3E%3Crect x='388' y='30' width='24' height='140'/%3E%3Crect x='410' y='100' width='42' height='70'/%3E%3Crect x='450' y='70' width='32' height='100'/%3E%3Crect x='480' y='120' width='46' height='50'/%3E%3Crect x='524' y='55' width='28' height='115'/%3E%3Crect x='550' y='90' width='50' height='80'/%3E%3C/g%3E%3Cg fill='%23e0af68' opacity='.55'%3E%3Crect x='118' y='52' width='3' height='3'/%3E%3Crect x='126' y='70' width='3' height='3'/%3E%3Crect x='190' y='34' width='3' height='3'/%3E%3Crect x='196' y='60' width='3' height='3'/%3E%3Crect x='190' y='92' width='3' height='3'/%3E%3Crect x='326' y='64' width='3' height='3'/%3E%3Crect x='334' y='90' width='3' height='3'/%3E%3Crect x='394' y='44' width='3' height='3'/%3E%3Crect x='400' y='78' width='3' height='3'/%3E%3Crect x='530' y='70' width='3' height='3'/%3E%3Crect x='46' y='76' width='3' height='3'/%3E%3Crect x='250' y='80' width='3' height='3'/%3E%3C/g%3E%3Cg fill='%237aa2f7' opacity='.5'%3E%3Crect x='120' y='96' width='3' height='3'/%3E%3Crect x='252' y='104' width='3' height='3'/%3E%3Crect x='456' y='86' width='3' height='3'/%3E%3Crect x='540' y='100' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E") bottom / 100% 100% no-repeat;
 }
-body[data-theme="tokyonight"]::after { height: 260px; background: linear-gradient(0deg, rgba(122,162,247,.16) 0%, rgba(187,154,247,.07) 45%, transparent 100%); }
+body[data-palette="tokyonight"]::after { height: 260px; background: linear-gradient(0deg, rgba(122,162,247,.16) 0%, rgba(187,154,247,.07) 45%, transparent 100%); }
 
 /* Aurora - make the bands actually visible */
-body[data-theme="aurora"]::after {
+body[data-palette="aurora"]::after {
   height: 300px;
   background: linear-gradient(180deg, rgba(34, 211, 238, 0.16) 0%, rgba(52, 211, 153, 0.1) 35%, rgba(34, 211, 238, 0.04) 65%, transparent 100%);
 }
-body[data-theme="aurora"]::before {
+body[data-palette="aurora"]::before {
   height: 240px;
   background: linear-gradient(180deg, rgba(52, 211, 153, 0.14) 0%, rgba(34, 211, 238, 0.07) 45%, transparent 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body[data-theme="sunset"] #root::after { animation: none; }
+  body[data-palette="sunset"] #root::after { animation: none; }
+}
+
+@keyframes lab-window-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  .lab-window { animation: none !important; }
 }
 
 /* Amber CRT - terminal type for headings too */
-body[data-theme="amber"] .chakra-heading {
+body[data-palette="amber"] .chakra-heading {
   font-family: "JetBrains Mono", monospace !important;
   letter-spacing: -0.03em;
 }
 
 /* Wide display faces need a little less size on phones */
 @media (max-width: 480px) {
-  body:is([data-theme="gruvbox"], [data-theme="cyberpunk"]) .chakra-heading { font-size: 85%; overflow-wrap: anywhere; }
+  body:is([data-palette="gruvbox"], [data-palette="cyberpunk"]) .chakra-heading { font-size: 85%; overflow-wrap: anywhere; }
 }

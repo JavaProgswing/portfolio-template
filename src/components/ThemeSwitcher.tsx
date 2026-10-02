@@ -53,7 +53,7 @@ export const SoundToggle = () => {
   return (
     <Button
       onClick={() => setFxMuted(!muted)} size="xs" variant="outline" borderColor="var(--border-strong)"
-      color={muted ? "gray.500" : "gray.400"} borderRadius="md" px={2} h="22px" minW="22px"
+      color={muted ? "fg.subtle" : "fg.muted"} borderRadius="md" px={2} h="22px" minW="22px"
       aria-label={muted ? "Unmute theme sounds" : "Mute theme sounds"} title={muted ? "Unmute theme sounds" : "Mute theme sounds"}
       _hover={{ color: "brand.400", borderColor: "brand.500" }}
     >
@@ -129,13 +129,13 @@ const ThemeSwitcher = () => {
         <PopoverArrow bg="var(--bg-base)" />
         <PopoverBody p={2} maxH="min(70vh, 480px)" overflowY="auto">
           <HStack justify="space-between" px={1} pt={1} pb={2} mb={1} borderBottom="1px solid var(--border)">
-            <HStack spacing={2.5} fontFamily="mono" fontSize="9px" color="gray.500">
+            <HStack spacing={2.5} fontFamily="mono" fontSize="9px" color="fg.subtle">
               <HStack spacing={1}><Icon as={FaVolumeUp as ElementType} boxSize={2.5} /><Text color="inherit">sound</Text></HStack>
               <HStack spacing={1}><Icon as={FaMagic as ElementType} boxSize={2.5} /><Text color="inherit">ambient</Text></HStack>
               <HStack spacing={1}><Icon as={FaBolt as ElementType} boxSize={2.5} /><Text color="inherit">immersive</Text></HStack>
             </HStack>
             <Button size="xs" variant="ghost" h="22px" px={2} fontFamily="mono" fontSize="10px"
-              color={muted ? "gray.500" : "brand.400"} onClick={() => setFxMuted(!muted)}
+              color={muted ? "fg.subtle" : "brand.400"} onClick={() => setFxMuted(!muted)}
               leftIcon={<Icon as={(muted ? FaVolumeMute : FaVolumeUp) as ElementType} boxSize={3} />}>
               {muted ? "muted" : "sound on"}
             </Button>
@@ -145,7 +145,7 @@ const ThemeSwitcher = () => {
             { label: "Dark only", items: THEMES.filter((t) => !isMinimalTheme(t.key)) },
           ].map((group) => (
             <Box key={group.label} mb={2}>
-              <Text fontSize="9px" color="gray.500" fontFamily="mono" letterSpacing="0.14em" mb={1.5} px={1} pt={1} textTransform="uppercase">
+              <Text fontSize="9px" color="fg.subtle" fontFamily="mono" letterSpacing="0.14em" mb={1.5} px={1} pt={1} textTransform="uppercase">
                 {group.label}
               </Text>
               <Box display="grid" gridTemplateColumns="1fr 1fr" gap={1.5}>
@@ -175,7 +175,7 @@ const ThemeSwitcher = () => {
                       </HStack>
                       <HStack justify="space-between" spacing={1}>
                         <Text fontSize="xs" fontWeight="600" isTruncated>{t.name}</Text>
-                        <HStack spacing={1} color={active ? "brand.400" : "gray.500"} flexShrink={0}>
+                        <HStack spacing={1} color={active ? "brand.400" : "fg.subtle"} flexShrink={0}>
                           {t.fx.immersive && <Icon as={FaBolt as ElementType} boxSize={2.5} aria-label="immersive" />}
                           {t.fx.ambient && <Icon as={FaMagic as ElementType} boxSize={2.5} aria-label="ambient visuals" />}
                           {t.fx.sound && <Icon as={(muted ? FaVolumeMute : FaVolumeUp) as ElementType} boxSize={2.5} aria-label="sound" opacity={muted ? 0.5 : 1} />}

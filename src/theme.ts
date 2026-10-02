@@ -14,8 +14,8 @@ const theme = extendTheme({
       "fg.strong": { default: "gray.900", _dark: "gray.100" },
       "fg.body": { default: "gray.700", _dark: "gray.300" },
       "fg.muted": { default: "gray.600", _dark: "gray.400" },
-      "fg.subtle": { default: "gray.500", _dark: "gray.600" },
-      "fg.faint": { default: "gray.400", _dark: "gray.700" },
+      "fg.subtle": { default: "gray.500", _dark: "#8e8e99" },
+      "fg.faint": { default: "gray.400", _dark: "gray.500" },
     },
   },
   fonts: {

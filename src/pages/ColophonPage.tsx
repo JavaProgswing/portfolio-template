@@ -10,6 +10,7 @@ import {
 import { motion } from "framer-motion";
 import { Link as RouterLink } from "react-router-dom";
 import { ElementType } from "react";
+import { DEFAULT_THEME, THEMES } from "../themes/palettes";
 import { FaServer, FaWrench } from "react-icons/fa";
 
 const MotionBox = motion(Box);
@@ -40,8 +41,8 @@ const SECTIONS = [
   {
     label: "Design",
     items: [
-      "Inter (body) + JetBrains Mono (code/mono labels)",
-      "Zinc/Indigo default · 7 alt themes (Ros\u00e9 Pine, Gruvbox, Evergreen, Cyberpunk, Aurora, Amber CRT, Tokyo Night)",
+      "Inter (body) + JetBrains Mono (code/mono labels), plus a display face per theme",
+      `${THEMES.length} themes, ${THEMES.find((t) => t.key === DEFAULT_THEME)?.name} by default (${THEMES.filter((t) => t.key !== DEFAULT_THEME).map((t) => t.name).join(", ")})`,
       "780px max content width — single-column document feel",
       "Dark-first · respects prefers-color-scheme",
     ],
@@ -109,7 +110,7 @@ const ColophonPage = ({ data }: Props) => {
         </Text>
       </RouterLink>
 
-      <Text fontSize="11px" fontFamily="mono" color="gray.500"
+      <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
         letterSpacing="0.14em" mb={2} textTransform="uppercase">
         Colophon
       </Text>
@@ -158,7 +159,7 @@ const ColophonPage = ({ data }: Props) => {
             {homelab.specs.map((s) => (
               <HStack key={s.label} align="flex-start" spacing={4}>
                 <Text
-                  fontSize="10px" fontFamily="mono" color="gray.500"
+                  fontSize="10px" fontFamily="mono" color="fg.subtle"
                   letterSpacing="0.1em" textTransform="uppercase"
                   w={{ base: "90px", md: "110px" }} flexShrink={0} pt="2px"
                 >
@@ -201,7 +202,7 @@ const ColophonPage = ({ data }: Props) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.06 }}>
-            <Text fontSize="10px" fontFamily="mono" color="gray.500"
+            <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
               letterSpacing="0.16em" mb={3} textTransform="uppercase">
               {section.label}
             </Text>

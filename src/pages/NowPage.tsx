@@ -19,7 +19,7 @@ const NowPage = ({ data }: { data: { now?: NowData; name: string } }) => {
         </Text>
       </RouterLink>
 
-      <Text fontSize="11px" fontFamily="mono" color="gray.500"
+      <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
         letterSpacing="0.14em" mb={2} textTransform="uppercase">
         Now
       </Text>
@@ -40,7 +40,7 @@ const NowPage = ({ data }: { data: { now?: NowData; name: string } }) => {
       )}
 
       {!now && (
-        <Text fontSize="sm" color="gray.500" fontStyle="italic">
+        <Text fontSize="sm" color="fg.subtle" fontStyle="italic">
           (Configure your now sections in <Text as="code" color="brand.400">me.ts → now</Text>)
         </Text>
       )}
@@ -54,7 +54,7 @@ const NowPage = ({ data }: { data: { now?: NowData; name: string } }) => {
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.08 }}
           >
-            <Text fontSize="10px" fontFamily="mono" color="gray.500"
+            <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
               letterSpacing="0.16em" mb={2} textTransform="uppercase">
               {section.label}
             </Text>

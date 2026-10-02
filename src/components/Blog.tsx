@@ -158,7 +158,7 @@ export const RatingBar = ({ slug }: { slug: string }) => {
 
   return (
     <Box>
-      <Text fontSize="10px" fontFamily="mono" color="gray.500"
+      <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
         letterSpacing="0.14em" textTransform="uppercase" mb={3}>
         Rate this post
       </Text>
@@ -173,7 +173,7 @@ export const RatingBar = ({ slug }: { slug: string }) => {
                 onMouseEnter={() => setHover(n)}
                 onMouseLeave={() => setHover(0)}
                 onClick={() => rate(n)}
-                color={filled ? "yellow.400" : "gray.600"}
+                color={filled ? "yellow.400" : "fg.subtle"}
                 _hover={{ color: "yellow.300", transform: "scale(1.25)" }}
                 sx={{ transition: "all 0.15s" }}
                 cursor="pointer"
@@ -185,7 +185,7 @@ export const RatingBar = ({ slug }: { slug: string }) => {
           })}
         </HStack>
         {stats && stats.count > 0 ? (
-          <Text color="gray.500">
+          <Text color="fg.subtle">
             <Text as="span" color="yellow.400" fontWeight="600">{stats.average?.toFixed(1)}</Text>
             {" "}· {stats.count} {stats.count === 1 ? "vote" : "votes"}
           </Text>
@@ -284,8 +284,8 @@ export const CommentsSection = ({ slug }: { slug: string }) => {
   return (
     <Box>
       <HStack spacing={2} mb={4}>
-        <Icon as={FaCommentDots as ElementType} boxSize={3.5} color="gray.500" />
-        <Text fontSize="10px" fontFamily="mono" color="gray.500"
+        <Icon as={FaCommentDots as ElementType} boxSize={3.5} color="fg.subtle" />
+        <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
           letterSpacing="0.14em" textTransform="uppercase">
           {comments.length} {comments.length === 1 ? "comment" : "comments"}
         </Text>
@@ -326,7 +326,7 @@ export const CommentsSection = ({ slug }: { slug: string }) => {
       >
         {replyTo !== null && (
           <HStack
-            mb={2} fontFamily="mono" fontSize="10px" color="gray.500" spacing={1}
+            mb={2} fontFamily="mono" fontSize="10px" color="fg.subtle" spacing={1}
           >
             <Icon as={FaReply as ElementType} boxSize={2.5} />
             <Text>replying to #{replyTo}</Text>
@@ -411,7 +411,7 @@ const CommentBubble = ({
             as="button"
             onClick={onReply}
             fontSize="10px"
-            color="gray.500"
+            color="fg.subtle"
             fontFamily="mono"
             _hover={{ color: "brand.400" }}
             display="flex"
@@ -473,7 +473,7 @@ const BlogCard = ({
     >
       <Stack spacing={3}>
         <HStack justify="space-between" align="flex-start">
-          <Text fontSize="11px" color="gray.500" fontFamily="mono">{post.date}</Text>
+          <Text fontSize="11px" color="fg.subtle" fontFamily="mono">{post.date}</Text>
           <Text fontSize="11px" color="fg.subtle" fontFamily="mono" whiteSpace="nowrap">
             {post.readTime}
           </Text>
@@ -497,7 +497,7 @@ const BlogCard = ({
 
         {/* Subtle read indicator */}
         {(post.content || post.link) && (
-          <HStack spacing={1.5} alignSelf="flex-start" color="gray.500"
+          <HStack spacing={1.5} alignSelf="flex-start" color="fg.subtle"
             _groupHover={{ color: "brand.400" }}
             sx={{ transition: "color 0.2s" }}>
             <Text fontSize="11px" fontFamily="mono">
@@ -521,7 +521,7 @@ const Blog = ({ blogs }: { blogs: BlogPost[] }) => {
     <Box>
       <Flex justify="space-between" align="flex-end" mb={8} wrap="wrap" gap={2}>
         <Box>
-          <Text fontSize="11px" fontFamily="mono" color="gray.500"
+          <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
             letterSpacing="0.14em" mb={2} textTransform="uppercase">
             Writing
           </Text>

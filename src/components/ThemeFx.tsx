@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { isFxMuted } from "../lib/fx";
+import { DEFAULT_THEME } from "../themes/palettes";
 import {
   bell, blip8, bootBeeps, electricZap, glitchSound, mallet, nextNote, pluck, swoosh,
   terminalBeep, thump, typeClick,
@@ -306,20 +307,44 @@ const setupAurora: SetupFn = (getCtx) => {
 
 const setupAmber: SetupFn = (getCtx) => {
   let flickerInterval: ReturnType<typeof setInterval> | null = null;
+  const bootTimers = new Set<ReturnType<typeof setTimeout>>();
+  let boot: HTMLElement | null = null;
+  let dismissBoot = () => {};
+
+  const scheduleBoot = (callback: () => void, delay: number) => {
+    const timer = setTimeout(() => {
+      bootTimers.delete(timer);
+      callback();
+    }, delay);
+    bootTimers.add(timer);
+    return timer;
+  };
+
+  const onBootKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape" && boot?.isConnected) dismissBoot();
+  };
 
   function showBoot() {
     const ctx = getCtx();
     if (ctx) bootBeeps(ctx);
 
-    const boot = createEl("div", {
+    boot = createEl("div", {
       position: "fixed", top: "0", left: "0", right: "0", bottom: "0",
       background: "rgba(10, 7, 0, 0.96)",
-      pointerEvents: "none", zIndex: "10001",
+      pointerEvents: "auto", zIndex: "10001",
       display: "flex", alignItems: "flex-start", justifyContent: "flex-start",
       padding: "40px",
       fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", color: "#ffb000",
       opacity: "1", transition: "opacity 0.8s ease-out",
     });
+    dismissBoot = () => {
+      if (!boot?.isConnected) return;
+      for (const timer of bootTimers) clearTimeout(timer);
+      bootTimers.clear();
+      boot.style.transition = "opacity 180ms ease-out";
+      boot.style.opacity = "0";
+      scheduleBoot(() => boot?.remove(), 190);
+    };
     const lines = [
       "BIOS v1.0.3 · 640K CONVENTIONAL MEMORY",
       "CHECKING HARDWARE ···· OK",
@@ -332,12 +357,26 @@ const setupAmber: SetupFn = (getCtx) => {
     const textBox = document.createElement("pre");
     textBox.style.cssText = "margin:0;line-height:1.8;color:#ffb000;text-shadow:0 0 6px rgba(255,176,0,0.35);";
     boot.appendChild(textBox);
+    const skip = createEl("button", {
+      position: "absolute", top: "20px", right: "20px", padding: "8px 12px",
+      border: "1px solid rgba(255,176,0,.4)", borderRadius: "4px",
+      background: "rgba(255,176,0,.08)", color: "#ffcf66", cursor: "pointer",
+      font: "12px 'JetBrains Mono', monospace",
+    }) as HTMLButtonElement;
+    skip.type = "button";
+    skip.textContent = "Skip intro · Esc";
+    skip.setAttribute("aria-label", "Skip Amber CRT intro");
+    skip.addEventListener("click", (event) => {
+      event.stopPropagation();
+      dismissBoot();
+    });
+    boot.appendChild(skip);
     document.body.appendChild(boot);
 
     let lineIdx = 0, charIdx = 0, displayed = "";
     function type() {
       if (lineIdx >= lines.length) {
-        setTimeout(() => { boot.style.opacity = "0"; setTimeout(() => boot.remove(), 800); }, 700);
+        scheduleBoot(() => dismissBoot(), 700);
         return;
       }
       const cur = lines[lineIdx];
@@ -345,14 +384,14 @@ const setupAmber: SetupFn = (getCtx) => {
         displayed += cur[charIdx]; charIdx++;
         textBox.textContent = displayed + "█";
         if (ctx && charIdx % 3 === 0) terminalBeep(ctx); // typing clicks
-        setTimeout(type, 20 + Math.random() * 20);
+        scheduleBoot(type, 20 + Math.random() * 20);
       } else {
         displayed += "\n"; lineIdx++; charIdx = 0;
         textBox.textContent = displayed + "█";
-        setTimeout(type, 180);
+        scheduleBoot(type, 180);
       }
     }
-    setTimeout(type, 400);
+    scheduleBoot(type, 400);
   }
 
   function doFlicker() {
@@ -392,7 +431,10 @@ const setupAmber: SetupFn = (getCtx) => {
   };
 
   // Page reloads skip the boot screen; it only plays when you switch to Amber.
-  if (!initialRun) showBoot();
+  if (!initialRun) {
+    showBoot();
+    window.addEventListener("keydown", onBootKeyDown);
+  }
   flickerInterval = setInterval(doFlicker, 12000 + Math.random() * 18000);
 
   window.addEventListener("click", onClick);
@@ -400,6 +442,9 @@ const setupAmber: SetupFn = (getCtx) => {
   return () => {
     window.removeEventListener("click", onClick);
     window.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("keydown", onBootKeyDown);
+    for (const timer of bootTimers) clearTimeout(timer);
+    bootTimers.clear();
     if (flickerInterval) clearInterval(flickerInterval);
     removeAllFxElements();
   };
@@ -646,7 +691,7 @@ const ThemeFx = () => {
       activate(key, false);
     };
 
-    const initial = document.body.dataset.theme || "indigo";
+    const initial = document.body.dataset.palette || DEFAULT_THEME;
     activate(initial, true);
 
     window.addEventListener("themechange", onThemeChange);

@@ -19,7 +19,8 @@ import {
 import { getTechIcon } from "../services/getTechIcon";
 import { useEffect, useState, ElementType } from "react";
 import { motion } from "framer-motion";
-import { FaChevronDown, FaExternalLinkAlt } from "react-icons/fa";
+import { Link as RouterLink } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa";
 
 export interface Info {
   name: string;
@@ -30,6 +31,7 @@ export interface Info {
     frontend: { name: string; id: string; desc: string; link: string }[];
     backend: { name: string; id: string; desc: string; link: string }[];
     databases: { name: string; id: string; desc: string; link: string }[];
+    machineLearning: { name: string; id: string; desc: string; link: string }[];
     misc: { name: string; id: string; desc: string; link: string }[];
   };
   projects: {
@@ -43,22 +45,15 @@ export interface Info {
     company: string;
     date: string;
     description: string;
+    type?: "education" | "work" | "project" | "community";
     evidence?: { name: string; url: string }[];
   }[];
   desc: string;
   desc_brief: string;
 }
 
-interface CurrentWorkData {
-  title: string;
-  org: string;
-  orgUrl: string;
-  startDate: string;
-}
-
 interface Props {
   data: Info;
-  currentWork?: CurrentWorkData;
   resumeUrl?: string;
   onScrollDown?: () => void;
 }
@@ -67,7 +62,7 @@ const MotionBox = motion(Box);
 const MotionImage = motion(Image);
 const MotionStack = motion(Stack);
 
-const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
+const Intro = ({ data, resumeUrl, onScrollDown }: Props) => {
   const { isOpen, onToggle } = useDisclosure();
   const [displayedText, setDisplayedText] = useState(data.desc_brief);
 
@@ -176,8 +171,8 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
             </Button>
             {resumeUrl && (
               <Button
-                as="a"
-                href={resumeUrl}
+                as={RouterLink}
+                to="/resume"
                 size="xs"
                 variant="outline"
                 borderColor="var(--border)"
@@ -192,52 +187,11 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
                   bg: "var(--surface)",
                 }}
               >
-                resume ↗
+                resume →
               </Button>
             )}
           </HStack>
 
-          {/* Compact "Now" status */}
-          {currentWork && (
-            <MotionBox
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.55 }}
-              display="inline-flex"
-              alignItems="center"
-              gap={3}
-              p={3}
-              borderRadius="10px"
-              bg="var(--surface)"
-              border="1px solid" borderColor="var(--border)"
-              maxW="fit-content"
-              _hover={{ borderColor: "rgba(var(--brand-rgb),0.3)" }}
-              sx={{ transition: "border-color 0.2s" }}
-            >
-              <Box
-                w="7px" h="7px" borderRadius="full" bg="green.400"
-                flexShrink={0} animation="live-dot 2s ease-in-out infinite"
-              />
-              <Box>
-                <Text fontSize="10px" color="green.400" fontFamily="mono"
-                  fontWeight="700" letterSpacing="0.14em">
-                  NOW · {currentWork.startDate}
-                </Text>
-                <HStack spacing={1} align="center">
-                  <Text fontSize="sm" fontWeight="600">{currentWork.title}</Text>
-                  <Text fontSize="xs" color="gray.500">·</Text>
-                  <Text
-                    as="a" href={currentWork.orgUrl} target="_blank" rel="noopener noreferrer"
-                    fontSize="xs" color="brand.400" _hover={{ color: "brand.300" }}
-                    display="inline-flex" alignItems="center" gap={1}
-                  >
-                    {currentWork.org}
-                    <Icon as={FaExternalLinkAlt as ElementType} boxSize={2.5} />
-                  </Text>
-                </HStack>
-              </Box>
-            </MotionBox>
-          )}
         </MotionStack>
       </Flex>
 
@@ -301,6 +255,7 @@ const Intro = ({ data, currentWork, resumeUrl, onScrollDown }: Props) => {
             { key: "frontend", label: "Frontend", items: data.frameworks.frontend },
             { key: "backend",  label: "Backend",  items: data.frameworks.backend },
             { key: "data",     label: "Data",     items: data.frameworks.databases },
+            { key: "ml",       label: "ML & Vision", items: data.frameworks.machineLearning },
             { key: "tools",    label: "Tools",    items: data.frameworks.misc },
           ]
             .filter((g) => g.items.length > 0)

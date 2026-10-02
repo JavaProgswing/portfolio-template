@@ -13,7 +13,7 @@ export interface Certificate {
   result?: string;
   featured?: boolean;
   description?: string;
-  file?: string; // path under public/, e.g. /certificates/x.pdf
+  file?: string; // path under public/, e.g. /files/certificates/x.pdf
   url?: string; // public verification link
 }
 

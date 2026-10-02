@@ -48,7 +48,7 @@ interface PortfolioData {
   languages: string[];
   frameworks: {
     frontend: Framework[]; backend: Framework[];
-    databases: Framework[]; misc: Framework[];
+    databases: Framework[]; machineLearning: Framework[]; misc: Framework[];
   };
   projects: Project[];
   contacts: Contact[];
@@ -73,6 +73,7 @@ function buildSystemPrompt(data: PortfolioData): string {
     ...data.frameworks.frontend,
     ...data.frameworks.backend,
     ...data.frameworks.databases,
+    ...data.frameworks.machineLearning,
     ...data.frameworks.misc,
   ].map((f) => f.name).join(", ");
 
@@ -573,7 +574,7 @@ const AiChat = ({ data }: Props) => {
             <Box px={3} py={3} borderTop="1px solid" borderColor={borderCol} flexShrink={0}>
               {available === false ? (
                 <Stack spacing={1} py={1}>
-                  <Text fontSize="xs" color="gray.500" textAlign="center" fontFamily="mono">
+                  <Text fontSize="xs" color="fg.subtle" textAlign="center" fontFamily="mono">
                     chat is offline
                   </Text>
                   <Text fontSize="10px" color="fg.subtle" textAlign="center" fontFamily="mono">

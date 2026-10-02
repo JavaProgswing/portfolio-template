@@ -74,7 +74,7 @@ Nothing personal is hardcoded in components. Everything you own lives in gitigno
 | File | What it holds |
 |---|---|
 | `src/data/me.ts` | Profile, journey, projects, blog posts, contacts, `lab` overrides |
-| `src/data/certificates.json` | Certificates and hackathon results for `/certificates` and `/resume`. Put the files in `public/certificates/` |
+| `src/data/certificates.json` | Certificates and hackathon results for `/certificates` and `/resume`. Put the files in `public/files/certificates/` |
 | `src/data/lab-sites.json` | Live sites with no GitHub repo homepage (CLI deploys, private repos) for `/lab` |
 | `src/data/repo-curation.json` | Ranking hints for `npm run fetch-repos` |
 | `portfolio.config.json` | Machine-specific script settings: SSH deploy target, resume PDF path |
@@ -164,7 +164,7 @@ The minimum is two files, both keyed by the same lowercase `key`.
 2. `src/index.css` - add a matching block with the same slug:
 
 ```css
-body[data-theme="mytheme"] {
+body[data-palette="mytheme"] {
   background-color: #0b0b0f !important;
   background-image: radial-gradient(ellipse at 50% 0%, #15151f 0%, #060608 70%) !important;
   --chakra-colors-brand-300: #ffd36e;
@@ -182,7 +182,7 @@ The `brand-300..600` vars retint every accent across the site; `--cursor-glow` c
 Add the key to `MINIMAL_THEMES` in `palettes.ts`, then add a light override in `index.css` (higher specificity wins over the dark block):
 
 ```css
-body[data-theme="mytheme"][data-mode="light"] {
+body[data-palette="mytheme"][data-mode="light"] {
   background-color: #faf7f0 !important;
   background-image: radial-gradient(ellipse at 50% 0%, #fffdf8 0%, #efe9dd 70%) !important;
   --chakra-colors-brand-400: #c0432c;   /* darker accents for contrast on a light bg */
@@ -203,7 +203,7 @@ Each theme can also have an at-rest identity (heading font, background texture, 
 | File | Role |
 |------|------|
 | `src/themes/palettes.ts` | Source of truth: `THEMES`, `DEFAULT_THEME`, `MINIMAL_THEMES`, `isMinimalTheme`, `applyTheme`, `resolveInitialTheme` |
-| `src/index.css` | `body[data-theme="<key>"]` colors, optional `[data-mode="light"]` overrides, and `fx-*` keyframes |
+| `src/index.css` | `body[data-palette="<key>"]` colors, optional `[data-mode="light"]` overrides, and `fx-*` keyframes |
 | `src/components/ThemeFx.tsx` | `THEME_FX` registry of per-theme click/ambient effects |
 | `src/lib/sound.ts`, `src/lib/fx.ts` | Synth voices + audio bus, and the global mute |
 | `src/components/ThemeSwitcher.tsx` | Renders the palette grid from `THEMES` (no edits needed) |
@@ -211,7 +211,7 @@ Each theme can also have an at-rest identity (heading font, background texture, 
 | `src/components/NavBar.tsx`, `src/components/ColorModeSync.tsx` | Gate light mode via `isMinimalTheme` |
 | `src/pages/ColophonPage.tsx` | Prose list of themes - update by hand |
 
-`applyTheme(key)` sets `document.body.dataset.theme`, persists to `localStorage`, and dispatches a `themechange` event that `ThemeFx`, the nav, and `ColorModeSync` listen for.
+`applyTheme(key)` sets `document.body.dataset.palette`, persists to `localStorage`, and dispatches a `themechange` event that `ThemeFx`, the nav, and `ColorModeSync` listen for.
 
 ## License
 

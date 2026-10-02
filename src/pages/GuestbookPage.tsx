@@ -106,7 +106,7 @@ const GuestbookPage = () => {
         </Text>
       </RouterLink>
 
-      <Text fontSize="11px" fontFamily="mono" color="gray.500"
+      <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
         letterSpacing="0.14em" mb={2} textTransform="uppercase">
         Guestbook
       </Text>
@@ -161,14 +161,14 @@ const GuestbookPage = () => {
       {/* Entries */}
       {available === false ? (
         <Box p={4} layerStyle="card" border="1px solid" borderColor={border} borderRadius="10px">
-          <Text fontSize="sm" color="gray.500">
+          <Text fontSize="sm" color="fg.subtle">
             Guestbook backend is offline. Make sure the FastAPI service is running:{" "}
           </Text>
         </Box>
       ) : loading ? (
-        <Text fontSize="sm" color="gray.500" fontFamily="mono">loading entries…</Text>
+        <Text fontSize="sm" color="fg.subtle" fontFamily="mono">loading entries…</Text>
       ) : entries.length === 0 ? (
-        <Text fontSize="sm" color="gray.500" fontFamily="mono" textAlign="center" py={6}>
+        <Text fontSize="sm" color="fg.subtle" fontFamily="mono" textAlign="center" py={6}>
           no entries yet · be the first
         </Text>
       ) : (

@@ -43,6 +43,9 @@ import {
   SiBabel,
   SiPhp,
   SiRubyonrails,
+  SiStreamlit,
+  SiMediapipe,
+  SiPandas,
 } from "react-icons/si";
 import { IconType } from "react-icons";
 
@@ -51,12 +54,14 @@ import { IconType } from "react-icons";
 export const getTechIcon = (
   id: string
 ): { icon: IconType | null; label: string } => {
-  switch (id.toLowerCase()) {
+  const key = id.toLowerCase().replace(/\s*\(.*\)\s*$/, "");
+  switch (key) {
     // Core Languages
     case "c":
+      return { icon: SiC, label: "C" };
     case "csharp":
     case "c#":
-      return { icon: SiC, label: "C" };
+      return { icon: SiDotnet, label: "C#" };
     case "c++":
     case "cpp":
     case "cplusplus":
@@ -64,7 +69,7 @@ export const getTechIcon = (
     case "go":
       return { icon: SiGo, label: "Go" };
     case "rust":
-      return { icon: FaRust, label: "Rust" };
+      return { icon: FaRust, label: /\(learning\)/i.test(id) ? "Rust · learning" : "Rust" };
     case "java":
       return { icon: FaJava, label: "Java" };
     case "swift":
@@ -123,6 +128,10 @@ export const getTechIcon = (
       return { icon: SiFlask, label: "Quart" };
     case "fastapi":
       return { icon: SiFastapi, label: "FastAPI" };
+    case "streamlit":
+      return { icon: SiStreamlit, label: "Streamlit" };
+    case "mediapipe":
+      return { icon: SiMediapipe, label: "MediaPipe" };
     case "django":
       return { icon: SiDjango, label: "Django" };
     case "spring":
@@ -142,6 +151,8 @@ export const getTechIcon = (
       return { icon: SiPostgresql, label: "PostgreSQL" };
     case "sqlite":
       return { icon: SiSqlite, label: "SQLite" };
+    case "pandas":
+      return { icon: SiPandas, label: "pandas" };
     case "mongodb":
       return { icon: SiMongodb, label: "MongoDB" };
     case "redis":

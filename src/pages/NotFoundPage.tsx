@@ -126,7 +126,7 @@ const NotFoundPage = ({ blogs = [] }: { blogs?: BlogPost[] }) => {
 
       <Box position="relative" maxW="720px" mx="auto" px={{ base: 5, md: 8 }} py={{ base: 12, md: 20 }} textAlign="center">
         <MotionBox style={{ x: tx, y: ty }}>
-          <Text fontFamily="mono" fontSize="11px" color="gray.500" letterSpacing="0.2em" textTransform="uppercase" mb={2}>
+          <Text fontFamily="mono" fontSize="11px" color="fg.subtle" letterSpacing="0.2em" textTransform="uppercase" mb={2}>
             error · page not found
           </Text>
           <Heading
@@ -139,19 +139,19 @@ const NotFoundPage = ({ blogs = [] }: { blogs?: BlogPost[] }) => {
 
         <MotionBox initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.4 }}>
           <Text fontSize="lg" mt={4} color="fg.body">{tagline}</Text>
-          <Text fontFamily="mono" fontSize="12px" color="gray.500" mt={2}>
+          <Text fontFamily="mono" fontSize="12px" color="fg.subtle" mt={2}>
             nothing lives at <Text as="span" color="brand.400">/{asked}</Text>
           </Text>
 
           <Box mt={9} textAlign="left" p={4} borderRadius="12px" layerStyle="card">
-            <Text fontFamily="mono" fontSize="11px" color="gray.500" mb={2}>
+            <Text fontFamily="mono" fontSize="11px" color="fg.subtle" mb={2}>
               $ did-you-mean {asked.split("/")[0] || "?"}
             </Text>
             <Box display="grid" gridTemplateColumns={{ base: "1fr", sm: "repeat(3, 1fr)" }} gap={2}>
               {suggestions.map((s) => (
                 <Box key={s.to} as={RouterLink} to={s.to} className="lift" p={3} borderRadius="10px" bg="var(--surface-strong)" border="1px solid var(--border)">
                   <Text fontFamily="mono" fontSize="13px" color="brand.400" fontWeight="600">{s.to}</Text>
-                  <Text fontSize="11px" color="gray.500">{s.hint}</Text>
+                  <Text fontSize="11px" color="fg.subtle">{s.hint}</Text>
                 </Box>
               ))}
             </Box>
@@ -170,7 +170,7 @@ const NotFoundPage = ({ blogs = [] }: { blogs?: BlogPost[] }) => {
 
           {blogs.length > 0 && (
             <Box mt={8} textAlign="left">
-              <Text fontFamily="mono" fontSize="10px" color="gray.500" letterSpacing="0.14em" textTransform="uppercase" mb={2}>
+              <Text fontFamily="mono" fontSize="10px" color="fg.subtle" letterSpacing="0.14em" textTransform="uppercase" mb={2}>
                 or read something while you're here
               </Text>
               {blogs.slice(0, 3).map((b) => (

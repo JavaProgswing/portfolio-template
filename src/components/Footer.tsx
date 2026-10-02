@@ -34,8 +34,8 @@ const Footer = ({ name }: Props) => {
     return () => clearInterval(interval);
   }, []);
 
-  const textColor = useColorModeValue("gray.600", "gray.500");
-  const subtleColor = useColorModeValue("gray.500", "gray.600");
+  const textColor = "fg.muted";
+  const subtleColor = "fg.subtle";
   const borderColor = useColorModeValue("gray.200", "gray.800");
   const kbdBg = useColorModeValue("gray.100", "rgba(255,255,255,0.05)");
   const kbdBorder = useColorModeValue("gray.300", "rgba(255,255,255,0.1)");

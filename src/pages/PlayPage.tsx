@@ -97,7 +97,7 @@ const PlayPage = () => {
 
       <HStack spacing={3} mb={3}>
         <Icon as={FaGamepad as ElementType} boxSize={5} color="brand.400" />
-        <Text fontSize="11px" fontFamily="mono" color="gray.500"
+        <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
           letterSpacing="0.14em" textTransform="uppercase">
           Mini-Games
         </Text>
@@ -213,7 +213,7 @@ const SuggestionForm = () => {
 
   return (
     <Box>
-      <Text fontSize="10px" fontFamily="mono" color="gray.500"
+      <Text fontSize="10px" fontFamily="mono" color="fg.subtle"
         letterSpacing="0.14em" mb={3} textTransform="uppercase">
         Got Feedback?
       </Text>

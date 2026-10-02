@@ -109,12 +109,12 @@ const FetchedRepoCard = ({ repo, index, border }: { repo: FetchedRepo; index: nu
           <HStack spacing={3} flexShrink={0}>
             {repo.homepage && (
               <Tooltip label="Live demo" hasArrow fontSize="xs">
-                <Link href={repo.homepage} isExternal color="gray.500" _hover={{ color: "brand.400" }}>
+                <Link href={repo.homepage} isExternal color="fg.subtle" _hover={{ color: "brand.400" }}>
                   <Icon as={FaGlobe as ElementType} boxSize={3.5} />
                 </Link>
               </Tooltip>
             )}
-            <Link href={repo.url} isExternal color="gray.500" _hover={{ color: "brand.400" }}>
+            <Link href={repo.url} isExternal color="fg.subtle" _hover={{ color: "brand.400" }}>
               <Icon as={FaGithub as ElementType} boxSize={3.5} />
             </Link>
           </HStack>
@@ -129,13 +129,13 @@ const FetchedRepoCard = ({ repo, index, border }: { repo: FetchedRepo; index: nu
             {repo.stars > 0 && (
               <HStack spacing={1}>
                 <Icon as={FaStar as ElementType} boxSize={3} color="yellow.400" />
-                <Text fontSize="11px" color="gray.500" fontFamily="mono">{repo.stars}</Text>
+                <Text fontSize="11px" color="fg.subtle" fontFamily="mono">{repo.stars}</Text>
               </HStack>
             )}
             {repo.forks > 0 && (
               <HStack spacing={1}>
-                <Icon as={FaCodeBranch as ElementType} boxSize={3} color="gray.500" />
-                <Text fontSize="11px" color="gray.500" fontFamily="mono">{repo.forks}</Text>
+                <Icon as={FaCodeBranch as ElementType} boxSize={3} color="fg.subtle" />
+                <Text fontSize="11px" color="fg.subtle" fontFamily="mono">{repo.forks}</Text>
               </HStack>
             )}
           </HStack>
@@ -179,7 +179,7 @@ const LegacyProjectCard = ({ project, index, border }: { project: LegacyProject;
             {project.links.map((l) =>
               l.link ? (
                 <Tooltip key={l.name} label={l.name} hasArrow fontSize="xs">
-                  <Link href={l.link} isExternal color="gray.500" _hover={{ color: "brand.400" }}>
+                  <Link href={l.link} isExternal color="fg.subtle" _hover={{ color: "brand.400" }}>
                     <Icon as={getTypeIcon(l.name)} boxSize={3.5} />
                   </Link>
                 </Tooltip>
@@ -237,22 +237,12 @@ const Projects = ({ data }: Props) => {
     <Box>
       <HStack justify="space-between" align="flex-end" mb={8}>
         <Box>
-          <Text fontSize="11px" fontFamily="mono" color="gray.500"
+          <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
             letterSpacing="0.14em" mb={2} textTransform="uppercase">
             Projects
           </Text>
           <Heading size="lg">What I've Built</Heading>
         </Box>
-        {useFetched && (
-          <Tooltip
-            label="Primary projects first; remaining work ranked by GitHub evidence and editorial review."
-            hasArrow fontSize="xs"
-          >
-            <Text fontSize="11px" color="fg.subtle" fontFamily="mono" cursor="default">
-              auto-ranked ↑
-            </Text>
-          </Tooltip>
-        )}
       </HStack>
 
       {/* One ranked grid; important custom work competes without special treatment. */}

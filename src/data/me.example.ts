@@ -117,6 +117,14 @@ export default {
         link: "https://www.postgresql.org/",
       },
     ],
+    machineLearning: [
+      {
+        name: "scikit-learn",
+        id: "scikitlearn",
+        desc: "Machine Learning Library",
+        link: "https://scikit-learn.org/",
+      },
+    ],
     misc: [
       {
         name: "Docker",

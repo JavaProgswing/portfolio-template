@@ -59,7 +59,7 @@ const ResumePage = ({ data }: Props) => {
           border="1px solid" borderColor={border} textAlign="center">
           <Icon as={FaFilePdf as ElementType} boxSize={10} color="fg.subtle" mb={3} />
           <Heading size="md" color="fg.body" mb={2}>No resume configured</Heading>
-          <Text fontSize="sm" color="gray.500" fontFamily="mono">
+          <Text fontSize="sm" color="fg.subtle" fontFamily="mono">
             set <Text as="code" color="brand.400">resumeUrl</Text> in <Text as="code" color="brand.400">me.ts</Text>
           </Text>
         </Box>
@@ -81,7 +81,7 @@ const ResumePage = ({ data }: Props) => {
           <Stack spacing={4} align="center" textAlign="center">
             <Icon as={FaFilePdf as ElementType} boxSize={10} color="red.400" />
             <Heading size="md">{data.name}'s resume</Heading>
-            <Text fontSize="xs" color="gray.500" fontFamily="mono">
+            <Text fontSize="xs" color="fg.subtle" fontFamily="mono">
               external host blocks embedding · open in new tab to view
             </Text>
             <HStack spacing={2}>
@@ -131,7 +131,7 @@ const ResumePage = ({ data }: Props) => {
 
           <HStack justify="space-between" align="flex-end" mb={4} flexWrap="wrap" gap={3}>
             <Box>
-              <Text fontSize="11px" fontFamily="mono" color="gray.500"
+              <Text fontSize="11px" fontFamily="mono" color="fg.subtle"
                 letterSpacing="0.14em" mb={2} textTransform="uppercase">
                 Resume
               </Text>
@@ -230,10 +230,6 @@ const ResumePage = ({ data }: Props) => {
 
       {!fullscreen && (
         <>
-          <Text fontSize="10px" color="fg.subtle" fontFamily="mono"
-            textAlign="center" mt={3}>
-            scroll within frame · zoom with browser controls · fullscreen for distraction-free
-          </Text>
           <Box mt={10}>
             <Certificates limit={6} />
           </Box>

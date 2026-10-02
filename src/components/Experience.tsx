@@ -41,7 +41,7 @@ const Experience = ({ experience }: { experience?: ExperienceItem[] }) => {
       <Text
         fontSize="11px"
         fontFamily="mono"
-        color="gray.500"
+        color="fg.subtle"
         letterSpacing="0.14em"
         mb={2}
         textTransform="uppercase"
@@ -95,7 +95,7 @@ const Experience = ({ experience }: { experience?: ExperienceItem[] }) => {
               <Stack spacing={0.5} align="end">
                 <Text
                   fontSize="11px"
-                  color="gray.500"
+                  color="fg.subtle"
                   fontFamily="mono"
                   letterSpacing="0.05em"
                 >
